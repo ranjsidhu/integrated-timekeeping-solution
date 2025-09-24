@@ -20,7 +20,7 @@ npm run format || {
 }
 
 echo "📝 Running unit tests..."
-npm run format || {
+npm run test || {
     echo "❌ Unit tests failed. Please fix the unit tests before committing."
     exit 1
 }
