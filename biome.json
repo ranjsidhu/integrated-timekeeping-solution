@@ -7,7 +7,17 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/generated",
+      "!**/coverage",
+      "!jest.setup.ts",
+      "!jest.config.ts",
+      "!commitlint.config.js",
+      "!next.config.ts"
+    ]
   },
   "formatter": {
     "enabled": true,
