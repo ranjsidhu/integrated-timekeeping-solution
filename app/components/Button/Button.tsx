@@ -2,11 +2,15 @@
 
 import { Button as CarbonButton } from "@carbon/react";
 
-export default function Button({
-  children,
-  ...props
-}: Readonly<
+type CarbonButtonProps = Readonly<
   React.PropsWithChildren<React.ComponentProps<typeof CarbonButton>>
->) {
-  return <CarbonButton {...props}>{children}</CarbonButton>;
+>;
+
+export default function Button({ children, ...props }: CarbonButtonProps) {
+  const dataTestId = props["data-testid"] ?? "button";
+  return (
+    <CarbonButton {...props} data-testid={dataTestId}>
+      {children}
+    </CarbonButton>
+  );
 }
