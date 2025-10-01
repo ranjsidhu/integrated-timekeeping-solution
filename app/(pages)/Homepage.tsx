@@ -7,6 +7,7 @@ import {
   CheckboxGroup,
   CopyButton,
   Link,
+  Loading,
 } from "@/app/components";
 
 export default function Homepage() {
@@ -30,6 +31,7 @@ export default function Homepage() {
       <Link href="/" inline>
         Testing link
       </Link>
+      <Loading active={false} />
     </>
   );
 }
