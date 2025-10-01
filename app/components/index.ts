@@ -3,5 +3,6 @@ import Checkbox from "./Checkbox/Checkbox";
 import CheckboxGroup from "./Checkbox/CheckboxGroup";
 import CopyButton from "./CopyButton/CopyButton";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
+import Link from "./Link/Link";
 
-export { Button, Checkbox, CheckboxGroup, CopyButton, ErrorBoundary };
+export { Button, Checkbox, CheckboxGroup, CopyButton, ErrorBoundary, Link };

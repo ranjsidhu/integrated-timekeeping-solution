@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Checkbox, CheckboxGroup, CopyButton } from "@/app/components";
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  CopyButton,
+  Link,
+} from "@/app/components";
 
 export default function Homepage() {
   const [error, setError] = useState<boolean>(false);
@@ -21,6 +27,9 @@ export default function Homepage() {
       </CheckboxGroup>
       <Button onClick={() => setError(!error)}>Click me</Button>
       <CopyButton autoAlign />
+      <Link href="/" inline>
+        Testing link
+      </Link>
     </>
   );
 }
