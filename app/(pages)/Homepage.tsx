@@ -1,19 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  Checkbox,
-  CheckboxGroup,
-  ErrorBoundary,
-} from "@/app/components";
-
-function ThrowError({ shouldThrowError }: { shouldThrowError: boolean }) {
-  if (shouldThrowError) {
-    throw new Error("Component threw error");
-  }
-  return "Successfully rendered";
-}
+import { Button, Checkbox, CheckboxGroup, CopyButton } from "@/app/components";
 
 export default function Homepage() {
   const [error, setError] = useState<boolean>(false);
@@ -32,9 +20,7 @@ export default function Homepage() {
         <Checkbox id="checkbox-label-2" labelText="Checkbox label" />
       </CheckboxGroup>
       <Button onClick={() => setError(!error)}>Click me</Button>
-      <ErrorBoundary fallback={<p>An error occured</p>}>
-        <ThrowError shouldThrowError={error} />
-      </ErrorBoundary>
+      <CopyButton autoAlign />
     </>
   );
 }
