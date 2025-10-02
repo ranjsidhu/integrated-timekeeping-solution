@@ -6,6 +6,7 @@ import {
   Checkbox,
   CheckboxGroup,
   CopyButton,
+  Input,
   Link,
   Loading,
 } from "@/app/components";
@@ -32,6 +33,13 @@ export default function Homepage() {
         Testing link
       </Link>
       <Loading active={false} />
+      <Input type="number" id="homepage-number" label="Number input" />
+      <Input
+        type="password"
+        id="homepage-password"
+        labelText="Password input"
+      />
+      <Input type="text" id="homepage-text" labelText="Text Input" />
     </>
   );
 }

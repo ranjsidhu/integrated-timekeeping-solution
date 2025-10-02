@@ -3,6 +3,7 @@ import Checkbox from "./Checkbox/Checkbox";
 import CheckboxGroup from "./Checkbox/CheckboxGroup";
 import CopyButton from "./CopyButton/CopyButton";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
+import Input from "./Input/Input";
 import Link from "./Link/Link";
 import Loading from "./Loading/Loading";
 
@@ -12,6 +13,7 @@ export {
   CheckboxGroup,
   CopyButton,
   ErrorBoundary,
+  Input,
   Link,
   Loading,
 };
