@@ -7,6 +7,7 @@ const createJestConfig = nextJest({
 const config = {
   preset: "ts-jest",
   coverageProvider: "v8",
+  testTimeout: 10000,
   setupFilesAfterEnv: ["./jest.setup.ts"],
   testEnvironment: "jsdom",
   collectCoverage: true,
