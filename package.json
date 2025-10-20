@@ -13,7 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@carbon/react": "1.92.1",
+    "@carbon/react": "1.93.0",
     "@carbon/styles": "1.91.0",
     "@ibm/plex": "6.4.1",
     "next": "15.5.6",
