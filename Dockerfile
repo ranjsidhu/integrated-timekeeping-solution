@@ -1,5 +1,3 @@
-# syntax=docker.io/docker/dockerfile:1
-
 FROM node:22-alpine AS base
 
 # Install dependencies only when needed
@@ -8,6 +6,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
+COPY prisma ./prisma
 RUN npm ci
 
 
@@ -19,6 +18,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN npx prisma generate --no-hints
 RUN npm run build
 
 # Production image, copy all the files and run next
