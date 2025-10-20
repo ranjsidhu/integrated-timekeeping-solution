@@ -193,8 +193,6 @@ model ForecastEntry {
   project       Project?     @relation(fields: [project_id], references: [id])
   bill_code     BillCode?    @relation(fields: [bill_code_id], references: [id])
 
-  @@unique([forecast_plan_id, project_id])
-  @@unique([forecast_plan_id, bill_code_id])
   @@map("forecast_entries")
 }
 
@@ -213,7 +211,7 @@ model Category {
 model AuditLog {
   id         String   @id @default(uuid()) @db.Uuid
   table_name String   @db.VarChar(50)
-  record_id  String   @db.Uuid
+  record_id  String
   action     String   @db.VarChar(50)
   old_values Json?    @db.JsonB
   new_values Json?    @db.JsonB
