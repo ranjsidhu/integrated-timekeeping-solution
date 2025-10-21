@@ -26,23 +26,17 @@ model User {
   forecast_plans         ForecastPlan[]
   owned_projects         Project[]
   audit_logs             AuditLog[]
-  user_resource_managers UserResourceManagers[] @relation("UserToRM")
-  managed_users          UserResourceManagers[] @relation("RMToUser")
 
   @@map("users")
 }
 
 model UserResourceManagers {
-  id         Int      @id @default(autoincrement())
   user_id    Int
   rm_user_id Int
   created_at DateTime @default(now()) @db.Timestamp(6)
   updated_at DateTime @updatedAt @db.Timestamp(6)
 
-  // Relations
-  user User @relation("UserToRM", fields: [user_id], references: [id])
-  rm   User @relation("RMToUser", fields: [rm_user_id], references: [id])
-
+  @@id([user_id, rm_user_id])
   @@map("user_resource_managers")
 }
 
