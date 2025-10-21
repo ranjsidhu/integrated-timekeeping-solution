@@ -22,10 +22,10 @@ model User {
   role Role @relation(fields: [role_id], references: [id])
 
   // Reverse relations
-  timesheets             Timesheet[]
-  forecast_plans         ForecastPlan[]
-  owned_projects         Project[]
-  audit_logs             AuditLog[]
+  timesheets     Timesheet[]
+  forecast_plans ForecastPlan[]
+  owned_projects Project[]
+  audit_logs     AuditLog[]
 
   @@map("users")
 }
