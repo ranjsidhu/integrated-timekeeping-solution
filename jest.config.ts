@@ -19,6 +19,8 @@ const config = {
   transformIgnorePatterns: ["/node_modules/(?!(lucide-react|@panva)/)"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+    "^@carbon/icons-react$": "<rootDir>/__mocks__/carbon-icons-react.js",
+    "^@carbon/icons-react/(.*)$": "<rootDir>/__mocks__/carbon-icons-react.js",
   },
   modulePathIgnorePatterns: ["<rootDir>/.next/standalone"],
   globals: {
