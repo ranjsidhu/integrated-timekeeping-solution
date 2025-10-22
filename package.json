@@ -14,16 +14,16 @@
     "test": "jest"
   },
   "dependencies": {
-    "@carbon/react": "1.93.0",
-    "@carbon/styles": "1.92.0",
+    "@carbon/react": "1.94.0",
+    "@carbon/styles": "1.93.0",
     "@ibm/plex": "6.4.1",
-    "@prisma/client": "6.17.1",
+    "@prisma/client": "6.18.0",
     "next": "15.5.6",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.6",
+    "@biomejs/biome": "2.2.7",
     "@commitlint/cli": "20.1.0",
     "@commitlint/config-conventional": "20.0.0",
     "@tailwindcss/postcss": "4.1.14",
@@ -38,7 +38,7 @@
     "husky": "9.1.7",
     "jest": "30.2.0",
     "jest-environment-jsdom": "30.2.0",
-    "prisma": "6.17.1",
+    "prisma": "6.18.0",
     "sass": "1.93.2",
     "tailwindcss": "4.1.14",
     "ts-jest": "29.4.5",
