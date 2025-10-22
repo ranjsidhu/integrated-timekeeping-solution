@@ -1,45 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Button,
-  Checkbox,
-  CheckboxGroup,
-  CopyButton,
-  Input,
-  Link,
-  Loading,
-} from "@/app/components";
+import { Column, Grid } from "@carbon/react";
 
 export default function Homepage() {
-  const [error, setError] = useState<boolean>(false);
-
   return (
-    <>
-      <Button kind="danger--tertiary">Testing button</Button>
-      <CheckboxGroup
-        className="some-class"
-        helperText="Helper text goes here"
-        invalidText="Invalid message goes here"
-        legendText="Group label"
-        warnText="Warning message goes here"
-      >
-        <Checkbox id="checkbox-label-1" labelText="Checkbox label" />
-        <Checkbox id="checkbox-label-2" labelText="Checkbox label" />
-      </CheckboxGroup>
-      <Button onClick={() => setError(!error)}>Click me</Button>
-      <CopyButton autoAlign />
-      <Link href="/" inline>
-        Testing link
-      </Link>
-      <Loading active={false} />
-      <Input type="number" id="homepage-number" label="Number input" />
-      <Input
-        type="password"
-        id="homepage-password"
-        labelText="Password input"
-      />
-      <Input type="text" id="homepage-text" labelText="Text Input" />
-    </>
+    <div className="sb-css-grid-container">
+      <Grid>
+        <Column sm={2} md={4} lg={6}>
+          <p>Small: Span 2 of 4</p>
+          <p>Medium: Span 4 of 8</p>
+          <p>Large: Span 6 of 16</p>
+        </Column>
+        <Column sm={2} md={2} lg={3}>
+          <p>Small: Span 2 of 4</p>
+          <p>Medium: Span 2 of 8</p>
+          <p>Large: Span 3 of 16</p>
+        </Column>
+        <Column sm={0} md={2} lg={3}>
+          <p>Small: Span 0 of 4</p>
+          <p>Medium: Span 2 of 8</p>
+          <p>Large: Span 3 of 16</p>
+        </Column>
+        <Column sm={0} md={0} lg={4}>
+          <p>Small: Span 0 of 4</p>
+          <p>Medium: Span 0 of 8</p>
+          <p>Large: Span 4 of 16</p>
+        </Column>
+        <Column sm="25%" md="50%" lg="75%">
+          <p>Small: Span 25%</p>
+          <p>Medium: Span 50%</p>
+          <p>Large: Span 75%</p>
+        </Column>
+      </Grid>
+    </div>
   );
 }
