@@ -9,38 +9,54 @@ datasource db {
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
-  email               String    @unique @db.VarChar(255)
-  password_hash       String    @db.VarChar(255)
-  name                String    @db.VarChar(255)
-  role_id             Int
-  resource_manager_id Int?
-  availability_date   DateTime? @db.Date
-  created_at          DateTime  @default(now()) @db.Timestamp(6)
-  updated_at          DateTime  @updatedAt @db.Timestamp(6)
-
-  // Relations
-  role             Role  @relation(fields: [role_id], references: [id])
-  resource_manager User? @relation("ResourceManagerRelation", fields: [resource_manager_id], references: [id])
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  password_hash     String
+  name              String
+  availability_date DateTime? @db.Date
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime  @updatedAt @db.Timestamptz(6)
 
   // Reverse relations
-  managed_users  User[]         @relation("ResourceManagerRelation")
   timesheets     Timesheet[]
   forecast_plans ForecastPlan[]
   owned_projects Project[]
   audit_logs     AuditLog[]
+  user_roles     UserRoles[]
 
-  @@index([resource_manager_id])
   @@map("users")
 }
 
+model UserRoles {
+  user_id    Int
+  role_id    Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+
+  role Role @relation(fields: [role_id], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, role_id])
+  @@map("user_roles")
+}
+
+model UserResourceManagers {
+  user_id    Int
+  rm_user_id Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+
+  @@id([user_id, rm_user_id])
+  @@map("user_resource_managers")
+}
+
 model Project {
-  id            String   @id @default(uuid()) @db.Uuid
+  id            Int      @id @default(autoincrement())
   project_name  String   @db.VarChar(255)
   owner_user_id Int
   is_active     Boolean  @default(true)
-  created_at    DateTime @default(now()) @db.Timestamp(6)
-  updated_at    DateTime @updatedAt @db.Timestamp(6)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @updatedAt @db.Timestamptz(6)
 
   // Relations
   owner            User            @relation(fields: [owner_user_id], references: [id])
@@ -51,16 +67,15 @@ model Project {
 }
 
 model Code {
-  id             String   @id @default(uuid()) @db.Uuid
-  project_id     String?  @db.Uuid
+  id             Int      @id @default(autoincrement())
+  project_id     Int?
   code           String   @unique @db.VarChar(50)
   description    String   @db.Text
   is_system_code Boolean  @default(false)
   start_date     DateTime @db.Date
   expiry_date    DateTime @db.Date
-  is_active      Boolean  @default(true)
-  created_at     DateTime @default(now()) @db.Timestamp(6)
-  updated_at     DateTime @updatedAt @db.Timestamp(6)
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime @updatedAt @db.Timestamptz(6)
 
   // Relations
   project    Project?   @relation(fields: [project_id], references: [id])
@@ -70,13 +85,12 @@ model Code {
 }
 
 model WorkItem {
-  id             String   @id @default(uuid()) @db.Uuid
-  code_id        String   @db.Uuid
+  id             Int      @id @default(autoincrement())
+  code_id        Int
   work_item_code String   @db.VarChar(50)
   description    String   @db.Text
-  is_active      Boolean  @default(true)
-  created_at     DateTime @default(now()) @db.Timestamp(6)
-  updated_at     DateTime @updatedAt @db.Timestamp(6)
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime @updatedAt @db.Timestamptz(6)
 
   // Relations
   code       Code       @relation(fields: [code_id], references: [id])
@@ -86,20 +100,18 @@ model WorkItem {
 }
 
 model BillCode {
-  id              String   @id @default(uuid()) @db.Uuid
-  work_item_id    String   @db.Uuid
+  id              Int      @id @default(autoincrement())
+  work_item_id    Int
   bill_code       String   @db.VarChar(50)
   bill_name       String   @db.VarChar(255)
   is_billable     Boolean  @default(true)
   is_forecastable Boolean  @default(false)
-  is_active       Boolean  @default(true)
-  created_at      DateTime @default(now()) @db.Timestamp(6)
-  updated_at      DateTime @updatedAt @db.Timestamp(6)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @updatedAt @db.Timestamptz(6)
 
   // Relations
   work_item         WorkItem         @relation(fields: [work_item_id], references: [id])
   timesheet_entries TimesheetEntry[]
-  forecast_entries  ForecastEntry[]
 
   @@map("bill_codes")
 }
@@ -115,21 +127,33 @@ model TimesheetStatus {
   @@map("timesheet_statuses")
 }
 
+model TimesheetWeekEnding {
+  id          Int      @id @default(autoincrement())
+  week_ending DateTime @unique @db.Date
+
+  // Reverse relations
+  timesheets        Timesheet[]
+  weekly_breakdowns ForecastWeeklyBreakdown[]
+
+  @@map("timesheet_week_endings")
+}
+
 model Timesheet {
-  id           String    @id @default(uuid()) @db.Uuid
-  user_id      Int
-  week_ending  DateTime  @db.Date
-  status_id    Int
-  submitted_at DateTime? @db.Timestamp(6)
-  created_at   DateTime  @default(now()) @db.Timestamp(6)
-  updated_at   DateTime  @updatedAt @db.Timestamp(6)
+  id                       Int       @id @default(autoincrement())
+  user_id                  Int
+  timesheet_week_ending_id Int
+  status_id                Int
+  submitted_at             DateTime? @db.Timestamptz(6)
+  created_at               DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime  @updatedAt @db.Timestamptz(6)
 
   // Relations
-  user              User             @relation(fields: [user_id], references: [id])
-  status            TimesheetStatus  @relation(fields: [status_id], references: [id])
+  user              User                @relation(fields: [user_id], references: [id])
+  status            TimesheetStatus     @relation(fields: [status_id], references: [id])
   timesheet_entries TimesheetEntry[]
+  week_ending       TimesheetWeekEnding @relation(fields: [timesheet_week_ending_id], references: [id])
 
-  @@unique([user_id, week_ending])
+  @@unique([user_id, timesheet_week_ending_id])
   @@map("timesheets")
 }
 
@@ -139,19 +163,19 @@ model Role {
   description String @db.Text
 
   // Reverse relations
-  users User[]
+  user_roles UserRoles[]
 
   @@map("roles")
 }
 
 model TimesheetEntry {
-  id           String   @id @default(uuid()) @db.Uuid
-  timesheet_id String   @db.Uuid
-  bill_code_id String   @db.Uuid
+  id           Int      @id @default(autoincrement())
+  timesheet_id Int
+  bill_code_id Int
   work_date    DateTime @db.Date
   hours        Int
-  created_at   DateTime @default(now()) @db.Timestamp(6)
-  updated_at   DateTime @updatedAt @db.Timestamp(6)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @updatedAt @db.Timestamptz(6)
 
   // Relations
   timesheet Timesheet @relation(fields: [timesheet_id], references: [id])
@@ -162,11 +186,11 @@ model TimesheetEntry {
 }
 
 model ForecastPlan {
-  id           String   @id @default(uuid()) @db.Uuid
+  id           Int      @id @default(autoincrement())
   user_id      Int
-  submitted_at DateTime @db.Timestamp(6)
-  created_at   DateTime @default(now()) @db.Timestamp(6)
-  updated_at   DateTime @updatedAt @db.Timestamp(6)
+  submitted_at DateTime @db.Timestamptz(6)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @updatedAt @db.Timestamptz(6)
 
   // Relations
   user             User            @relation(fields: [user_id], references: [id])
@@ -176,24 +200,38 @@ model ForecastPlan {
 }
 
 model ForecastEntry {
-  id               String   @id @default(uuid()) @db.Uuid
-  forecast_plan_id String   @db.Uuid
+  id               Int      @id @default(autoincrement())
+  forecast_plan_id Int
   category_id      Int
-  project_id       String?  @db.Uuid
-  bill_code_id     String?  @db.Uuid
+  project_id       Int?
   from_date        DateTime @db.Date
   to_date          DateTime @db.Date
   hours_per_week   Int
-  created_at       DateTime @default(now()) @db.Timestamp(6)
-  updated_at       DateTime @updatedAt @db.Timestamp(6)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @updatedAt @db.Timestamptz(6)
 
   // Relations
-  forecast_plan ForecastPlan @relation(fields: [forecast_plan_id], references: [id])
-  category      Category     @relation(fields: [category_id], references: [id])
-  project       Project?     @relation(fields: [project_id], references: [id])
-  bill_code     BillCode?    @relation(fields: [bill_code_id], references: [id])
+  forecast_plan     ForecastPlan              @relation(fields: [forecast_plan_id], references: [id])
+  category          Category                  @relation(fields: [category_id], references: [id])
+  project           Project?                  @relation(fields: [project_id], references: [id])
+  weekly_breakdowns ForecastWeeklyBreakdown[]
 
   @@map("forecast_entries")
+}
+
+model ForecastWeeklyBreakdown {
+  id                      Int      @id @default(autoincrement())
+  forecast_entry_id       Int
+  forecast_week_ending_id Int
+  hours                   Int
+  created_at              DateTime @default(now()) @db.Timestamp(6)
+  updated_at              DateTime @updatedAt @db.Timestamp(6)
+
+  forecast_entry ForecastEntry       @relation(fields: [forecast_entry_id], references: [id], onDelete: Cascade)
+  week_ending    TimesheetWeekEnding @relation(fields: [forecast_week_ending_id], references: [id], onDelete: Cascade)
+
+  @@unique([forecast_entry_id, forecast_week_ending_id])
+  @@map("forecast_weekly_breakdowns")
 }
 
 model Category {
@@ -209,14 +247,14 @@ model Category {
 }
 
 model AuditLog {
-  id         String   @id @default(uuid()) @db.Uuid
+  id         Int      @id @default(autoincrement())
   table_name String   @db.VarChar(50)
   record_id  String
   action     String   @db.VarChar(50)
   old_values Json?    @db.JsonB
   new_values Json?    @db.JsonB
   changed_by Int
-  changed_at DateTime @db.Timestamp(6)
+  changed_at DateTime @db.Timestamptz(6)
 
   // Relations
   user User @relation(fields: [changed_by], references: [id])
