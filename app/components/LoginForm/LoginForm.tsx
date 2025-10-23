@@ -1,8 +1,7 @@
 "use client";
 
-import { Form, InlineNotification } from "@carbon/react";
 import { type ChangeEvent, type FormEvent, useState } from "react";
-import { Button, Input } from "@/app/components";
+import { Button, Form, InlineNotification, Input } from "@/app/components";
 import type {
   FormErrors,
   LoginFormData,
