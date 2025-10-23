@@ -50,7 +50,7 @@ Table Roles {
 Table Projects {
   id integer pk
   project_name varchar(255)
-  owner_user_id uuid [ref: > Users.id]
+  owner_user_id integer [ref: > Users.id]
   is_active boolean [default: true]
   created_at timestamp
   updated_at timestamp
@@ -58,7 +58,7 @@ Table Projects {
 
 Table Codes {
   id integer pk
-  project_id uuid [ref: > Projects.id]
+  project_id integer [ref: > Projects.id]
   code varchar(50) unique
   description text
   is_system_code boolean [default: false]
@@ -72,7 +72,7 @@ Table Codes {
 
 Table WorkItems {
   id integer pk
-  code_id uuid [ref: > Codes.id]
+  code_id integer [ref: > Codes.id]
   work_item_code varchar(50)
   description text
   created_at timestamp
@@ -81,7 +81,7 @@ Table WorkItems {
 
 Table BillCodes {
   id integer pk
-  work_item_id uuid [ref: > WorkItems.id]
+  work_item_id integer [ref: > WorkItems.id]
   bill_code varchar(50)
   bill_name varchar(255)
   is_billable boolean [default: true]
@@ -104,7 +104,7 @@ Table Categories {
 
 Table Timesheets {
   id integer pk
-  user_id uuid [ref: > Users.id]
+  user_id integer [ref: > Users.id]
   timesheet_week_ending_id integer [ref: > TimesheetWeekEndings.id]
   status_id integer [ref: > TimesheetStatuses.id]
   submitted_at timestamp
@@ -126,8 +126,8 @@ Table TimesheetStatuses {
 
 Table TimesheetEntries {
   id integer pk
-  timesheet_id uuid [ref: > Timesheets.id]
-  bill_code_id uuid [ref: > BillCodes.id]
+  timesheet_id integer [ref: > Timesheets.id]
+  bill_code_id integer [ref: > BillCodes.id]
   work_date date
   hours integer
   created_at timestamp
@@ -142,7 +142,7 @@ Table TimesheetEntries {
 
 Table ForecastPlans {
   id integer pk
-  user_id uuid [ref: > Users.id]
+  user_id integer [ref: > Users.id]
   submitted_at timestamp
   created_at timestamp
   updated_at timestamp
@@ -153,11 +153,11 @@ Table ForecastPlans {
 // add table to track edits to weekly hours - DONE
 Table ForecastEntries {
   id integer pk
-  forecast_plan_id uuid [ref: > ForecastPlans.id]
+  forecast_plan_id integer [ref: > ForecastPlans.id]
   category_id integer [ref: > Categories.id]
-  project_id uuid [ref: > Projects.id]
+  project_id integer [ref: > Projects.id]
   // remove bill code id - DONE
-  // bill_code_id uuid [ref: > BillCodes.id]
+  // bill_code_id integer [ref: > BillCodes.id]
   from_date date
   to_date date
   hours_per_week integer
@@ -184,11 +184,11 @@ Table ForecastWeeklyBreakdown {
 Table AuditLog {
   id integer pk
   table_name varchar(50)
-  record_id uuid
+  record_id integer
   action varchar(50)
   old_values jsonb
   new_values jsonb
-  changed_by uuid [ref: > Users.id]
+  changed_by integer [ref: > Users.id]
   changed_at timestamp
   
   indexes {
