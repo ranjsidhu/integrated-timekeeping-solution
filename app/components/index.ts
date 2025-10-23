@@ -4,6 +4,7 @@ import CheckboxGroup from "./Checkbox/CheckboxGroup";
 import CopyButton from "./CopyButton/CopyButton";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
 import Input from "./Input/Input";
+import Layout from "./Layout/Layout";
 import Link from "./Link/Link";
 import Loading from "./Loading/Loading";
 
@@ -14,6 +15,7 @@ export {
   CopyButton,
   ErrorBoundary,
   Input,
+  Layout,
   Link,
   Loading,
 };

@@ -1,0 +1,199 @@
+// is_active required for all tables? - DONE
+// - what happens when code expiry_date is past?
+// - removed from Codes, WorkItem, BillCode
+// varchar vs text DONE
+// don't allow user to submit custom week ending - DONE
+//  - create a new table TimesheetWeekEndings - DONE
+
+Table Users {
+  id integer pk
+  // case-insensitive email
+  // - will be done with in-code validation
+  email citext unique 
+  password_hash varchar(255)
+  name varchar(255)
+  overridden_availability_date date
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'availability_date is the end date of the latest productive reservation in forecast'
+}
+
+Table UserRoles {
+  user_id integer [ref: > Users.id]
+  role_id integer [ref: > Roles.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table UserResourceManagers {
+  id integer pk
+  user_id integer [ref: > Users.id]
+  rm_user_id integer [ref: > Users.id]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Maps users to their resource managers.'
+}
+
+Table TimesheetWeekEndings {
+  id integer pk
+  week_ending timestamp
+}
+
+Table Roles {
+  id integer pk
+  name varchar(50) unique
+  description text
+}
+
+Table Projects {
+  id integer pk
+  project_name varchar(255)
+  owner_user_id uuid [ref: > Users.id]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Codes {
+  id integer pk
+  project_id uuid [ref: > Projects.id]
+  code varchar(50) unique
+  description text
+  is_system_code boolean [default: false]
+  start_date date
+  expiry_date date
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'project_id is null for system codes like SK77'
+}
+
+Table WorkItems {
+  id integer pk
+  code_id uuid [ref: > Codes.id]
+  work_item_code varchar(50)
+  description text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table BillCodes {
+  id integer pk
+  work_item_id uuid [ref: > WorkItems.id]
+  bill_code varchar(50)
+  bill_name varchar(255)
+  is_billable boolean [default: true]
+  is_forecastable boolean [default: false]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'is_forecastable=true for system bill codes shown in forecast UI'
+}
+
+Table Categories {
+  id integer pk
+  assignment_type varchar(50)
+  category_name varchar(100)
+  description text
+  
+  Note: 'Productive: Billable. Non-Productive: Holiday, Training'
+}
+
+Table Timesheets {
+  id integer pk
+  user_id uuid [ref: > Users.id]
+  timesheet_week_ending_id integer [ref: > TimesheetWeekEndings.id]
+  status_id integer [ref: > TimesheetStatuses.id]
+  submitted_at timestamp
+  created_at timestamp
+  updated_at timestamp
+  
+  indexes {
+    (user_id, timesheet_week_ending_id) [unique]
+  }
+  
+  Note: 'Total weekly hours must equal 40'
+}
+
+Table TimesheetStatuses {
+  id integer pk
+  name varchar(50) unique
+  description text
+}
+
+Table TimesheetEntries {
+  id integer pk
+  timesheet_id uuid [ref: > Timesheets.id]
+  bill_code_id uuid [ref: > BillCodes.id]
+  work_date date
+  hours integer
+  created_at timestamp
+  updated_at timestamp
+  
+  indexes {
+    (timesheet_id, bill_code_id, work_date) [unique]
+  }
+  
+  Note: 'hours must be >= 0'
+}
+
+Table ForecastPlans {
+  id integer pk
+  user_id uuid [ref: > Users.id]
+  submitted_at timestamp
+  created_at timestamp
+  updated_at timestamp
+  
+  Note: 'Latest submitted plan is active. Must cover minimum 12 weeks, 40h per week, no gaps.'
+}
+
+// add table to track edits to weekly hours - DONE
+Table ForecastEntries {
+  id integer pk
+  forecast_plan_id uuid [ref: > ForecastPlans.id]
+  category_id integer [ref: > Categories.id]
+  project_id uuid [ref: > Projects.id]
+  // remove bill code id - DONE
+  // bill_code_id uuid [ref: > BillCodes.id]
+  from_date date
+  to_date date
+  hours_per_week integer
+  created_at timestamp
+  updated_at timestamp
+  
+  indexes {
+    (forecast_plan_id, project_id) [unique]
+    // (forecast_plan_id, bill_code_id) [unique]
+  }
+  
+  Note: 'One project/bill_code per forecast plan. hours_per_week max 40 for prototype.'
+}
+
+Table ForecastWeeklyBreakdown {
+  id integer pk
+  forecast_entry_id integer [ref: > ForecastEntries.id]
+  forecast_week_ending_id integer [ref: > TimesheetWeekEndings.id]
+  hours integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table AuditLog {
+  id integer pk
+  table_name varchar(50)
+  record_id uuid
+  action varchar(50)
+  old_values jsonb
+  new_values jsonb
+  changed_by uuid [ref: > Users.id]
+  changed_at timestamp
+  
+  indexes {
+    (table_name, record_id)
+    (changed_by)
+    (changed_at)
+  }
+}

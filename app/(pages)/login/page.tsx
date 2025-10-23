@@ -1,5 +1,5 @@
-import LoginPageTyped from "./LoginPage";
+import Login from "./Login";
 
-export default function LoginPage() {
-  return <LoginPageTyped />;
+export default async function LoginPage() {
+  return <Login />;
 }
