@@ -3,12 +3,12 @@
  */
 
 export interface LoginFormData {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface FormErrors {
-  username?: string;
+  email?: string;
   password?: string;
   form?: string;
 }
@@ -19,7 +19,7 @@ export interface LoginResponse {
   message?: string;
   user?: {
     id: string;
-    username: string;
+    name: string;
     email?: string;
     role?: string;
   };

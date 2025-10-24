@@ -13,7 +13,7 @@ import { login } from "./serveractions";
 export default function LoginForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<LoginFormData>({
-    username: "",
+    email: "",
     password: "",
   });
   const [notification, setNotification] = useState<NotificationState>({
@@ -95,20 +95,22 @@ export default function LoginForm() {
       )}
       <div className="mb-6">
         <Input
+          autoComplete="email"
           type="text"
-          id="username"
-          data-testid="username-input"
-          labelText="Username"
-          placeholder="Enter your username"
-          value={formData.username}
+          id="email"
+          data-testid="email-input"
+          labelText="Email"
+          placeholder="Enter your email"
+          value={formData.email}
           onChange={handleInputChange}
-          invalid={!!errors.username}
-          invalidText={errors.username}
+          invalid={!!errors.email}
+          invalidText={errors.email}
         />
       </div>
 
       <div className="mb-8">
         <Input
+          autoComplete="password"
           type="password"
           id="password"
           data-testid="password-input"

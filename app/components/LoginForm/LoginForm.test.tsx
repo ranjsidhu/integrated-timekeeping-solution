@@ -15,7 +15,7 @@ describe("LoginForm", () => {
   it("renders inputs and submit button", () => {
     render(<LoginForm />);
 
-    expect(screen.getByTestId("username-input")).toBeInTheDocument();
+    expect(screen.getByTestId("email-input")).toBeInTheDocument();
     expect(screen.getByTestId("password-input")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /sign in/i }),
@@ -25,13 +25,13 @@ describe("LoginForm", () => {
   it("updates input values when typing", () => {
     render(<LoginForm />);
 
-    const username = screen.getByTestId("username-input") as HTMLInputElement;
+    const email = screen.getByTestId("email-input") as HTMLInputElement;
     const password = screen.getByTestId("password-input") as HTMLInputElement;
 
-    fireEvent.change(username, { target: { value: "alice" } });
+    fireEvent.change(email, { target: { value: "alice" } });
     fireEvent.change(password, { target: { value: "supersecret" } });
 
-    expect(username).toHaveValue("alice");
+    expect(email).toHaveValue("alice");
     expect(password).toHaveValue("supersecret");
   });
 
@@ -40,7 +40,7 @@ describe("LoginForm", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
 
-    expect(screen.getByText(/Username is required/i)).toBeInTheDocument();
+    expect(screen.getByText(/email is required/i)).toBeInTheDocument();
     expect(screen.getByText(/Password is required/i)).toBeInTheDocument();
   });
 
@@ -49,15 +49,15 @@ describe("LoginForm", () => {
 
     // Trigger validation errors by submitting empty form
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
-    expect(screen.getByText(/Username is required/i)).toBeInTheDocument();
+    expect(screen.getByText(/email is required/i)).toBeInTheDocument();
 
-    // Change username input -> should clear the username error
-    fireEvent.change(screen.getByTestId("username-input"), {
+    // Change email input -> should clear the email error
+    fireEvent.change(screen.getByTestId("email-input"), {
       target: { value: "alice" },
     });
 
-    // Username error should be removed
-    expect(screen.queryByText(/Username is required/i)).toBeNull();
+    // email error should be removed
+    expect(screen.queryByText(/email is required/i)).toBeNull();
   });
 
   it("shows success notification when login succeeds", async () => {
@@ -65,7 +65,7 @@ describe("LoginForm", () => {
 
     render(<LoginForm />);
 
-    fireEvent.change(screen.getByTestId("username-input"), {
+    fireEvent.change(screen.getByTestId("email-input"), {
       target: { value: "alice" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
@@ -86,7 +86,7 @@ describe("LoginForm", () => {
 
     render(<LoginForm />);
 
-    fireEvent.change(screen.getByTestId("username-input"), {
+    fireEvent.change(screen.getByTestId("email-input"), {
       target: { value: "bob" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
@@ -104,7 +104,7 @@ describe("LoginForm", () => {
 
     render(<LoginForm />);
 
-    fireEvent.change(screen.getByTestId("username-input"), {
+    fireEvent.change(screen.getByTestId("email-input"), {
       target: { value: "alice" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
@@ -135,7 +135,7 @@ describe("LoginForm", () => {
 
       render(<LoginForm />);
 
-      fireEvent.change(screen.getByTestId("username-input"), {
+      fireEvent.change(screen.getByTestId("email-input"), {
         target: { value: "alice" },
       });
       fireEvent.change(screen.getByTestId("password-input"), {
@@ -163,7 +163,7 @@ describe("LoginForm", () => {
 
     render(<LoginForm />);
 
-    fireEvent.change(screen.getByTestId("username-input"), {
+    fireEvent.change(screen.getByTestId("email-input"), {
       target: { value: "alice" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
@@ -173,7 +173,7 @@ describe("LoginForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
 
     expect(login).toHaveBeenCalledWith({
-      username: "alice",
+      email: "alice",
       password: "supersecret",
     });
   });
@@ -185,7 +185,7 @@ describe("LoginForm", () => {
 
     render(<LoginForm />);
 
-    fireEvent.change(screen.getByTestId("username-input"), {
+    fireEvent.change(screen.getByTestId("email-input"), {
       target: { value: "bob" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
@@ -195,7 +195,7 @@ describe("LoginForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
 
     expect(login).toHaveBeenCalledWith({
-      username: "bob",
+      email: "bob",
       password: "wrongpass",
     });
   });

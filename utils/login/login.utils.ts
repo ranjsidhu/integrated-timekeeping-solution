@@ -3,8 +3,8 @@ import type { FormErrors, LoginFormData } from "@/types/login.types";
 const validateForm = (formData: LoginFormData): FormErrors => {
   const newErrors: FormErrors = {};
 
-  if (!formData.username.trim()) {
-    newErrors.username = "Username is required";
+  if (!formData.email.trim()) {
+    newErrors.email = "IBMid or email is required";
   }
 
   if (!formData.password) {
