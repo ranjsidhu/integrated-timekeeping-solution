@@ -15,7 +15,7 @@ model User {
   name              String
   availability_date DateTime? @db.Date
   created_at        DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime  @updatedAt @db.Timestamptz(6)
+  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Reverse relations
   timesheets     Timesheet[]
@@ -31,7 +31,7 @@ model UserRoles {
   user_id    Int
   role_id    Int
   created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @updatedAt @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   role Role @relation(fields: [role_id], references: [id])
   user User @relation(fields: [user_id], references: [id])
@@ -44,7 +44,7 @@ model UserResourceManagers {
   user_id    Int
   rm_user_id Int
   created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @updatedAt @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   @@id([user_id, rm_user_id])
   @@map("user_resource_managers")
@@ -56,7 +56,7 @@ model Project {
   owner_user_id Int
   is_active     Boolean  @default(true)
   created_at    DateTime @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime @updatedAt @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   owner            User            @relation(fields: [owner_user_id], references: [id])
@@ -75,7 +75,7 @@ model Code {
   start_date     DateTime @db.Date
   expiry_date    DateTime @db.Date
   created_at     DateTime @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime @updatedAt @db.Timestamptz(6)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   project    Project?   @relation(fields: [project_id], references: [id])
@@ -90,7 +90,7 @@ model WorkItem {
   work_item_code String   @db.VarChar(50)
   description    String   @db.Text
   created_at     DateTime @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime @updatedAt @db.Timestamptz(6)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   code       Code       @relation(fields: [code_id], references: [id])
@@ -107,7 +107,7 @@ model BillCode {
   is_billable     Boolean  @default(true)
   is_forecastable Boolean  @default(false)
   created_at      DateTime @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime @updatedAt @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   work_item         WorkItem         @relation(fields: [work_item_id], references: [id])
@@ -145,7 +145,7 @@ model Timesheet {
   status_id                Int
   submitted_at             DateTime? @db.Timestamptz(6)
   created_at               DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at               DateTime  @updatedAt @db.Timestamptz(6)
+  updated_at               DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   user              User                @relation(fields: [user_id], references: [id])
@@ -175,7 +175,7 @@ model TimesheetEntry {
   work_date    DateTime @db.Date
   hours        Int
   created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   timesheet Timesheet @relation(fields: [timesheet_id], references: [id])
@@ -190,7 +190,7 @@ model ForecastPlan {
   user_id      Int
   submitted_at DateTime @db.Timestamptz(6)
   created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @updatedAt @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   user             User            @relation(fields: [user_id], references: [id])
@@ -208,7 +208,7 @@ model ForecastEntry {
   to_date          DateTime @db.Date
   hours_per_week   Int
   created_at       DateTime @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime @updatedAt @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   // Relations
   forecast_plan     ForecastPlan              @relation(fields: [forecast_plan_id], references: [id])
@@ -225,7 +225,7 @@ model ForecastWeeklyBreakdown {
   forecast_week_ending_id Int
   hours                   Int
   created_at              DateTime @default(now()) @db.Timestamp(6)
-  updated_at              DateTime @updatedAt @db.Timestamp(6)
+  updated_at              DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   forecast_entry ForecastEntry       @relation(fields: [forecast_entry_id], references: [id], onDelete: Cascade)
   week_ending    TimesheetWeekEnding @relation(fields: [forecast_week_ending_id], references: [id], onDelete: Cascade)

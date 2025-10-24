@@ -1,16 +1,23 @@
 "use client";
 
 import { type ChangeEvent, type FormEvent, useState } from "react";
-import { Button, Form, InlineNotification, Input } from "@/app/components";
+import {
+  Button,
+  Form,
+  InlineNotification,
+  Input,
+  Loading,
+} from "@/app/components";
 import type {
   FormErrors,
   LoginFormData,
   NotificationState,
 } from "@/types/login.types";
+import { handleCredentialsSignIn } from "@/utils/auth/signIn";
 import { validateForm } from "@/utils/login/login.utils";
-import { login } from "./serveractions";
 
 export default function LoginForm() {
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
@@ -48,31 +55,21 @@ export default function LoginForm() {
     }
 
     try {
-      const response = await login(formData);
-      if (!response.ok) {
-        throw new Error(response.message || "Login failed");
+      setLoading(true);
+      await handleCredentialsSignIn(formData);
+    } catch (error: unknown) {
+      const castedError = error as Error;
+      if (!castedError?.message?.includes("NEXT_REDIRECT")) {
+        console.error("Login error:", castedError.message);
+        setNotification({
+          show: true,
+          kind: "error",
+          title: "Login Failed",
+          subtitle: "Invalid username or password",
+        });
       }
-
-      setNotification({
-        show: true,
-        kind: "success",
-        title: "Login Successful",
-        subtitle: "Redirecting to dashboard...",
-      });
-
-      setTimeout(() => {
-        setNotification((prev) => ({ ...prev, show: false }));
-      }, 5000);
-    } catch (error) {
-      setNotification({
-        show: true,
-        kind: "error",
-        title: "Login Failed",
-        subtitle:
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred",
-      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,6 +79,7 @@ export default function LoginForm() {
 
   return (
     <Form onSubmit={handleSubmit}>
+      <Loading active={loading} description="Signing in..." />
       {notification.show && (
         <div className="mb-6" data-testid="notification">
           <InlineNotification
