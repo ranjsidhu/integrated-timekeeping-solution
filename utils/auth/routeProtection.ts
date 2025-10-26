@@ -48,6 +48,11 @@ export function withSessionProtection(handler: RouteHandler): RouteHandler {
  * @returns Either a unhandled 5xx error (application code should not run if env vars are not set) or the roleName parameter
  */
 export function verifyRoleEnvVariable(roleName: string | undefined) {
+  // Skip validation during build time
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    return roleName || "BUILD_TIME_PLACEHOLDER";
+  }
+
   if (!roleName) {
     throw new Error("Required role name environment variable is not set");
   }

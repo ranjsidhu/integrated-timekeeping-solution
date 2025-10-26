@@ -114,5 +114,25 @@ describe("routeProtection wrappers", () => {
     it("returns the role name when set", () => {
       expect(verifyRoleEnvVariable("ADMIN_ROLE")).toBe("ADMIN_ROLE");
     });
+
+    it("returns BUILD_TIME_PLACEHOLDER during build phase when roleName is undefined", () => {
+      const prev = process.env.NEXT_PHASE;
+      process.env.NEXT_PHASE = "phase-production-build";
+      try {
+        expect(verifyRoleEnvVariable(undefined)).toBe("BUILD_TIME_PLACEHOLDER");
+      } finally {
+        process.env.NEXT_PHASE = prev;
+      }
+    });
+
+    it("returns provided roleName during build phase when set", () => {
+      const prev = process.env.NEXT_PHASE;
+      process.env.NEXT_PHASE = "phase-production-build";
+      try {
+        expect(verifyRoleEnvVariable("ADMIN_BUILD")).toBe("ADMIN_BUILD");
+      } finally {
+        process.env.NEXT_PHASE = prev;
+      }
+    });
   });
 });
