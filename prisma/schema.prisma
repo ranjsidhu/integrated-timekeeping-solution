@@ -224,7 +224,7 @@ model ForecastWeeklyBreakdown {
   forecast_entry_id       Int
   forecast_week_ending_id Int
   hours                   Int
-  created_at              DateTime @default(now()) @db.Timestamp(6)
+  created_at              DateTime @default(now()) @db.Timestamptz(6)
   updated_at              DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   forecast_entry ForecastEntry       @relation(fields: [forecast_entry_id], references: [id], onDelete: Cascade)

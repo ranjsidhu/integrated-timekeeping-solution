@@ -16,7 +16,7 @@ describe("getUserDetails server action", () => {
   });
 
   it("fetches user details and returns parsed JSON when response is ok", async () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://api.example.com";
+    process.env.BASE_URL = "https://api.example.com";
     const mockResponse = { user: { roles: ["admin"] } };
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
@@ -28,9 +28,9 @@ describe("getUserDetails server action", () => {
 
     expect(data).toEqual(mockResponse);
 
-    const expectedUrl = `${
-      process.env.NEXT_PUBLIC_BASE_URL
-    }/api/user/${encodeURIComponent(email)}`;
+    const expectedUrl = `${process.env.BASE_URL}/api/user/${encodeURIComponent(
+      email,
+    )}`;
 
     expect(global.fetch).toHaveBeenCalledWith(
       expectedUrl,
@@ -43,7 +43,7 @@ describe("getUserDetails server action", () => {
   });
 
   it("throws when response.ok is false", async () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://api.example.com";
+    process.env.BASE_URL = "https://api.example.com";
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 500,
@@ -55,7 +55,7 @@ describe("getUserDetails server action", () => {
   });
 
   it("propagates network errors from fetch", async () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://api.example.com";
+    process.env.BASE_URL = "https://api.example.com";
     (global.fetch as jest.Mock).mockRejectedValueOnce(
       new Error("network down"),
     );

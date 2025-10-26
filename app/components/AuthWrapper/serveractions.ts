@@ -2,7 +2,7 @@
 
 const getUserDetails = async (email: string) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/${encodeURIComponent(email)}`,
+    `${process.env.BASE_URL}/api/user/${encodeURIComponent(email)}`,
     {
       method: "GET",
       headers: {

@@ -1,6 +1,12 @@
 # Exit on error
 set -e
 
+echo "📝 Running formatting check..."
+npm run format || {
+    echo "❌ Format check failed. Please fix the formatting errors before committing."
+    exit 1
+}
+
 echo "🔍 Running lint check..."
 npm run lint || {
     echo "❌ Linting failed. Please fix the errors before committing."
@@ -13,11 +19,6 @@ npm run type-check || {
     exit 1
 }
 
-echo "📝 Running formatting check..."
-npm run format || {
-    echo "❌ Format check failed. Please fix the formatting errors before committing."
-    exit 1
-}
 
 echo "📝 Running unit tests..."
 npm run test || {

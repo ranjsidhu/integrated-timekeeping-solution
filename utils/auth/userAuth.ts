@@ -136,6 +136,15 @@ export async function validateUserIdMatch(
   }
 
   const userIdNumber = Number(userId);
+  if (Number.isNaN(userIdNumber)) {
+    return {
+      isAuthorized: false,
+      response: NextResponse.json(
+        { error: "Invalid user ID format" },
+        { status: 400 },
+      ),
+    };
+  }
 
   if (userIdNumber !== authResult.user.id) {
     return {
