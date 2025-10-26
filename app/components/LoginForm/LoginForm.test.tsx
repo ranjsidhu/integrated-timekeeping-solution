@@ -141,5 +141,17 @@ describe("LoginForm", () => {
     expect(
       await screen.findByText(/Invalid username or password/i),
     ).toBeInTheDocument();
+
+    // close the notification and ensure it is removed
+    const wrapper = screen.getByTestId("notification");
+    const closeBtn = wrapper.querySelector(
+      "button[aria-label], button[aria-labelledby]",
+    );
+    expect(closeBtn).toBeTruthy();
+    if (closeBtn) fireEvent.click(closeBtn);
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("notification")).toBeNull(),
+    );
   });
 });
