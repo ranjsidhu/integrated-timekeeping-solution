@@ -41,3 +41,7 @@ jobs:
           context: .
           push: false
           load: false
+          build-args: |
+            ADMIN_ROLE_NAME=${{ vars.ADMIN_ROLE_NAME }}
+            EMPLOYEE_ROLE_NAME=${{ vars.EMPLOYEE_ROLE_NAME }}
+            RESOURCE_MANAGER_ROLE_NAME=${{ vars.RESOURCE_MANAGER_ROLE_NAME }}
