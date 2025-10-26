@@ -1,7 +1,15 @@
+import { redirect } from "next/navigation";
 import { Layout } from "@/app/components";
+import { getSession } from "@/utils/auth/getSession";
 import LoginForm from "../../components/LoginForm/LoginForm";
 
 export default async function Login() {
+  // Check if the user is already authenticated
+  const session = await getSession();
+  if (session) {
+    redirect("/timesheet");
+  }
+
   return (
     <Layout>
       <div className="flex justify-center items-center w-full p-8 m-0 overflow-hidden min-h-screen">
