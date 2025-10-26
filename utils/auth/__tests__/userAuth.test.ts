@@ -173,6 +173,21 @@ describe("userAuth helpers", () => {
       expect(res.userId).toBe(42);
     });
 
+    it("returns 400 when userId format is invalid (non-numeric)", async () => {
+      (getSession as jest.Mock).mockResolvedValue({ user: { email: "a@b" } });
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 42,
+        user_roles: [{ role: { name: "user" } }],
+      });
+
+      const res = await validateUserIdMatch("not-a-number");
+      expect(res.isAuthorized).toBe(false);
+      expect(res.response).toEqual({
+        body: { error: "Invalid user ID format" },
+        status: 400,
+      });
+    });
+
     it("handles non-Error thrown values in catch (string)", async () => {
       (getSession as jest.Mock).mockResolvedValue({ user: { email: "a@b" } });
       (prisma.user.findUnique as jest.Mock).mockRejectedValue(
