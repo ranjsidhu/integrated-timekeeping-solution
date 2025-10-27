@@ -3,13 +3,14 @@ import { prisma } from "@/prisma/prisma";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ email: string }> },
+  { params }: { params: Promise<{ email: string }> }
 ) {
   const { email } = await params;
+  const decodedEmail = decodeURIComponent(email);
 
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: decodedEmail },
       select: {
         id: true,
         name: true,
@@ -21,7 +22,7 @@ export async function GET(
     if (!user) {
       return NextResponse.json(
         { success: false, message: "User not found" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -35,7 +36,7 @@ export async function GET(
           roles: user.user_roles.map((ur) => ur.role.name),
         },
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -45,7 +46,7 @@ export async function GET(
         message:
           error instanceof Error ? error.message : "Internal Server Error",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

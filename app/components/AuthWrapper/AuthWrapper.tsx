@@ -15,9 +15,6 @@ export default async function AuthWrapper({
   const userDetails = await getUserDetails(session.user.email);
   const userRoles: string[] = userDetails?.user?.roles || [];
 
-  // If there are no roles on the returned user payload, treat as unauthenticated
-  // and redirect to the root. This checks the original payload (which may be
-  // missing the `roles` field) rather than the normalized `userRoles` array.
   if (!userDetails?.user?.roles) {
     redirect("/");
   }

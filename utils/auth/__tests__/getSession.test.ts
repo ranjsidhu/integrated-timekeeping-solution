@@ -14,8 +14,7 @@ type MockSession =
         id?: string;
         email?: string;
         name?: string;
-        image?: string;
-        role?: string;
+        roles?: string[];
         [key: string]: any;
       };
       expires?: string;
@@ -160,7 +159,6 @@ describe("session utilities", () => {
       const result = await getSession();
 
       expect(result).toEqual(mockSession);
-      expect(result?.user?.image).toBe("https://example.com/avatar.jpg");
       expect((result as any)?.accessToken).toBe("access-token-123");
       expect((result as any)?.refreshToken).toBe("refresh-token-456");
       expect((result as any)?.customProperty).toBe("custom-value");

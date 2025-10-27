@@ -9,8 +9,7 @@ declare module "next-auth" {
       id: string;
       email: string;
       name: string;
-      image?: string;
-      role: string;
+      roles?: string[];
     };
   }
 }
@@ -30,6 +29,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub as string;
+        session.user.roles =
+          (token as unknown as { roles?: string[] }).roles || [];
       }
       return session;
     },
