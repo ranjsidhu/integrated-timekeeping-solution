@@ -23,7 +23,7 @@ describe("validateForm", () => {
   });
 
   it("should return an error when password is shorter than 6 characters", () => {
-    const data: LoginFormData = { email: "user", password: "abc" };
+    const data: LoginFormData = { email: "user@example.com", password: "abc" };
     const errors = validateForm(data);
 
     expect(errors).toEqual({
@@ -32,16 +32,34 @@ describe("validateForm", () => {
   });
 
   it("does not return password length error when password length is exactly 6", () => {
-    const data: LoginFormData = { email: "user", password: "abcdef" };
+    const data: LoginFormData = {
+      email: "user@example.com",
+      password: "abcdef",
+    };
     const errors = validateForm(data);
 
     expect(errors).toEqual({});
   });
 
   it("returns no errors for valid input", () => {
-    const data: LoginFormData = { email: "alice", password: "supersecret" };
+    const data: LoginFormData = {
+      email: "alice@example.com",
+      password: "supersecret",
+    };
     const errors = validateForm(data);
 
     expect(errors).toEqual({});
+  });
+
+  it("returns an error for invalid email formats", () => {
+    const data: LoginFormData = {
+      email: "not-an-email",
+      password: "supersecret",
+    };
+    const errors = validateForm(data);
+
+    expect(errors).toEqual({
+      email: "Enter a valid IBMid or email address",
+    });
   });
 });
