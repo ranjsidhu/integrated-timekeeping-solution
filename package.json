@@ -14,7 +14,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@carbon/react": "1.94.1",
+    "@carbon/react": "1.94.2",
     "@carbon/styles": "1.93.0",
     "@ibm/plex": "6.4.1",
     "@prisma/client": "6.18.0",
