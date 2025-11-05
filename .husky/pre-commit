@@ -26,4 +26,7 @@ npm run test || {
     exit 1
 }
 
+git add .
+
+
 echo "✅ All checks passed!"
