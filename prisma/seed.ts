@@ -29,7 +29,7 @@ const seedTimesheetWeekEndings = async () => {
   } catch (error: unknown) {
     console.error(
       "Error seeding TimesheetWeekEndings:",
-      (error as Error).message
+      (error as Error).message,
     );
   }
 };
