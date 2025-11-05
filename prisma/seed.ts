@@ -1,4 +1,4 @@
-"use server";
+// npx tsx prisma/seed.ts
 import { prisma } from "./prisma";
 
 // Seed TimesheetWeekEndings for every Friday between 2025-10-01 and 2026-12-26 using upsert logic
@@ -7,24 +7,34 @@ const seedTimesheetWeekEndings = async () => {
     console.log("----Seeding TimesheetWeekEndings----");
     const startDate = new Date("2025-10-01");
     const endDate = new Date("2026-12-26");
-    const currentDate = startDate;
 
-    while (currentDate <= endDate) {
-      // Check if the current date is a Friday
-      if (currentDate.getDay() === 5) {
-        await prisma.timesheetWeekEnding.upsert({
-          where: {
-            week_ending: currentDate,
-          },
-          update: {},
-          create: {
-            week_ending: currentDate,
-          },
-        });
-      }
-      // Move to the next day
-      currentDate.setDate(currentDate.getDate() + 1);
+    // Find the first Friday on or after startDate
+    const firstFriday = new Date(startDate);
+    const dayOfWeek = firstFriday.getDay();
+    // 5 is Friday
+    const daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+    firstFriday.setDate(firstFriday.getDate() + daysUntilFriday);
+    // Collect all Fridays between startDate and endDate
+    const fridays: Date[] = [];
+    const currentFriday = new Date(firstFriday);
+    while (currentFriday <= endDate) {
+      fridays.push(new Date(currentFriday));
+      currentFriday.setDate(currentFriday.getDate() + 7);
     }
+    // Prepare upsert operations
+    const upserts = fridays.map((friday) =>
+      prisma.timesheetWeekEnding.upsert({
+        where: {
+          week_ending: friday,
+        },
+        update: {},
+        create: {
+          week_ending: friday,
+        },
+      }),
+    );
+    // Execute all upserts in a transaction
+    await prisma.$transaction(upserts);
     console.log("----Seeding TimesheetWeekEndings completed----");
   } catch (error: unknown) {
     console.error(
@@ -88,8 +98,6 @@ const seedCategories = async () => {
       await prisma.category.upsert({
         where: {
           category_name: category.category_name,
-          assignment_type: category.assignment_type,
-          description: category.description,
         },
         update: {},
         create: category,
@@ -114,7 +122,7 @@ const seedTimesheetStatuses = async () => {
 
     for (const status of statuses) {
       await prisma.timesheetStatus.upsert({
-        where: { name: status.name, description: status.description },
+        where: { name: status.name },
         update: {},
         create: status,
       });
