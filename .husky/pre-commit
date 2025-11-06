@@ -1,4 +1,4 @@
-# # Exit on error
+# Exit on error
 set -e
 
 echo "📝 Running formatting check..."
