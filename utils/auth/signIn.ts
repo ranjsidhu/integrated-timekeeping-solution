@@ -7,7 +7,7 @@ const handleCredentialsSignIn = async (formData: LoginFormData) => {
   await signIn("credentials", {
     email: formData.email,
     password: formData.password,
-    redirectTo: "/",
+    redirectTo: "/timesheet",
   });
 };
 

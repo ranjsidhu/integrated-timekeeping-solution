@@ -11,16 +11,20 @@ const config = {
   setupFilesAfterEnv: ["./jest.setup.ts"],
   testEnvironment: "jsdom",
   collectCoverage: true,
-  coveragePathIgnorePatterns: ["/node_modules/"],
+  coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/generated/"],
   transform: {
     "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
   },
-  // Updated to include next-auth and related packages
-  transformIgnorePatterns: ["/node_modules/(?!(lucide-react|@panva)/)"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!(lucide-react|@panva|next-auth|@auth)/)",
+  ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
-  modulePathIgnorePatterns: ["<rootDir>/.next/standalone"],
+  modulePathIgnorePatterns: [
+    "<rootDir>/.next/standalone",
+    "<rootDir>/generated/",
+  ],
   globals: {
     fetch: global.fetch,
   },

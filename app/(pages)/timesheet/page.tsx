@@ -1,10 +1,12 @@
-import { Layout } from "@/app/components";
+import { AuthWrapper, Layout } from "@/app/components";
 import TimesheetPageResponsive from "./Timesheet";
 
 export default function TimesheetPage() {
   return (
-    <Layout>
-      <TimesheetPageResponsive />
-    </Layout>
+    <AuthWrapper>
+      <Layout>
+        <TimesheetPageResponsive />
+      </Layout>
+    </AuthWrapper>
   );
 }

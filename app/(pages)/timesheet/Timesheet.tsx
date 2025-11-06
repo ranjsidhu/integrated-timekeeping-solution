@@ -5,29 +5,23 @@
 
 "use client";
 
-import React, { useState } from "react";
+import { Add, ChevronDown, ChevronRight, TrashCan } from "@carbon/icons-react";
 import {
-  Grid,
+  Button,
   Column,
   Dropdown,
-  Button,
-  Tag,
-  InlineNotification,
+  Grid,
   IconButton,
-  Modal,
+  InlineNotification,
+  Tag,
 } from "@carbon/react";
-import {
-  Add,
-  TrashCan,
-  ChevronDown,
-  ChevronRight,
-  OverflowMenuVertical,
-} from "@carbon/icons-react";
-import {
-  WeekEnding,
+import React, { useState } from "react";
+import type {
   BillCode,
-  TimeEntry,
   DayOfWeek,
+  SubCode,
+  TimeEntry,
+  WeekEnding,
 } from "@/types/timesheet.types";
 
 const TimesheetPageResponsive: React.FC = () => {
@@ -58,7 +52,7 @@ const TimesheetPageResponsive: React.FC = () => {
   const [weekEndings] = useState<WeekEnding[]>(generateWeekEndings());
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(weekEndings[0]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(
-    new Set(["1", "2"])
+    new Set(["1", "2"]),
   );
   const [showNotification, setShowNotification] = useState<boolean>(false);
 
@@ -121,7 +115,7 @@ const TimesheetPageResponsive: React.FC = () => {
   };
 
   const getDayInfo = (
-    offset: number
+    offset: number,
   ): { shortDay: string; date: string; fullDate: string } => {
     const date = new Date(selectedWeek.date);
     date.setDate(date.getDate() - (4 - offset));
@@ -149,15 +143,15 @@ const TimesheetPageResponsive: React.FC = () => {
   const updateHours = (
     entryId: string,
     day: DayOfWeek,
-    value: string
+    value: string,
   ): void => {
     const numValue = parseFloat(value) || 0;
     setTimeEntries((prev) =>
       prev.map((entry) =>
         entry.id === entryId
           ? { ...entry, hours: { ...entry.hours, [day]: numValue } }
-          : entry
-      )
+          : entry,
+      ),
     );
   };
 
@@ -405,7 +399,7 @@ const TimesheetPageResponsive: React.FC = () => {
                   {billCodes.map((billCode) => {
                     const isExpanded = expandedRows.has(billCode.id);
                     const entries = timeEntries.filter(
-                      (e) => e.billCodeId === billCode.id
+                      (e) => e.billCodeId === billCode.id,
                     );
 
                     return (
@@ -478,9 +472,9 @@ const TimesheetPageResponsive: React.FC = () => {
 
                         {/* Sub Code Rows */}
                         {isExpanded &&
-                          billCode.subCodes?.map((subCode: any) => {
+                          billCode.subCodes?.map((subCode: SubCode) => {
                             const entry = entries.find(
-                              (e) => e.subCodeId === subCode.id
+                              (e) => e.subCodeId === subCode.id,
                             );
                             if (!entry) return null;
 
@@ -554,7 +548,7 @@ const TimesheetPageResponsive: React.FC = () => {
                                         updateHours(
                                           entry.id,
                                           day,
-                                          e.target.value
+                                          e.target.value,
                                         )
                                       }
                                       style={{
@@ -572,9 +566,9 @@ const TimesheetPageResponsive: React.FC = () => {
                                           "2px solid #0f62fe";
                                         e.target.style.outlineOffset = "-2px";
                                       }}
-                                      onBlur={(e) =>
-                                        (e.target.style.outline = "none")
-                                      }
+                                      onBlur={(e) => {
+                                        e.target.style.outline = "none";
+                                      }}
                                     />
                                   </td>
                                 ))}
@@ -649,7 +643,7 @@ const TimesheetPageResponsive: React.FC = () => {
                         >
                           {calculateDayTotal(day)}
                         </td>
-                      )
+                      ),
                     )}
                     <td
                       style={{
@@ -660,7 +654,7 @@ const TimesheetPageResponsive: React.FC = () => {
                     >
                       {timeEntries.reduce(
                         (sum, entry) => sum + calculateTotal(entry.hours),
-                        0
+                        0,
                       )}
                     </td>
                     <td

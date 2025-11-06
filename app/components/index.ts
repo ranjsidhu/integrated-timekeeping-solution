@@ -1,3 +1,4 @@
+import AuthWrapper from "./AuthWrapper/AuthWrapper";
 import Button from "./Button/Button";
 import Checkbox from "./Checkbox/Checkbox";
 import CheckboxGroup from "./Checkbox/CheckboxGroup";
@@ -11,6 +12,7 @@ import Loading from "./Loading/Loading";
 import InlineNotification from "./Notifications/InlineNotification/InlineNotification";
 
 export {
+  AuthWrapper,
   Button,
   Checkbox,
   CheckboxGroup,

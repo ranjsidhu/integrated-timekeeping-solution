@@ -46,3 +46,10 @@ export interface NotificationState {
   title: string;
   subtitle: string;
 }
+
+export type Role = "Employee" | "Resource Manager";
+
+export interface AuthWrapperProps {
+  children: React.ReactNode;
+  rolesRequired?: Role[];
+}

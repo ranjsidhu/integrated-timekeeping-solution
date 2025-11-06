@@ -64,7 +64,7 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     fireEvent.change(screen.getByTestId("email-input"), {
-      target: { value: "alice" },
+      target: { value: "alice@gmail.com" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
       target: { value: "supersecret" },
@@ -74,7 +74,7 @@ describe("LoginForm", () => {
 
     await waitFor(() =>
       expect(handleCredentialsSignIn).toHaveBeenCalledWith({
-        email: "alice",
+        email: "alice@gmail.com",
         password: "supersecret",
       }),
     );
@@ -94,7 +94,7 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     fireEvent.change(screen.getByTestId("email-input"), {
-      target: { value: "eve" },
+      target: { value: "eve@gmail.com" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
       target: { value: "secret" },
@@ -104,7 +104,7 @@ describe("LoginForm", () => {
 
     await waitFor(() =>
       expect(handleCredentialsSignIn).toHaveBeenCalledWith({
-        email: "eve",
+        email: "eve@gmail.com",
         password: "secret",
       }),
     );
@@ -122,7 +122,7 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     fireEvent.change(screen.getByTestId("email-input"), {
-      target: { value: "bob" },
+      target: { value: "bob@gmail.com" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
       target: { value: "wrongpass" },
@@ -132,7 +132,7 @@ describe("LoginForm", () => {
 
     await waitFor(() =>
       expect(handleCredentialsSignIn).toHaveBeenCalledWith({
-        email: "bob",
+        email: "bob@gmail.com",
         password: "wrongpass",
       }),
     );
@@ -141,5 +141,17 @@ describe("LoginForm", () => {
     expect(
       await screen.findByText(/Invalid username or password/i),
     ).toBeInTheDocument();
+
+    // close the notification and ensure it is removed
+    const wrapper = screen.getByTestId("notification");
+    const closeBtn = wrapper.querySelector(
+      "button[aria-label], button[aria-labelledby]",
+    );
+    expect(closeBtn).toBeTruthy();
+    if (closeBtn) fireEvent.click(closeBtn);
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("notification")).toBeNull(),
+    );
   });
 });

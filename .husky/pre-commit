@@ -1,11 +1,17 @@
 # # Exit on error
 # set -e
 
-# echo "🔍 Running lint check..."
-# npm run lint || {
-#     echo "❌ Linting failed. Please fix the errors before committing."
-#     exit 1
-# }
+echo "📝 Running formatting check..."
+npm run format || {
+    echo "❌ Format check failed. Please fix the formatting errors before committing."
+    exit 1
+}
+
+echo "🔍 Running lint check..."
+npm run lint || {
+    echo "❌ Linting failed. Please fix the errors before committing."
+    exit 1
+}
 
 # echo "📝 Running type check..."
 # npm run type-check || {
@@ -13,16 +19,14 @@
 #     exit 1
 # }
 
-# echo "📝 Running formatting check..."
-# npm run format || {
-#     echo "❌ Format check failed. Please fix the formatting errors before committing."
-#     exit 1
-# }
 
 # echo "📝 Running unit tests..."
 # npm run test || {
 #     echo "❌ Unit tests failed. Please fix the unit tests before committing."
 #     exit 1
 # }
+
+git add .
+
 
 echo "✅ All checks passed!"
