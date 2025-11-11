@@ -16,8 +16,10 @@ import Loading from "./Loading/Loading";
 import InlineNotification from "./Notifications/InlineNotification/InlineNotification";
 import Tag from "./Tag/Tag";
 import TimesheetActions from "./Timesheet/TimesheetActions";
+import TimesheetBillCodes from "./Timesheet/TimesheetBillCodes";
 import TimesheetControls from "./Timesheet/TimesheetControls";
 import TimesheetHead from "./Timesheet/TimesheetHead";
+import TimesheetSubCodes from "./Timesheet/TimesheetSubCodes";
 import TimesheetTotals from "./Timesheet/TimesheetTotals";
 
 export {
@@ -39,7 +41,9 @@ export {
   InlineNotification,
   Tag,
   TimesheetActions,
+  TimesheetBillCodes,
   TimesheetControls,
   TimesheetHead,
+  TimesheetSubCodes,
   TimesheetTotals,
 };

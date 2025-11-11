@@ -3,18 +3,17 @@
 
 "use client";
 
-import { ChevronDown, ChevronRight, TrashCan } from "@carbon/icons-react";
 import React, { useState } from "react";
 import {
   Column,
   Grid,
-  IconButton,
   InlineNotification,
-  Input,
   Tag,
   TimesheetActions,
+  TimesheetBillCodes,
   TimesheetControls,
   TimesheetHead,
+  TimesheetSubCodes,
   TimesheetTotals,
 } from "@/app/components";
 import type {
@@ -25,7 +24,6 @@ import type {
   WeekEnding,
 } from "@/types/timesheet.types";
 import {
-  calculateTotal,
   generateWeekEndings,
   getStatusColor,
 } from "@/utils/timesheet/timesheet.utils";
@@ -181,29 +179,11 @@ export default function TimesheetPageResponsive() {
                     return (
                       <React.Fragment key={billCode.id}>
                         {/* Bill Code Row */}
-                        <tr
-                          className="bg-white border-b border-slate-200 cursor-pointer"
-                          onClick={() => toggleExpanded(billCode.id)}
-                        >
-                          <td className="p-4 sticky left-0 bg-white z-10">
-                            <div className="flex items-center gap-2">
-                              {isExpanded ? (
-                                <ChevronDown size={20} className="shrink-0" />
-                              ) : (
-                                <ChevronRight size={20} className="shrink-0" />
-                              )}
-                              <div className="min-w-0">
-                                <div className="font-semibold text-[#0f62fe] overflow-hidden text-ellipsis whitespace-nowrap">
-                                  {billCode.code}
-                                </div>
-                                <div className="text-slate-600 text-[0.8125rem] mt-1 overflow-hidden text-ellipsis whitespace-nowrap">
-                                  {billCode.description}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td colSpan={7}></td>
-                        </tr>
+                        <TimesheetBillCodes
+                          billCode={billCode}
+                          isExpanded={isExpanded}
+                          toggleExpanded={toggleExpanded}
+                        />
 
                         {/* Sub Code Rows */}
                         {isExpanded &&
@@ -214,70 +194,13 @@ export default function TimesheetPageResponsive() {
                             if (!entry) return null;
 
                             return (
-                              <tr
+                              <TimesheetSubCodes
                                 key={entry.id}
-                                className="bg-slate-50 border-b border-slate-200"
-                              >
-                                <td className="pl-12 pr-4 py-3 sticky left-0 bg-slate-50 z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
-                                  <div className="min-w-0">
-                                    <div className="font-medium text-sm overflow-hidden text-ellipsis whitespace-nowrap">
-                                      {subCode.code}
-                                    </div>
-                                    <div className="text-slate-600 text-[0.8125rem] mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
-                                      {subCode.description}
-                                    </div>
-                                  </div>
-                                </td>
-                                {(
-                                  [
-                                    "mon",
-                                    "tue",
-                                    "wed",
-                                    "thu",
-                                    "fri",
-                                  ] as DayOfWeek[]
-                                ).map((day) => (
-                                  <td
-                                    key={day}
-                                    className="p-2 text-center border-r border-slate-200"
-                                  >
-                                    <Input
-                                      id={`${entry.id}-${day}-hours`}
-                                      pattern="[0-9]*"
-                                      type="number"
-                                      hideSteppers
-                                      min={0}
-                                      max={24}
-                                      value={entry.hours[day] ?? 0}
-                                      width={40}
-                                      onChange={(e) =>
-                                        entry.id &&
-                                        updateHours(
-                                          entry.id,
-                                          day,
-                                          e.currentTarget.value,
-                                        )
-                                      }
-                                    />
-                                  </td>
-                                ))}
-                                <td className="px-4 py-2 text-center font-semibold text-sm bg-slate-100 border-r border-slate-200">
-                                  {calculateTotal(entry.hours)}
-                                </td>
-                                <td className="p-2 text-center sticky right-0 bg-slate-50 z-10 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
-                                  <IconButton
-                                    label="Delete entry"
-                                    kind="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      entry.id && deleteEntry(entry.id);
-                                    }}
-                                  >
-                                    <TrashCan size={16} />
-                                  </IconButton>
-                                </td>
-                              </tr>
+                                entry={entry}
+                                subCode={subCode}
+                                deleteEntry={deleteEntry}
+                                updateHours={updateHours}
+                              />
                             );
                           })}
                       </React.Fragment>
@@ -297,7 +220,8 @@ export default function TimesheetPageResponsive() {
         </Column>
       </Grid>
 
-      <style>{`
+      <style>
+        {`
         /* Responsive text adjustments */
         @media (max-width: 672px) {
           .button-text {
@@ -318,7 +242,8 @@ export default function TimesheetPageResponsive() {
             font-size: 0.875rem !important;
           }
         }
-      `}</style>
+      `}
+      </style>
     </div>
   );
 }
