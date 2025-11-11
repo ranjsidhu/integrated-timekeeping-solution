@@ -15,6 +15,10 @@ import Link from "./Link/Link";
 import Loading from "./Loading/Loading";
 import InlineNotification from "./Notifications/InlineNotification/InlineNotification";
 import Tag from "./Tag/Tag";
+import TimesheetActions from "./Timesheet/TimesheetActions";
+import TimesheetControls from "./Timesheet/TimesheetControls";
+import TimesheetHead from "./Timesheet/TimesheetHead";
+import TimesheetTotals from "./Timesheet/TimesheetTotals";
 
 export {
   AuthWrapper,
@@ -34,4 +38,8 @@ export {
   Loading,
   InlineNotification,
   Tag,
+  TimesheetActions,
+  TimesheetControls,
+  TimesheetHead,
+  TimesheetTotals,
 };
