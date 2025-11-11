@@ -52,6 +52,17 @@ describe("AuthWrapper", () => {
     expect(redirect).not.toHaveBeenCalled();
   });
 
+  it("redirects to user-fetch-failed when getUserDetails returns null", async () => {
+    (getSession as jest.Mock).mockResolvedValue({ user: { email: "a@b" } });
+    (getUserDetails as jest.Mock).mockResolvedValue(null);
+
+    await expect(
+      AuthWrapper({ children: <div />, rolesRequired: undefined }),
+    ).rejects.toThrow("redirect:/error?type=user-fetch-failed");
+
+    expect(redirect).toHaveBeenCalledWith("/error?type=user-fetch-failed");
+  });
+
   it("redirects to /timesheet when rolesRequired not satisfied", async () => {
     (getSession as jest.Mock).mockResolvedValue({ user: { email: "a@b" } });
     (getUserDetails as jest.Mock).mockResolvedValue({
@@ -83,13 +94,12 @@ describe("AuthWrapper", () => {
 
   it("redirects to / when userDetails has no roles field", async () => {
     (getSession as jest.Mock).mockResolvedValue({ user: { email: "a@b" } });
-    // simulate userDetails lacking a roles property
     (getUserDetails as jest.Mock).mockResolvedValue({ user: {} });
 
     await expect(
       AuthWrapper({ children: <div />, rolesRequired: undefined }),
-    ).rejects.toThrow("redirect:/");
+    ).rejects.toThrow("redirect:/error?type=user-roles-missing");
 
-    expect(redirect).toHaveBeenCalledWith("/");
+    expect(redirect).toHaveBeenCalledWith("/error?type=user-roles-missing");
   });
 });

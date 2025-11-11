@@ -1,23 +1,28 @@
 "use server";
 
 const getUserDetails = async (email: string) => {
-  const response = await fetch(
-    `${process.env.BASE_URL}/api/user/${encodeURIComponent(email)}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const response = await fetch(
+      `${process.env.BASE_URL}/api/user/${encodeURIComponent(email)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
       },
-      cache: "no-store",
-    },
-  );
+    );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch user details");
+    if (!response.ok) {
+      throw new Error("Failed to fetch user details");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: unknown) {
+    console.error("Error fetching user details:", (error as Error).message);
+    return null;
   }
-
-  const data = await response.json();
-  return data;
 };
 
 export { getUserDetails };

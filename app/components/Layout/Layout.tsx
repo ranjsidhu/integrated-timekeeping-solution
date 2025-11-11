@@ -9,7 +9,7 @@ export default function Layout({ children }: LayoutProps) {
           Integrated Timekeeping
         </HeaderName>
       </Header>
-      {children}
+      <main className="pt-12">{children}</main>
     </div>
   );
 }

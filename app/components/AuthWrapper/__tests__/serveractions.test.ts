@@ -49,9 +49,7 @@ describe("getUserDetails server action", () => {
       status: 500,
     });
 
-    await expect(getUserDetails("u@x.com")).rejects.toThrow(
-      "Failed to fetch user details",
-    );
+    await expect(getUserDetails("u@x.com")).resolves.toBeNull();
   });
 
   it("propagates network errors from fetch", async () => {
@@ -60,6 +58,6 @@ describe("getUserDetails server action", () => {
       new Error("network down"),
     );
 
-    await expect(getUserDetails("u@x.com")).rejects.toThrow("network down");
+    await expect(getUserDetails("u@x.com")).resolves.toBeNull();
   });
 });

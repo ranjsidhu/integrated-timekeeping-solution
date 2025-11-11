@@ -1,11 +1,10 @@
-/**
- * Fully Responsive Timesheet Component
- * Adapts layout for mobile, tablet, and desktop views
- */
+// TODO - replace hardcoded data with API integration
+// TODO - seperate client and server components
 
 "use client";
 
 import { Add, ChevronDown, ChevronRight, TrashCan } from "@carbon/icons-react";
+import React, { useState } from "react";
 import {
   Button,
   Column,
@@ -14,8 +13,7 @@ import {
   IconButton,
   InlineNotification,
   Tag,
-} from "@carbon/react";
-import React, { useState } from "react";
+} from "@/app/components";
 import type {
   BillCode,
   DayOfWeek,
@@ -23,32 +21,15 @@ import type {
   TimeEntry,
   WeekEnding,
 } from "@/types/timesheet.types";
+import {
+  calculateDayTotal,
+  calculateTotal,
+  generateWeekEndings,
+  getDayInfo,
+  getStatusColor,
+} from "@/utils/timesheet/timesheet.utils";
 
-const TimesheetPageResponsive: React.FC = () => {
-  // Generate week ending dates
-  const generateWeekEndings = (): WeekEnding[] => {
-    const weeks: WeekEnding[] = [];
-    const today = new Date();
-
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - (today.getDay() + 7 * i - 5));
-
-      weeks.push({
-        id: `week-${i}`,
-        label: date.toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        }),
-        date: date,
-        status: i === 0 ? "draft" : i === 1 ? "submitted" : "approved",
-      });
-    }
-
-    return weeks;
-  };
-
+export default function TimesheetPageResponsive() {
   const [weekEndings] = useState<WeekEnding[]>(generateWeekEndings());
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(weekEndings[0]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(
@@ -114,32 +95,6 @@ const TimesheetPageResponsive: React.FC = () => {
     });
   };
 
-  const getDayInfo = (
-    offset: number,
-  ): { shortDay: string; date: string; fullDate: string } => {
-    const date = new Date(selectedWeek.date);
-    date.setDate(date.getDate() - (4 - offset));
-    return {
-      shortDay: date.toLocaleDateString("en-US", { weekday: "short" }),
-      date: date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      }),
-      fullDate: date.toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-      }),
-    };
-  };
-
-  const calculateTotal = (hours: TimeEntry["hours"]): number => {
-    return hours.mon + hours.tue + hours.wed + hours.thu + hours.fri;
-  };
-
-  const calculateDayTotal = (day: DayOfWeek): number => {
-    return timeEntries.reduce((sum, entry) => sum + (entry.hours[day] || 0), 0);
-  };
-
   const updateHours = (
     entryId: string,
     day: DayOfWeek,
@@ -169,49 +124,14 @@ const TimesheetPageResponsive: React.FC = () => {
     setTimeEntries((prev) => prev.filter((entry) => entry.id !== entryId));
   };
 
-  const getStatusColor = (status?: WeekEnding["status"]) => {
-    switch (status) {
-      case "submitted":
-        return "blue";
-      case "saved":
-        return "gray";
-      default:
-        return "gray";
-    }
-  };
-
   return (
-    <div
-      className="w-screen pt-12"
-      style={{ background: "#f4f4f4", minHeight: "100vh" }}
-    >
+    <div className="w-screen bg-slate-50 min-h-screen">
       <Grid fullWidth>
         <Column lg={16} md={8} sm={4}>
           {/* Header */}
-          <div
-            style={{
-              background: "white",
-              padding: "1.5rem",
-              borderBottom: "1px solid #e0e0e0",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "1rem",
-              }}
-            >
-              <h1
-                style={{
-                  fontSize: "clamp(1.5rem, 4vw, 2rem)",
-                  fontWeight: "400",
-                  color: "#161616",
-                  margin: 0,
-                }}
-              >
+          <div className="bg-white p-6 border-b border-slate-200">
+            <div className="flex justify-between items-center flex-wrap gap-4">
+              <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-normal text-[#161616] m-0">
                 Timesheets
               </h1>
               {selectedWeek.status && (
@@ -225,7 +145,7 @@ const TimesheetPageResponsive: React.FC = () => {
 
           {/* Notification */}
           {showNotification && (
-            <div style={{ padding: "1rem" }}>
+            <div className="p-4">
               <InlineNotification
                 kind="success"
                 title="Timesheet saved"
@@ -238,15 +158,9 @@ const TimesheetPageResponsive: React.FC = () => {
           )}
 
           {/* Controls */}
-          <div
-            style={{
-              background: "white",
-              padding: "1.5rem",
-              borderBottom: "1px solid #e0e0e0",
-            }}
-          >
+          <div className="bg-white p-6 border-b border-slate-200">
             <Grid narrow>
-              <Column lg={4} md={4} sm={4} style={{ marginBottom: "1rem" }}>
+              <Column lg={4} md={4} sm={4} className="mb-4">
                 <Dropdown
                   id="week-ending"
                   titleText="Week ending"
@@ -261,14 +175,7 @@ const TimesheetPageResponsive: React.FC = () => {
               </Column>
 
               <Column lg={12} md={4} sm={4}>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "0.75rem",
-                    flexWrap: "wrap",
-                    alignItems: "flex-end",
-                  }}
-                >
+                <div className="flex gap-3 flex-wrap items-end">
                   <Button kind="primary" renderIcon={Add} size="md">
                     <span className="button-text">Add bill code</span>
                   </Button>
@@ -276,7 +183,7 @@ const TimesheetPageResponsive: React.FC = () => {
                   <Button
                     kind="tertiary"
                     size="md"
-                    style={{ whiteSpace: "nowrap" }}
+                    className="whitespace-nowrap"
                   >
                     <span className="button-text-short">Copy template</span>
                   </Button>
@@ -284,7 +191,7 @@ const TimesheetPageResponsive: React.FC = () => {
                   <Button
                     kind="tertiary"
                     size="md"
-                    style={{ whiteSpace: "nowrap" }}
+                    className="whitespace-nowrap"
                   >
                     <span className="button-text-short">Copy prev week</span>
                   </Button>
@@ -294,105 +201,33 @@ const TimesheetPageResponsive: React.FC = () => {
           </div>
 
           {/* Timesheet Table - Responsive Container */}
-          <div
-            style={{
-              background: "white",
-              minHeight: "400px",
-            }}
-          >
+          <div className="bg-white min-h-[400px]">
             {/* Desktop/Tablet View */}
-            <div
-              style={{
-                overflowX: "auto",
-                WebkitOverflowScrolling: "touch",
-              }}
-            >
-              <table
-                style={{
-                  width: "100%",
-                  minWidth: "800px",
-                  borderCollapse: "collapse",
-                  fontSize: "0.875rem",
-                }}
-              >
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px] border-collapse text-sm">
                 <thead>
-                  <tr
-                    style={{
-                      background: "#f4f4f4",
-                      borderBottom: "1px solid #e0e0e0",
-                    }}
-                  >
-                    <th
-                      style={{
-                        padding: "1rem",
-                        textAlign: "left",
-                        fontWeight: "600",
-                        fontSize: "0.75rem",
-                        color: "#525252",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.5px",
-                        minWidth: "250px",
-                        position: "sticky",
-                        left: 0,
-                        background: "#f4f4f4",
-                        zIndex: 10,
-                      }}
-                    >
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="p-4 text-left font-semibold text-xs text-slate-600 uppercase tracking-wide min-w-[250px] sticky left-0 bg-slate-50 z-10">
                       Project / Activity
                     </th>
                     {[0, 1, 2, 3, 4].map((offset) => {
-                      const dayInfo = getDayInfo(offset);
+                      const dayInfo = getDayInfo(offset, selectedWeek);
                       return (
                         <th
                           key={offset}
-                          style={{
-                            padding: "0.75rem 0.5rem",
-                            textAlign: "center",
-                            fontWeight: "600",
-                            fontSize: "0.75rem",
-                            color: "#525252",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.5px",
-                            minWidth: "90px",
-                            maxWidth: "120px",
-                          }}
+                          className="px-2 py-3 text-center font-semibold text-xs text-slate-600 uppercase tracking-wide min-w-[90px] max-w-[120px]"
                         >
                           <div>{dayInfo.shortDay}</div>
-                          <div
-                            style={{
-                              fontWeight: "400",
-                              marginTop: "0.25rem",
-                              fontSize: "0.6875rem",
-                            }}
-                          >
+                          <div className="font-normal mt-1 text-[0.6875rem]">
                             {dayInfo.date}
                           </div>
                         </th>
                       );
                     })}
-                    <th
-                      style={{
-                        padding: "0.75rem 0.5rem",
-                        textAlign: "center",
-                        fontWeight: "600",
-                        fontSize: "0.75rem",
-                        color: "#525252",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.5px",
-                        minWidth: "80px",
-                      }}
-                    >
+                    <th className="px-3 py-3 text-center font-semibold text-xs text-slate-600 uppercase tracking-wide min-w-20">
                       Total
                     </th>
-                    <th
-                      style={{
-                        minWidth: "60px",
-                        position: "sticky",
-                        right: 0,
-                        background: "#f4f4f4",
-                        zIndex: 10,
-                      }}
-                    ></th>
+                    <th className="min-w-[60px] sticky right-0 bg-slate-50 z-10"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -406,62 +241,21 @@ const TimesheetPageResponsive: React.FC = () => {
                       <React.Fragment key={billCode.id}>
                         {/* Bill Code Row */}
                         <tr
-                          style={{
-                            background: "#ffffff",
-                            borderBottom: "1px solid #e0e0e0",
-                            cursor: "pointer",
-                          }}
+                          className="bg-white border-b border-slate-200 cursor-pointer"
                           onClick={() => toggleExpanded(billCode.id)}
                         >
-                          <td
-                            style={{
-                              padding: "1rem",
-                              position: "sticky",
-                              left: 0,
-                              background: "#ffffff",
-                              zIndex: 5,
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "0.5rem",
-                              }}
-                            >
+                          <td className="p-4 sticky left-0 bg-white z-10">
+                            <div className="flex items-center gap-2">
                               {isExpanded ? (
-                                <ChevronDown
-                                  size={20}
-                                  style={{ flexShrink: 0 }}
-                                />
+                                <ChevronDown size={20} className="shrink-0" />
                               ) : (
-                                <ChevronRight
-                                  size={20}
-                                  style={{ flexShrink: 0 }}
-                                />
+                                <ChevronRight size={20} className="shrink-0" />
                               )}
-                              <div style={{ minWidth: 0 }}>
-                                <div
-                                  style={{
-                                    fontWeight: "600",
-                                    color: "#0f62fe",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  }}
-                                >
+                              <div className="min-w-0">
+                                <div className="font-semibold text-[#0f62fe] overflow-hidden text-ellipsis whitespace-nowrap">
                                   {billCode.code}
                                 </div>
-                                <div
-                                  style={{
-                                    color: "#525252",
-                                    fontSize: "0.8125rem",
-                                    marginTop: "0.25rem",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  }}
-                                >
+                                <div className="text-slate-600 text-[0.8125rem] mt-1 overflow-hidden text-ellipsis whitespace-nowrap">
                                   {billCode.description}
                                 </div>
                               </div>
@@ -481,42 +275,14 @@ const TimesheetPageResponsive: React.FC = () => {
                             return (
                               <tr
                                 key={entry.id}
-                                style={{
-                                  background: "#fafafa",
-                                  borderBottom: "1px solid #e0e0e0",
-                                }}
+                                className="bg-slate-50 border-b border-slate-200"
                               >
-                                <td
-                                  style={{
-                                    padding: "0.75rem 1rem 0.75rem 3rem",
-                                    position: "sticky",
-                                    left: 0,
-                                    background: "#fafafa",
-                                    zIndex: 5,
-                                  }}
-                                >
-                                  <div style={{ minWidth: 0 }}>
-                                    <div
-                                      style={{
-                                        fontWeight: "500",
-                                        fontSize: "0.875rem",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                      }}
-                                    >
+                                <td className="pl-12 pr-4 py-3 sticky left-0 bg-slate-50 z-10">
+                                  <div className="min-w-0">
+                                    <div className="font-medium text-sm overflow-hidden text-ellipsis whitespace-nowrap">
                                       {subCode.code}
                                     </div>
-                                    <div
-                                      style={{
-                                        color: "#525252",
-                                        fontSize: "0.8125rem",
-                                        marginTop: "0.125rem",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                      }}
-                                    >
+                                    <div className="text-slate-600 text-[0.8125rem] mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
                                       {subCode.description}
                                     </div>
                                   </div>
@@ -530,18 +296,12 @@ const TimesheetPageResponsive: React.FC = () => {
                                     "fri",
                                   ] as DayOfWeek[]
                                 ).map((day) => (
-                                  <td
-                                    key={day}
-                                    style={{
-                                      padding: "0.5rem",
-                                      textAlign: "center",
-                                    }}
-                                  >
+                                  <td key={day} className="p-2 text-center">
                                     <input
                                       type="number"
                                       min="0"
                                       max="24"
-                                      step="0.5"
+                                      step="1"
                                       value={entry.hours[day] || 0}
                                       onChange={(e) =>
                                         entry.id &&
@@ -551,47 +311,14 @@ const TimesheetPageResponsive: React.FC = () => {
                                           e.target.value,
                                         )
                                       }
-                                      style={{
-                                        width: "100%",
-                                        maxWidth: "70px",
-                                        padding: "0.5rem 0.25rem",
-                                        border: "1px solid #8d8d8d",
-                                        borderRadius: "0",
-                                        textAlign: "center",
-                                        fontSize: "0.875rem",
-                                        fontFamily: "inherit",
-                                      }}
-                                      onFocus={(e) => {
-                                        e.target.style.outline =
-                                          "2px solid #0f62fe";
-                                        e.target.style.outlineOffset = "-2px";
-                                      }}
-                                      onBlur={(e) => {
-                                        e.target.style.outline = "none";
-                                      }}
+                                      className="w-full max-w-[70px] px-1 py-2 border border-slate-400 rounded-none text-center text-sm font-inherit focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                   </td>
                                 ))}
-                                <td
-                                  style={{
-                                    padding: "0.75rem 0.5rem",
-                                    textAlign: "center",
-                                    fontWeight: "600",
-                                    fontSize: "0.875rem",
-                                  }}
-                                >
+                                <td className="px-3 py-2 text-center font-semibold text-sm">
                                   {calculateTotal(entry.hours)}
                                 </td>
-                                <td
-                                  style={{
-                                    padding: "0.5rem",
-                                    textAlign: "center",
-                                    position: "sticky",
-                                    right: 0,
-                                    background: "#fafafa",
-                                    zIndex: 5,
-                                  }}
-                                >
+                                <td className="p-2 text-center sticky right-0 bg-slate-50 z-10">
                                   <IconButton
                                     label="Delete entry"
                                     kind="ghost"
@@ -612,80 +339,36 @@ const TimesheetPageResponsive: React.FC = () => {
                   })}
 
                   {/* Totals Row */}
-                  <tr
-                    style={{
-                      background: "#e0e0e0",
-                      fontWeight: "600",
-                      borderTop: "2px solid #525252",
-                    }}
-                  >
-                    <td
-                      style={{
-                        padding: "1rem",
-                        fontSize: "0.875rem",
-                        position: "sticky",
-                        left: 0,
-                        background: "#e0e0e0",
-                        zIndex: 5,
-                      }}
-                    >
+                  <tr className="bg-slate-200 font-semibold border-t-2 border-slate-700">
+                    <td className="p-4 text-sm sticky left-0 bg-slate-200 z-10">
                       Total
                     </td>
                     {(["mon", "tue", "wed", "thu", "fri"] as DayOfWeek[]).map(
                       (day) => (
-                        <td
-                          key={day}
-                          style={{
-                            padding: "1rem 0.5rem",
-                            textAlign: "center",
-                            fontSize: "0.875rem",
-                          }}
-                        >
-                          {calculateDayTotal(day)}
+                        <td key={day} className="px-3 py-4 text-center text-sm">
+                          {calculateDayTotal(day, timeEntries)}
                         </td>
                       ),
                     )}
-                    <td
-                      style={{
-                        padding: "1rem 0.5rem",
-                        textAlign: "center",
-                        fontSize: "0.875rem",
-                      }}
-                    >
+                    <td className="px-3 py-4 text-center text-sm">
                       {timeEntries.reduce(
                         (sum, entry) => sum + calculateTotal(entry.hours),
                         0,
                       )}
                     </td>
-                    <td
-                      style={{
-                        position: "sticky",
-                        right: 0,
-                        background: "#e0e0e0",
-                        zIndex: 5,
-                      }}
-                    ></td>
+                    <td className="sticky right-0 bg-slate-200 z-10"></td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             {/* Action Buttons */}
-            <div
-              style={{
-                display: "flex",
-                gap: "1rem",
-                padding: "1.5rem",
-                borderTop: "1px solid #e0e0e0",
-                background: "white",
-                flexWrap: "wrap",
-              }}
-            >
+            <div className="flex gap-4 p-6 border-t border-slate-200 bg-white flex-wrap">
               <Button
                 kind="secondary"
                 size="lg"
                 onClick={handleSave}
-                style={{ flex: "1 1 auto", minWidth: "120px" }}
+                className="flex-1 min-w-[120px]"
               >
                 Save
               </Button>
@@ -694,7 +377,7 @@ const TimesheetPageResponsive: React.FC = () => {
                 kind="primary"
                 size="lg"
                 onClick={handleSubmit}
-                style={{ flex: "1 1 auto", minWidth: "120px" }}
+                className="flex-1 min-w-[120px]"
               >
                 Submit
               </Button>
@@ -727,6 +410,4 @@ const TimesheetPageResponsive: React.FC = () => {
       `}</style>
     </div>
   );
-};
-
-export default TimesheetPageResponsive;
+}
