@@ -1,12 +1,25 @@
+import { redirect } from "next/navigation";
+import { getWeekEndings } from "@/app/actions/getWeekEndings";
 import { AuthWrapper, Layout } from "@/app/components";
-import TimesheetPageResponsive from "./Timesheet";
+import { getSession } from "@/utils/auth/getSession";
+import { withSessionProtection } from "@/utils/auth/routeProtection";
+import Timesheet from "./Timesheet";
 
-export default function TimesheetPage() {
-  return (
-    <AuthWrapper>
-      <Layout>
-        <TimesheetPageResponsive />
-      </Layout>
-    </AuthWrapper>
-  );
+export default async function TimesheetPage() {
+  const session = await getSession();
+
+  try {
+    const weekEndings = await withSessionProtection(getWeekEndings);
+
+    return (
+      <AuthWrapper session={session}>
+        <Layout>
+          <Timesheet weekEndings={weekEndings} />
+        </Layout>
+      </AuthWrapper>
+    );
+  } catch (error: unknown) {
+    console.error("Error in TimesheetPage:", (error as Error).message);
+    redirect("/error");
+  }
 }

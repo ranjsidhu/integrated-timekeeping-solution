@@ -1,4 +1,3 @@
-// TODO - replace hardcoded data with API integration
 // TODO - seperate client and server components
 
 "use client";
@@ -21,15 +20,12 @@ import type {
   DayOfWeek,
   SubCode,
   TimeEntry,
+  TimesheetProps,
   WeekEnding,
 } from "@/types/timesheet.types";
-import {
-  generateWeekEndings,
-  getStatusColor,
-} from "@/utils/timesheet/timesheet.utils";
+import { getStatusColor } from "@/utils/timesheet/timesheet.utils";
 
-export default function TimesheetPageResponsive() {
-  const [weekEndings] = useState<WeekEnding[]>(generateWeekEndings());
+export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(weekEndings[0]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(
     new Set(["1", "2"]),
@@ -133,7 +129,7 @@ export default function TimesheetPageResponsive() {
               <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-normal text-[#161616] m-0">
                 Timesheets
               </h1>
-              {selectedWeek.status && (
+              {selectedWeek?.status && (
                 <Tag type={getStatusColor(selectedWeek.status)} size="md">
                   {selectedWeek.status.charAt(0).toUpperCase() +
                     selectedWeek.status.slice(1)}

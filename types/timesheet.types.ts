@@ -3,10 +3,10 @@
  */
 
 export interface WeekEnding {
-  id: string;
+  id: number;
   label: string;
-  date: Date;
-  status?: "draft" | "saved" | "submitted" | "approved" | "rejected";
+  week_ending: Date;
+  status: string;
 }
 
 export interface BillCode {
@@ -86,4 +86,8 @@ export interface TimesheetTemplate {
   description?: string;
   entries: Omit<TimeEntry, "id" | "createdAt" | "updatedAt">[];
   isDefault?: boolean;
+}
+
+export interface TimesheetProps {
+  weekEndings: WeekEnding[];
 }

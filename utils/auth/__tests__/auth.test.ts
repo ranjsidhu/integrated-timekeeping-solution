@@ -28,7 +28,7 @@ jest.mock("@/utils/auth/authorizeUsers", () => ({
 
 describe("auth module initialization", () => {
   // import after mocks set up
-  const authModule = require("@/utils/auth/auth");
+  const authModule = require("@/auth");
   const NextAuth = require("next-auth");
   const { signInCallback } = require("@/utils/auth/signInCallback");
 

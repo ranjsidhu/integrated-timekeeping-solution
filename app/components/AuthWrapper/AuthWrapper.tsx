@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation";
 import type { AuthWrapperProps, Role } from "@/types/login.types";
-import { getSession } from "@/utils/auth/getSession";
 import { getUserDetails } from "./serveractions";
 
 export default async function AuthWrapper({
   children,
+  session,
   rolesRequired,
 }: AuthWrapperProps) {
-  const session = await getSession();
   if (!session?.user) {
     redirect("/");
   }

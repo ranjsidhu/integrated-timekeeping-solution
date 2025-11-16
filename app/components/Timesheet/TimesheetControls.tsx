@@ -23,7 +23,7 @@ export default function TimesheetControls({
           <Dropdown
             id="week-ending"
             titleText="Week ending"
-            label={selectedWeek.label}
+            label={selectedWeek?.label}
             items={weekEndings}
             itemToString={(item) => (item ? item.label : "")}
             onChange={({ selectedItem }) => {

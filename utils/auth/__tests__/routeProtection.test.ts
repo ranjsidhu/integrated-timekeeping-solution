@@ -70,22 +70,19 @@ describe("routeProtection wrappers", () => {
   });
 
   describe("withSessionProtection", () => {
-    it("returns 401 when no session", async () => {
+    it("throws when no session", async () => {
       (getSession as jest.Mock).mockResolvedValue(null);
 
       const handler = jest
         .fn()
         .mockResolvedValue({}) as unknown as RouteHandler;
-      const wrapper = withSessionProtection(handler);
 
-      const res = await wrapper({} as unknown as NextRequest, {});
+      await expect(
+        withSessionProtection(handler, {} as unknown as NextRequest, {}),
+      ).rejects.toThrow("Unauthorized: No session found");
 
       expect(getSession).toHaveBeenCalled();
       expect(handler).not.toHaveBeenCalled();
-      expect(res).toEqual({
-        body: { isAuthorized: false, error: "Unauthorized: No session found" },
-        status: 401,
-      });
     });
 
     it("calls handler when session exists", async () => {
@@ -94,9 +91,12 @@ describe("routeProtection wrappers", () => {
       const handler = jest
         .fn()
         .mockResolvedValue({ ok: true }) as unknown as RouteHandler;
-      const wrapper = withSessionProtection(handler);
 
-      const res = await wrapper({} as unknown as NextRequest, {});
+      const res = await withSessionProtection(
+        handler,
+        {} as unknown as NextRequest,
+        {},
+      );
 
       expect(getSession).toHaveBeenCalled();
       expect(handler).toHaveBeenCalled();

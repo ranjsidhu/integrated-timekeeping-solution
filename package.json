@@ -11,7 +11,8 @@
     "format": "biome format --write",
     "type-check": "tsc --noEmit",
     "prepare": "husky",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@carbon/react": "1.94.2",

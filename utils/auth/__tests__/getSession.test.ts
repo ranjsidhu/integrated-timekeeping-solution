@@ -1,10 +1,10 @@
 // Mock the auth module
 /** biome-ignore-all lint/suspicious/noExplicitAny: Unit tests */
-jest.mock("../auth", () => ({
+jest.mock("../../../auth", () => ({
   auth: jest.fn(),
 }));
 
-import { auth } from "../auth";
+import { auth } from "../../../auth";
 import { getSession } from "../getSession";
 
 // Define the session type for better type safety
