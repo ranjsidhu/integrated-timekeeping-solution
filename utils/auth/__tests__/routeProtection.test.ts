@@ -32,7 +32,7 @@ describe("routeProtection wrappers", () => {
   });
 
   describe("withRoleProtection", () => {
-    it("returns the response when not authorized", async () => {
+    it("throws when not authorized", async () => {
       // simulate checkUserRole returning a 403-like response
       (checkUserRole as jest.Mock).mockResolvedValue({
         isAuthorized: false,
@@ -42,13 +42,18 @@ describe("routeProtection wrappers", () => {
       const handler = jest
         .fn()
         .mockResolvedValue({ ok: true }) as unknown as RouteHandler;
-      const wrapper = withRoleProtection(handler, ["admin"]);
 
-      const result = await wrapper({} as unknown as NextRequest, {});
+      await expect(
+        withRoleProtection(
+          handler,
+          ["admin"],
+          {} as unknown as NextRequest,
+          {},
+        ),
+      ).rejects.toThrow("Unauthorized: admin access required");
 
       expect(checkUserRole).toHaveBeenCalledWith(["admin"]);
       expect(handler).not.toHaveBeenCalled();
-      expect(result).toEqual({ body: { error: "no" }, status: 403 });
     });
 
     it("calls handler when authorized", async () => {
@@ -60,9 +65,13 @@ describe("routeProtection wrappers", () => {
       const handler = jest
         .fn()
         .mockResolvedValue({ success: true }) as unknown as RouteHandler;
-      const wrapper = withRoleProtection(handler, ["admin"]);
 
-      const res = await wrapper({} as unknown as NextRequest, {});
+      const res = await withRoleProtection(
+        handler,
+        ["admin"],
+        {} as unknown as NextRequest,
+        {},
+      );
       expect(checkUserRole).toHaveBeenCalledWith(["admin"]);
       expect(handler).toHaveBeenCalled();
       expect(res).toEqual({ success: true });

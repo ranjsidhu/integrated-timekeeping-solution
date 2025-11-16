@@ -1,4 +1,3 @@
-import type { RouteHandler } from "@/types/auth.types";
 import { getSession } from "@/utils/auth/getSession";
 import { checkUserRole } from "@/utils/auth/userAuth";
 
@@ -8,17 +7,18 @@ import { checkUserRole } from "@/utils/auth/userAuth";
  * @param allowedRoles Roles allowed to access endpoint
  * @returns Either a 4xx error or the result of the handler
  */
-export function withRoleProtection(
-  handler: RouteHandler,
+export async function withRoleProtection<T, Args extends unknown[]>(
+  handler: (...args: Args) => Promise<T>,
   allowedRoles: string[],
-): RouteHandler {
-  return async (req, context) => {
-    const { isAuthorized, response } = await checkUserRole(allowedRoles);
-    if (!isAuthorized && response) {
-      return response;
-    }
-    return handler(req, context);
-  };
+  ...args: Args
+): Promise<T> {
+  const { isAuthorized, response } = await checkUserRole(allowedRoles);
+  if (!isAuthorized && response) {
+    throw new Error(
+      `Unauthorized: ${allowedRoles.join(" or ")} access required`,
+    );
+  }
+  return await handler(...args);
 }
 
 /**
