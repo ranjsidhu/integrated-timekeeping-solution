@@ -15,15 +15,15 @@ export interface BillCode {
   description: string;
   projectName?: string;
   clientName?: string;
-  subCodes?: SubCode[];
+  workItems?: WorkItem[];
   isExpanded?: boolean;
 }
 
-export interface SubCode {
+export interface WorkItem {
   id: string;
-  code: string;
+  codeId: number;
+  workItemCode: string;
   description: string;
-  category?: string;
 }
 
 export interface DayHours {

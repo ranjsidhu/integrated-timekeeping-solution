@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getWeekEndings } from "@/app/actions/getWeekEndings";
+import { getWeekEndings } from "@/app/actions";
 import { AuthWrapper, Layout } from "@/app/components";
 import { getSession } from "@/utils/auth/getSession";
 import { withSessionProtection } from "@/utils/auth/routeProtection";

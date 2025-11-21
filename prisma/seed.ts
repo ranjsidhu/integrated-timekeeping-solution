@@ -133,12 +133,29 @@ const seedTimesheetStatuses = async () => {
   }
 };
 
+// Seed Projects and WorkItems if they don't exist
+const seedProjectsAndWorkItems = async () => {
+  try {
+    console.log("----Seeding Projects and WorkItems----");
+
+    const projects = [];
+
+    console.log("----Seeding Projects and WorkItems completed----");
+  } catch (error: unknown) {
+    console.error(
+      "Error seeding Projects and WorkItems:",
+      (error as Error).message,
+    );
+  }
+};
+
 async function main() {
   try {
     await seedTimesheetWeekEndings();
     await seedRoles();
     await seedCategories();
     await seedTimesheetStatuses();
+    await seedProjectsAndWorkItems();
   } catch (error: unknown) {
     console.error("Error during seeding:", error);
   }

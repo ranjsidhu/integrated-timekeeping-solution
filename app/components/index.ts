@@ -19,8 +19,8 @@ import TimesheetActions from "./Timesheet/TimesheetActions";
 import TimesheetBillCodes from "./Timesheet/TimesheetBillCodes";
 import TimesheetControls from "./Timesheet/TimesheetControls";
 import TimesheetHead from "./Timesheet/TimesheetHead";
-import TimesheetSubCodes from "./Timesheet/TimesheetSubCodes";
 import TimesheetTotals from "./Timesheet/TimesheetTotals";
+import TimesheetWorkItems from "./Timesheet/TimesheetWorkItems";
 
 export {
   AuthWrapper,
@@ -44,6 +44,6 @@ export {
   TimesheetBillCodes,
   TimesheetControls,
   TimesheetHead,
-  TimesheetSubCodes,
   TimesheetTotals,
+  TimesheetWorkItems,
 };

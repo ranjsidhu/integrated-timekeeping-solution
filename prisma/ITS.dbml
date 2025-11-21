@@ -86,7 +86,6 @@ Table BillCodes {
   bill_name varchar(255)
   is_billable boolean [default: true]
   is_forecastable boolean [default: false]
-  is_active boolean [default: true]
   created_at timestamp
   updated_at timestamp
   
@@ -197,3 +196,5 @@ Table AuditLog {
     (changed_at)
   }
 }
+
+Ref: "Codes"."id" < "Codes"."description"

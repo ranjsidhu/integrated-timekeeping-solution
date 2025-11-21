@@ -9,7 +9,9 @@ export default function Layout({ children }: LayoutProps) {
           Integrated Timekeeping
         </HeaderName>
       </Header>
-      <main className="pt-12">{children}</main>
+      <main className="pt-12 max-w-5xl flex justify-center items-center w-full">
+        {children}
+      </main>
     </div>
   );
 }

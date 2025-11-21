@@ -1,36 +1,39 @@
 import { TrashCan } from "@carbon/icons-react";
-import type { DayOfWeek, SubCode, TimeEntry } from "@/types/timesheet.types";
+import type { DayOfWeek, TimeEntry, WorkItem } from "@/types/timesheet.types";
 import { calculateTotal } from "@/utils/timesheet/timesheet.utils";
 import IconButton from "../IconButton/IconButton";
 import Input from "../Input/Input";
 
-type TimesheetSubCodeProps = {
+type TimesheetWorkItemsProps = {
   entry: TimeEntry;
-  subCode: SubCode;
+  workItem: WorkItem;
   deleteEntry: (entryId: string) => void;
   updateHours: (entryId: string, day: DayOfWeek, value: string) => void;
 };
 
-export default function TimesheetSubCodes({
+export default function TimesheetWorkItems({
   entry,
-  subCode,
+  workItem,
   deleteEntry,
   updateHours,
-}: TimesheetSubCodeProps) {
+}: TimesheetWorkItemsProps) {
   return (
     <tr key={entry.id} className="bg-slate-50 border-b border-slate-200">
       <td className="pl-12 pr-4 py-3 sticky left-0 bg-slate-50 z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
         <div className="min-w-0">
           <div className="font-medium text-sm overflow-hidden text-ellipsis whitespace-nowrap">
-            {subCode.code}
+            {workItem.workItemCode}
           </div>
           <div className="text-slate-600 text-[0.8125rem] mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
-            {subCode.description}
+            {workItem.description}
           </div>
         </div>
       </td>
       {(["mon", "tue", "wed", "thu", "fri"] as DayOfWeek[]).map((day) => (
-        <td key={day} className="p-2 text-center border-r border-slate-200">
+        <td
+          key={day}
+          className="p-2 text-center border-r border-slate-200 w-14"
+        >
           <Input
             id={`${entry.id}-${day}-hours`}
             pattern="[0-9]*"
@@ -38,8 +41,7 @@ export default function TimesheetSubCodes({
             hideSteppers
             min={0}
             max={24}
-            value={entry.hours[day] ?? 0}
-            width={40}
+            value={entry.hours[day] ?? ""}
             onChange={(e) =>
               entry.id && updateHours(entry.id, day, e.currentTarget.value)
             }
