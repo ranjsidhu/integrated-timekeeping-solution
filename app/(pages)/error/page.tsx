@@ -13,6 +13,9 @@ export default async function ErrorPage({ searchParams }: ErrorPageProps) {
     "user-fetch-failed":
       "Failed to fetch user details. Please try again later.",
     "user-roles-missing": "User roles are missing. Access denied.",
+    "unauthorised-access-attempted":
+      "The email provided does not match the session user.",
+    "user-not-found": "The specified user was not found.",
   };
 
   return (

@@ -15,9 +15,14 @@ export default async function AuthWrapper({
   if (!userDetails) {
     redirect("/error?type=user-fetch-failed");
   }
-  const userRoles: string[] = userDetails?.user?.roles || [];
 
-  if (!userDetails?.user?.roles) {
+  if (userDetails.error) {
+    redirect(`/error?type=${userDetails.error}`);
+  }
+
+  const userRoles = userDetails?.roles;
+
+  if (!userRoles) {
     redirect("/error?type=user-roles-missing");
   }
 
