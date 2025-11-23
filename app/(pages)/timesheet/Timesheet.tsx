@@ -112,7 +112,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   };
 
   return (
-    <div className="w-full bg-slate-50 min-h-screen">
+    <div className="w-full bg-slate-50 min-h-full">
       <Grid fullWidth>
         <Column lg={16} md={8} sm={4}>
           {/* Header */}
