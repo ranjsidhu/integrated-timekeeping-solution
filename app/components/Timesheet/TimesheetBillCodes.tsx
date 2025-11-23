@@ -3,7 +3,7 @@ import type { BillCode } from "@/types/timesheet.types";
 
 type TimesheetBillCodesProps = {
   billCode: BillCode;
-  toggleExpanded: (id: string) => void;
+  toggleExpanded: (id: number) => void;
   isExpanded: boolean;
 };
 

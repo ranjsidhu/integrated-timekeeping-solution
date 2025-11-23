@@ -10,7 +10,7 @@ export default function TimesheetHead({ selectedWeek }: TimesheetHeadProps) {
     <thead>
       <tr className="bg-slate-50 border-b border-slate-200">
         <th className="p-4 text-left font-semibold text-xs text-slate-600 uppercase tracking-wide min-w-[250px] sticky left-0 bg-slate-50 z-10">
-          Project / Activity
+          Project
         </th>
         {[0, 1, 2, 3, 4].map((offset) => {
           const dayInfo = getDayInfo(offset, selectedWeek);

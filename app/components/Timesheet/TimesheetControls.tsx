@@ -1,4 +1,7 @@
+"use client";
+
 import { Add } from "@carbon/icons-react";
+import { useRouter } from "next/navigation";
 import type { WeekEnding } from "@/types/timesheet.types";
 import Button from "../Button/Button";
 import Column from "../Column/Column";
@@ -15,6 +18,8 @@ export default function TimesheetControls({
   setSelectedWeek,
   weekEndings,
 }: TimesheetControlsProps) {
+  const router = useRouter();
+
   return (
     <div className="bg-white p-6 border-b border-slate-200 flex flex-col justify-center">
       <Column lg={4} md={4} sm={4} className="mb-4">
@@ -34,7 +39,12 @@ export default function TimesheetControls({
 
       <Column lg={12} md={4} sm={4}>
         <div className="flex gap-3 flex-wrap items-end">
-          <Button kind="primary" renderIcon={Add} size="md">
+          <Button
+            kind="primary"
+            renderIcon={Add}
+            size="md"
+            onClick={() => router.push("/search")}
+          >
             <span className="button-text">Add bill code</span>
           </Button>
 

@@ -2,7 +2,10 @@
 
 import { ChevronDown, ChevronRight, TrashCan } from "@carbon/icons-react";
 import React, { useEffect, useState } from "react";
-import { getBillCodesByUserByWeek } from "@/app/actions";
+import {
+  getBillCodesByUserByWeek,
+  getTimesheetByWeekEnding,
+} from "@/app/actions";
 import {
   Button,
   Column,
@@ -16,6 +19,7 @@ import {
   TimesheetTotals,
   TimesheetWorkItems,
 } from "@/app/components";
+import { useSelectedCode } from "@/app/providers";
 import type {
   BillCode,
   DayOfWeek,
@@ -36,11 +40,14 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set([]));
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [billCodes, setBillCodes] = useState<BillCode[]>([]);
+  const { code: selectedCode } = useSelectedCode();
 
   useEffect(() => {
     const fetchUserBillCodes = async () => {
       try {
         const userBillCodes = await getBillCodesByUserByWeek(selectedWeek.id);
+        const timesheet = await getTimesheetByWeekEnding(selectedWeek.id);
+        // console.log("🚀 ~ fetchUserBillCodes ~ timesheet:", timesheet);
         setBillCodes(userBillCodes);
       } catch (error: unknown) {
         console.error("Error fetching bill codes:", (error as Error).message);
@@ -49,34 +56,58 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
     fetchUserBillCodes();
   }, [selectedWeek.id]);
 
+  useEffect(() => {
+    console.log("🚀 ~ TimesheetPage ~ code:", selectedCode);
+    setTimeEntries((prevEntries) => {
+      if (!selectedCode) return prevEntries;
+
+      // Check if an entry with the selected code already exists
+      const entryExists = prevEntries.some(
+        (entry) => entry.billCodeId === selectedCode.id,
+      );
+      if (entryExists) return prevEntries;
+
+      // Create a new TimeEntry for the selected code
+      const newEntry: TimeEntry = {
+        id: `entry-${prevEntries.length + 1}`,
+        billCodeId: selectedCode.id,
+        // subCodeId: selectedCode.workItems?.[0]?.id || "",
+        hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+      };
+
+      return [...prevEntries, newEntry];
+    });
+  }, [selectedCode]);
+
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([
     {
       id: "entry-1",
-      billCodeId: "1",
-      subCodeId: "1-1",
+      billCodeId: 1,
+      subCodeId: 1,
       hours: { mon: 8, tue: 8, wed: 8, thu: 0, fri: 8 },
     },
     {
       id: "entry-2",
-      billCodeId: "2",
-      subCodeId: "2-1",
+      billCodeId: 2,
+      subCodeId: 2,
       hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
     },
     {
       id: "entry-3",
-      billCodeId: "2",
-      subCodeId: "2-2",
+      billCodeId: 2,
+      subCodeId: 2,
       hours: { mon: 0, tue: 0, wed: 0, thu: 8, fri: 0 },
     },
   ]);
 
-  const toggleExpanded = (id: string): void => {
+  const toggleExpanded = (id: number): void => {
+    const castedId = id.toString();
     setExpandedRows((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
+      if (newSet.has(castedId)) {
+        newSet.delete(castedId);
       } else {
-        newSet.add(id);
+        newSet.add(castedId);
       }
       return newSet;
     });
@@ -159,7 +190,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
                 <TimesheetHead selectedWeek={selectedWeek} />
                 <tbody>
                   {billCodes.map((billCode) => {
-                    const isExpanded = expandedRows.has(billCode.id);
+                    const isExpanded = expandedRows.has(billCode.id.toString());
                     const entries = timeEntries.filter(
                       (e) => e.billCodeId === billCode.id,
                     );
@@ -200,7 +231,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
             {/* Mobile View - Cards Layout */}
             <div className="sm:hidden">
               {billCodes.map((billCode) => {
-                const isExpanded = expandedRows.has(billCode.id);
+                const isExpanded = expandedRows.has(billCode.id.toString());
                 const entries = timeEntries.filter(
                   (e) => e.billCodeId === billCode.id,
                 );

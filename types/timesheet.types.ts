@@ -10,7 +10,7 @@ export interface WeekEnding {
 }
 
 export interface BillCode {
-  id: string;
+  id: number;
   code: string;
   description: string;
   projectName?: string;
@@ -20,7 +20,7 @@ export interface BillCode {
 }
 
 export interface WorkItem {
-  id: string;
+  id: number;
   codeId: number;
   workItemCode: string;
   description: string;
@@ -38,8 +38,8 @@ export interface DayHours {
 
 export interface TimeEntry {
   id?: string;
-  billCodeId: string;
-  subCodeId?: string;
+  billCodeId: number;
+  subCodeId?: number;
   hours: DayHours;
   notes?: string;
   createdAt?: Date;
@@ -47,7 +47,7 @@ export interface TimeEntry {
 }
 
 export interface Timesheet {
-  id: string;
+  id: number;
   userId: string;
   weekEnding: Date;
   entries: TimeEntry[];
@@ -81,7 +81,7 @@ export interface TimesheetValidation {
 }
 
 export interface TimesheetTemplate {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   entries: Omit<TimeEntry, "id" | "createdAt" | "updatedAt">[];
@@ -90,4 +90,20 @@ export interface TimesheetTemplate {
 
 export interface TimesheetProps {
   weekEndings: WeekEnding[];
+}
+
+export interface Code {
+  id: number;
+  project_id: number | null;
+  code: string;
+  description: string;
+  is_system_code: boolean;
+  start_date: Date;
+  expiry_date: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface SearchCodeResultProps {
+  code: Code;
 }

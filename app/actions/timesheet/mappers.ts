@@ -10,7 +10,7 @@ type PrismaBillCodeWithWorkItem = PrismaBillCode & {
 
 export function mapBillCode(b: PrismaBillCodeWithWorkItem): BillCode {
   return {
-    id: String(b.id),
+    id: b.id,
     code: b.bill_code,
     description: b.bill_name,
     projectName: undefined,
@@ -18,7 +18,7 @@ export function mapBillCode(b: PrismaBillCodeWithWorkItem): BillCode {
     workItems: b.work_item
       ? [
           {
-            id: String(b.work_item.id),
+            id: b.work_item.id,
             codeId: b.work_item.code_id,
             workItemCode: b.work_item.work_item_code,
             description: b.work_item.description,

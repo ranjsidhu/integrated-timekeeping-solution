@@ -439,6 +439,47 @@ async function seedBillCodes() {
   }
 }
 
+const CATEGORIES = [
+  {
+    assignment_type: "Productive",
+    category_name: "Billable",
+    description: "Client billable work",
+  },
+  {
+    assignment_type: "Non-Productive",
+    category_name: "Formal and Virtual Training",
+    description: "Learning and development",
+  },
+  {
+    assignment_type: "Non-Productive",
+    category_name: "Holiday",
+    description: "Vacation and annual leave",
+  },
+];
+
+async function seedCategories() {
+  for (const categoryData of CATEGORIES) {
+    const { assignment_type, category_name, description } = categoryData;
+
+    const existingCategory = await prisma.category.findFirst({
+      where: { category_name },
+    });
+
+    if (!existingCategory) {
+      await prisma.category.create({
+        data: {
+          assignment_type,
+          category_name,
+          description,
+        },
+      });
+      console.log(`Created category: ${category_name}`);
+    } else {
+      console.log(`Category already exists: ${category_name}`);
+    }
+  }
+}
+
 async function main() {
   await seedUsers();
   await seedUserRoles();
@@ -446,6 +487,7 @@ async function main() {
   await seedCodes();
   await seedWorkItems();
   await seedBillCodes();
+  await seedCategories();
 }
 
 main();

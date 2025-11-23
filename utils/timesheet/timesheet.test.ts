@@ -81,17 +81,17 @@ describe("timesheet utils", () => {
       const entries: TimeEntry[] = [
         {
           id: "1",
-          billCodeId: "b1",
+          billCodeId: 1,
           hours: { mon: 1, tue: 0, wed: 0, thu: 0, fri: 0 },
         },
         {
           id: "2",
-          billCodeId: "b2",
+          billCodeId: 2,
           hours: { mon: 2, tue: 3, wed: 0, thu: 0, fri: 0 },
         },
         {
           id: "3",
-          billCodeId: "b3",
+          billCodeId: 3,
           hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
         },
       ];

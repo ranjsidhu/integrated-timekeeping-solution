@@ -10,7 +10,11 @@ const plexSans = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Integrated Timekeeping Solution",
+  title: {
+    default: "Integrated Timekeeping Solution",
+    template: "%s | Integrated Timekeeping Solution",
+  },
+  description: "An integrated solution for timekeeping and project management.",
 };
 
 export default function RootLayout({
