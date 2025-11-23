@@ -196,5 +196,3 @@ Table AuditLog {
     (changed_at)
   }
 }
-
-Ref: "Codes"."id" < "Codes"."description"

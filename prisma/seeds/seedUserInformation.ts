@@ -299,9 +299,145 @@ async function seedCodes() {
 }
 
 // Seed WorkItems
-const WORK_ITEMS = [];
+const WORK_ITEMS = [
+  {
+    work_item_code: "8DC0WHG0",
+    description: "SOW003 - DWP Ask Nexus",
+    code: "UKAIDEG",
+  },
+  {
+    work_item_code: "L1LEARNG",
+    description: "Approved Non-IBM Learning",
+    code: "SK77",
+  },
+  {
+    work_item_code: "8DC0WHG3",
+    description: "SOW002 - Gail Nexus",
+    code: "UKAIDEK",
+  },
+  {
+    work_item_code: "GBSUNBIL",
+    description: "GBS Unbilled for Regualars",
+    code: "SKSI",
+  },
+  {
+    work_item_code: "ZWC03PC4",
+    description: "CDEL",
+    code: "UKAIAVL",
+  },
+  {
+    work_item_code: "CF066520",
+    description: "Governance",
+    code: "QNGBBAA",
+  },
+];
 
-async function seedWorkItems() {}
+async function seedWorkItems() {
+  const codesInDB = await prisma.code.findMany();
+
+  for (const workItemData of WORK_ITEMS) {
+    const { work_item_code, description, code } = workItemData;
+
+    const codeInDB = codesInDB.find((c) => c.code === code);
+
+    if (!codeInDB) {
+      console.error(
+        `Code with code ${code} not found. Skipping work item ${work_item_code}.`,
+      );
+      continue;
+    }
+
+    const existingWorkItem = await prisma.workItem.findFirst({
+      where: { work_item_code },
+    });
+
+    if (!existingWorkItem) {
+      await prisma.workItem.create({
+        data: {
+          work_item_code,
+          description,
+          code_id: codeInDB.id,
+        },
+      });
+      console.log(`Created work item: ${work_item_code}`);
+    } else {
+      console.log(`Work item already exists: ${work_item_code}`);
+    }
+  }
+}
+
+// Seed BillCodes
+const BILL_CODES = [
+  {
+    bill_code: "GB0020",
+    bill_name: "General Billablle",
+    is_billable: true,
+    is_forecastable: true,
+    work_items: ["8DC0WHG0", "8DC0WHG3", "ZWC03PC4", "CF066520"],
+  },
+  {
+    bill_code: "XL0H00",
+    bill_name: "Non-IBM Learning",
+    is_billable: false,
+    is_forecastable: true,
+    work_items: ["L1LEARNG"],
+  },
+  {
+    bill_code: "VL0947",
+    bill_name: "Apprentice UniDay",
+    is_billable: false,
+    is_forecastable: true,
+    work_items: ["GBSUNBIL"],
+  },
+];
+
+async function seedBillCodes() {
+  const workItemsInDB = await prisma.workItem.findMany();
+
+  for (const billCodeData of BILL_CODES) {
+    const { bill_code, bill_name, is_billable, is_forecastable, work_items } =
+      billCodeData;
+
+    for (const work_item_code of work_items) {
+      const workItemInDB = workItemsInDB.find(
+        (wi) => wi.work_item_code === work_item_code,
+      );
+
+      if (!workItemInDB) {
+        console.error(
+          `Work item with code ${work_item_code} not found. Skipping bill code ${bill_code}.`,
+        );
+        continue;
+      }
+
+      const existingBillCode = await prisma.billCode.findFirst({
+        where: {
+          bill_code,
+          work_item_id: workItemInDB.id,
+        },
+      });
+
+      if (!existingBillCode) {
+        await prisma.billCode.create({
+          data: {
+            bill_code,
+            bill_name,
+            is_billable,
+            is_forecastable,
+            work_item_id: workItemInDB.id,
+          },
+        });
+        console.log(
+          `Created bill code: ${bill_code} for work item: ${work_item_code}`,
+        );
+      } else {
+        console.log(
+          `Bill code already exists: ${bill_code} for work item: ${work_item_code}`,
+        );
+      }
+    }
+  }
+}
 
 async function main() {
   await seedUsers();
@@ -309,6 +445,7 @@ async function main() {
   await seedProjects();
   await seedCodes();
   await seedWorkItems();
+  await seedBillCodes();
 }
 
 main();
