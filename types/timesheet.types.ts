@@ -105,5 +105,27 @@ export interface Code {
 }
 
 export interface SearchCodeResultProps {
-  code: Code;
+  code: CodeWithWorkItems;
+}
+
+export interface CodeWithWorkItems extends Code {
+  work_items: {
+    id: number;
+    code_id: number;
+    work_item_code: string;
+    description: string;
+    bill_codes: {
+      id: number;
+      work_item_id: number;
+      bill_code: string;
+      bill_name: string;
+    }[];
+  }[];
+}
+
+export interface WorkItem {
+  id: number;
+  code_id: number;
+  work_item_code: string;
+  description: string;
 }

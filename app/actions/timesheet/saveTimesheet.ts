@@ -1,6 +1,5 @@
 "use server";
 
-import { prisma } from "@/prisma/prisma";
 import { getSession } from "@/utils/auth/getSession";
 
 const saveTimesheet = async () => {

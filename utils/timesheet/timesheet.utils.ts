@@ -34,7 +34,13 @@ const getStatusColor = (status?: WeekEnding["status"]) => {
 };
 
 const calculateTotal = (hours: TimeEntry["hours"]): number => {
-  return hours.mon + hours.tue + hours.wed + hours.thu + hours.fri;
+  return (
+    (hours.mon || 0) +
+    (hours.tue || 0) +
+    (hours.wed || 0) +
+    (hours.thu || 0) +
+    (hours.fri || 0)
+  );
 };
 
 const calculateDayTotal = (

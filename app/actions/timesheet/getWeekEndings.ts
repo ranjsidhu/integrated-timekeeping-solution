@@ -5,7 +5,7 @@ import type { WeekEnding } from "@/types/timesheet.types";
 
 export const getWeekEndings = async (): Promise<WeekEnding[]> => {
   const nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 14);
+  nextWeek.setDate(nextWeek.getDate() + 7);
 
   try {
     const weekEndings = await prisma.timesheetWeekEnding.findMany({

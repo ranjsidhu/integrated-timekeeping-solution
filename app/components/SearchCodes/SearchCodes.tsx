@@ -3,12 +3,12 @@
 import { Fragment, useState } from "react";
 import { getCodesBySearch } from "@/app/actions";
 import { Search } from "@/app/components";
-import type { Code } from "@/types/timesheet.types";
+import type { CodeWithWorkItems } from "@/types/timesheet.types";
 import SearchCodeResult from "./SearchCodeResult";
 
 export default function SearchCodes() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<Code[]>([]);
+  const [searchResults, setSearchResults] = useState<CodeWithWorkItems[]>([]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.value.length) {
