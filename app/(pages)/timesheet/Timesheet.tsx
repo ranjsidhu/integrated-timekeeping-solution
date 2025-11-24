@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getTimesheetByWeekEnding } from "@/app/actions";
 import {
   Column,
@@ -8,12 +8,9 @@ import {
   InlineNotification,
   Tag,
   TimesheetActions,
-  TimesheetBillCodes,
   TimesheetControls,
-  TimesheetHead,
-  TimesheetTotals,
-  TimesheetWorkItems,
 } from "@/app/components";
+import TimesheetCards from "@/app/components/Timesheet/TimesheetCards";
 import { useSelectedCode } from "@/app/providers";
 import type {
   DayOfWeek,
@@ -21,14 +18,18 @@ import type {
   TimesheetProps,
   WeekEnding,
 } from "@/types/timesheet.types";
-import { getStatusColor } from "@/utils/timesheet/timesheet.utils";
+import {
+  calculateDayTotal,
+  calculateTotal,
+  getStatusColor,
+} from "@/utils/timesheet/timesheet.utils";
 
 export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(weekEndings[0]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set([]));
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
-  const { code: selectedCode, workItems } = useSelectedCode();
+  const { code: selectedCode, workItems, filterWorkItems } = useSelectedCode();
 
   // Temporary editing buffer for inputs: entryId -> { day -> string }
   const [editingValues, setEditingValues] = useState<
@@ -110,6 +111,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   };
 
   const deleteEntry = (entryId: string): void => {
+    filterWorkItems(Number(entryId));
     setTimeEntries((prev) => prev.filter((entry) => entry.id !== entryId));
   };
 
@@ -153,42 +155,48 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
             weekEndings={weekEndings}
           />
 
-          {/* Timesheet Table */}
+          {/* Timesheet Cards (modern, responsive) */}
           <div className="bg-white min-h-[400px]">
-            <div className="hidden sm:block overflow-x-auto">
-              <table className="w-full min-w-[800px] border-collapse text-sm">
-                <TimesheetHead selectedWeek={selectedWeek} />
-                <tbody className="w-full">
-                  {workItems.map((workItem) => {
-                    const isExpanded = expandedRows.has(workItem.id.toString());
+            <div className="p-0 sm:p-4">
+              <TimesheetCards
+                workItems={workItems}
+                expandedRows={expandedRows}
+                toggleExpanded={toggleExpanded}
+                editingValues={editingValues}
+                onTempChange={handleTempChange}
+                onCommit={handleCommit}
+                deleteEntry={deleteEntry}
+                timeEntries={timeEntries}
+              />
 
-                    return (
-                      <React.Fragment key={workItem.id}>
-                        <TimesheetWorkItems
-                          workItem={workItem}
-                          isExpanded={isExpanded}
-                          toggleExpanded={toggleExpanded}
-                        />
-                        {isExpanded && workItem.bill_codes && (
-                          <TimesheetBillCodes
-                            billCodes={workItem.bill_codes}
-                            editingValues={editingValues}
-                            onTempChange={handleTempChange}
-                            onCommit={handleCommit}
-                            deleteEntry={deleteEntry}
-                            entry={
-                              timeEntries.find(
-                                (entry) => entry.subCodeId === workItem.id,
-                              ) as TimeEntry
-                            }
-                          />
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-                  <TimesheetTotals timeEntries={timeEntries} />
-                </tbody>
-              </table>
+              {/* Totals summary */}
+              <div className="mt-4 p-4 bg-slate-50 rounded-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="font-semibold">Week Totals</div>
+                <div className="flex items-center gap-3 text-sm flex-wrap">
+                  <div className="px-2 py-1 bg-white rounded shadow-sm">
+                    Mon: {calculateDayTotal("mon", timeEntries)}
+                  </div>
+                  <div className="px-2 py-1 bg-white rounded shadow-sm">
+                    Tue: {calculateDayTotal("tue", timeEntries)}
+                  </div>
+                  <div className="px-2 py-1 bg-white rounded shadow-sm">
+                    Wed: {calculateDayTotal("wed", timeEntries)}
+                  </div>
+                  <div className="px-2 py-1 bg-white rounded shadow-sm">
+                    Thu: {calculateDayTotal("thu", timeEntries)}
+                  </div>
+                  <div className="px-2 py-1 bg-white rounded shadow-sm">
+                    Fri: {calculateDayTotal("fri", timeEntries)}
+                  </div>
+                  <div className="px-3 py-1 bg-[#0f62fe] text-white rounded font-semibold">
+                    Total:{" "}
+                    {timeEntries.reduce(
+                      (sum, entry) => sum + calculateTotal(entry.hours),
+                      0,
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Action Buttons */}
@@ -199,32 +207,6 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
           </div>
         </Column>
       </Grid>
-
-      <style>
-        {`
-        /* Ensure inputs don't zoom on mobile Safari */
-        input[type="number"] {
-          font-size: 16px !important;
-        }
-
-        @media (min-width: 640px) {
-          input[type="number"] {
-            font-size: 0.875rem !important;
-          }
-        }
-
-        /* Remove number input spinners on mobile */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        
-        input[type="number"] {
-          -moz-appearance: textfield;
-        }
-      `}
-      </style>
     </div>
   );
 }

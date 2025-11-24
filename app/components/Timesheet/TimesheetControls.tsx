@@ -49,10 +49,6 @@ export default function TimesheetControls({
           </Button>
 
           <Button kind="tertiary" size="md" className="whitespace-nowrap">
-            <span className="button-text-short">Copy template</span>
-          </Button>
-
-          <Button kind="tertiary" size="md" className="whitespace-nowrap">
             <span className="button-text-short">Copy prev week</span>
           </Button>
         </div>

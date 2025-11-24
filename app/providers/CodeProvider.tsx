@@ -9,6 +9,7 @@ type SelectedCodeContextType = {
   workItems: CodeWithWorkItems["work_items"];
   addWorkItems: (items: CodeWithWorkItems["work_items"]) => void;
   clearWorkItems: () => void;
+  filterWorkItems: (codeToRemoveId: number) => void;
 };
 
 const SelectedCodeContext = createContext<SelectedCodeContextType | undefined>(
@@ -35,9 +36,20 @@ export const CodeProvider = ({ children }: { children: React.ReactNode }) => {
 
   const clearWorkItems = useCallback(() => setWorkItems([]), []);
 
+  const filterWorkItems = useCallback((codeToRemoveId: number) => {
+    setWorkItems((prev) => prev.filter((wi) => wi.code_id === codeToRemoveId));
+  }, []);
+
   return (
     <SelectedCodeContext.Provider
-      value={{ code, setCode, workItems, addWorkItems, clearWorkItems }}
+      value={{
+        code,
+        setCode,
+        workItems,
+        addWorkItems,
+        clearWorkItems,
+        filterWorkItems,
+      }}
     >
       {children}
     </SelectedCodeContext.Provider>

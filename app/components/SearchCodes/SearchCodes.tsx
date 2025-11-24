@@ -16,7 +16,7 @@ export default function SearchCodes() {
       setSearchTerm("");
     } else {
       setSearchTerm(e.target.value);
-      if (searchTerm.length > 3) {
+      if (searchTerm.length >= 3) {
         const codes = await getCodesBySearch(e.target.value);
         setSearchResults(codes);
       }
