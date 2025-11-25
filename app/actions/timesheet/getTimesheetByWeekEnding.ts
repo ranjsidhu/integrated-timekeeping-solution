@@ -40,7 +40,7 @@ export async function getTimesheetByWeekEnding(weekEndingId: number) {
             },
           },
           orderBy: {
-            work_date: "asc",
+            id: "asc",
           },
         },
       },

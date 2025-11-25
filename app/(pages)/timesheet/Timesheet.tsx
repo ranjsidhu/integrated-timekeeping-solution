@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getTimesheetByWeekEnding } from "@/app/actions";
+import { getTimesheetByWeekEnding, saveTimesheet } from "@/app/actions";
 import {
   Column,
   Grid,
@@ -24,17 +24,15 @@ import {
   getStatusColor,
 } from "@/utils/timesheet/timesheet.utils";
 
+type EditingValuesState = Record<string, Partial<Record<DayOfWeek, string>>>;
+
 export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(weekEndings[0]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set([]));
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
+  const [editingValues, setEditingValues] = useState<EditingValuesState>({});
   const { code: selectedCode, workItems, filterWorkItems } = useSelectedCode();
-
-  // Temporary editing buffer for inputs: entryId -> { day -> string }
-  const [editingValues, setEditingValues] = useState<
-    Record<string, Partial<Record<DayOfWeek, string>>>
-  >({});
 
   const handleTempChange = (entryId: string, day: DayOfWeek, value: string) => {
     setEditingValues((prev) => ({
@@ -66,19 +64,18 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
     const fetchUserBillCodes = async () => {
       try {
         const timesheet = await getTimesheetByWeekEnding(selectedWeek.id);
-        console.log(
-          "🚀 ~ fetchUserBillCodes ~ timesheet:",
-          timesheet.data?.bill_code_summary,
-        );
+        console.log("🚀 ~ fetchUserBillCodes ~ timesheet:", timesheet);
         if (!timesheet.data?.bill_code_summary && selectedCode) {
           setTimeEntries(
             workItems.map((workItem) => ({
-              id: `entry-${workItem.id}`,
-              billCodeId: selectedCode.id,
+              id: workItem.id.toString(),
+              billCodeId: workItem.bill_codes[0].id,
+              codeId: workItem.code_id,
               subCodeId: workItem.id,
               hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
             })),
           );
+        } else if (timesheet.data) {
         }
       } catch (error: unknown) {
         console.error("Error fetching bill codes:", (error as Error).message);
@@ -101,9 +98,20 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   };
 
   const handleSave = (): void => {
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000);
-    console.log("Saving timesheet...", { selectedWeek, timeEntries });
+    try {
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+      saveTimesheet(selectedWeek, timeEntries);
+      console.log("Saving timesheet...", {
+        selectedWeek,
+        timeEntries,
+      });
+    } catch (error: unknown) {
+      console.error(
+        "Error saving timesheet:",
+        error instanceof Error ? error.message : error,
+      );
+    }
   };
 
   const handleSubmit = (): void => {

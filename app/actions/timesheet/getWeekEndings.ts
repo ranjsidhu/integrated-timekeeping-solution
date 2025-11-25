@@ -27,7 +27,7 @@ export const getWeekEndings = async (): Promise<WeekEnding[]> => {
     return weekEndings.map((we) => ({
       id: we.id,
       week_ending: we.week_ending,
-      status: we.timesheets[0]?.status?.name || "Draft",
+      status: we.timesheets[0]?.status?.name ?? "Draft",
       label: new Date(we.week_ending).toLocaleDateString("en-GB", {
         month: "short",
         day: "2-digit",
