@@ -5,13 +5,13 @@ import { getTimesheetByWeekEnding, saveTimesheet } from "@/app/actions";
 import {
   Column,
   Grid,
-  InlineNotification,
+  Notifications,
   Tag,
   TimesheetActions,
   TimesheetControls,
 } from "@/app/components";
 import TimesheetCards from "@/app/components/Timesheet/TimesheetCards";
-import { useSelectedCode } from "@/app/providers";
+import { useNotification, useSelectedCode } from "@/app/providers";
 import type {
   DayOfWeek,
   TimeEntry,
@@ -29,10 +29,15 @@ type EditingValuesState = Record<string, Partial<Record<DayOfWeek, string>>>;
 export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(weekEndings[0]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set([]));
-  const [showNotification, setShowNotification] = useState<boolean>(false);
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
   const [editingValues, setEditingValues] = useState<EditingValuesState>({});
-  const { code: selectedCode, workItems, filterWorkItems } = useSelectedCode();
+  const {
+    code: selectedCode,
+    workItems,
+    filterWorkItems,
+    addWorkItems,
+  } = useSelectedCode();
+  const { addNotification } = useNotification();
 
   const handleTempChange = (entryId: string, day: DayOfWeek, value: string) => {
     setEditingValues((prev) => ({
@@ -75,7 +80,8 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
               hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
             })),
           );
-        } else if (timesheet.data) {
+        } else if (timesheet.data?.bill_code_summary) {
+          // addWorkItems(timesheet.data.bill_code_summary);
         }
       } catch (error: unknown) {
         console.error("Error fetching bill codes:", (error as Error).message);
@@ -99,14 +105,21 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
 
   const handleSave = (): void => {
     try {
-      setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 3000);
-      saveTimesheet(selectedWeek, timeEntries);
-      console.log("Saving timesheet...", {
-        selectedWeek,
-        timeEntries,
+      saveTimesheet(selectedWeek, timeEntries).then(() => {
+        addNotification({
+          kind: "success",
+          title: "Saved",
+          subtitle: "Your changes were saved",
+          type: "inline",
+        });
       });
     } catch (error: unknown) {
+      addNotification({
+        kind: "error",
+        title: "Error",
+        subtitle: "Failed to save timesheet",
+        type: "inline",
+      });
       console.error(
         "Error saving timesheet:",
         error instanceof Error ? error.message : error,
@@ -142,19 +155,9 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
             </div>
           </div>
 
-          {/* Notification */}
-          {showNotification && (
-            <div className="p-3 sm:p-4">
-              <InlineNotification
-                kind="success"
-                title="Timesheet saved"
-                subtitle="Your changes have been saved successfully"
-                hideCloseButton={false}
-                onClose={() => setShowNotification(false)}
-                lowContrast
-              />
-            </div>
-          )}
+          <div className="p-3 sm:p-4">
+            <Notifications />
+          </div>
 
           {/* Controls */}
           <TimesheetControls
@@ -163,7 +166,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
             weekEndings={weekEndings}
           />
 
-          {/* Timesheet Cards (modern, responsive) */}
+          {/* Timesheet Cards */}
           <div className="bg-white min-h-[400px]">
             <div className="p-0 sm:p-4">
               <TimesheetCards

@@ -14,6 +14,8 @@ import Layout from "./Layout/Layout";
 import Link from "./Link/Link";
 import Loading from "./Loading/Loading";
 import InlineNotification from "./Notifications/InlineNotification/InlineNotification";
+import Notifications from "./Notifications/Notifications";
+import ToastNotification from "./Notifications/ToastNotification/ToastNotification";
 import Search from "./Search/Search";
 import SearchCodes from "./SearchCodes/SearchCodes";
 import Tag from "./Tag/Tag";
@@ -41,6 +43,8 @@ export {
   Link,
   Loading,
   InlineNotification,
+  Notifications,
+  ToastNotification,
   Search,
   SearchCodes,
   Tag,

@@ -95,6 +95,18 @@ export async function getTimesheetByWeekEnding(weekEndingId: number) {
       >,
     );
 
+    /**
+     *           setTimeEntries(
+            workItems.map((workItem) => ({
+              id: workItem.id.toString(),
+              billCodeId: workItem.bill_codes[0].id,
+              codeId: workItem.code_id,
+              subCodeId: workItem.id,
+              hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+            })),
+          );
+     */
+
     return {
       success: true,
       data: {
