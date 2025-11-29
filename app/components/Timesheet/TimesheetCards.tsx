@@ -5,7 +5,6 @@ import type {
   TimeEntry,
 } from "@/types/timesheet.types";
 import { calculateTotal } from "@/utils/timesheet/timesheet.utils";
-import IconButton from "../IconButton/IconButton";
 import Input from "../Input/Input";
 
 type TimesheetCardsProps = {
@@ -81,17 +80,14 @@ export default function TimesheetCards({
                     entry?.hours ?? { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
                   )}
                 </div>
-                <IconButton
-                  label="Delete entry"
-                  kind="ghost"
-                  size="sm"
+                <TrashCan
+                  data-testid="delete-entry-button"
+                  size={16}
                   onClick={(e) => {
                     e.stopPropagation();
                     entry?.id && deleteEntry(entry.id);
                   }}
-                >
-                  <TrashCan size={16} />
-                </IconButton>
+                />
               </div>
             </button>
 

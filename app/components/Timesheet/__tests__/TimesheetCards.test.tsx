@@ -60,7 +60,7 @@ describe("TimesheetCards", () => {
     expect(onCommit).toHaveBeenCalledWith("e1", "mon");
 
     // Delete button should call deleteEntry with entry id and not call toggleExpanded
-    const deleteBtn = screen.getByLabelText("Delete entry");
+    const deleteBtn = screen.getByTestId("delete-entry-button");
     fireEvent.click(deleteBtn);
     expect(deleteEntry).toHaveBeenCalledWith("e1");
     expect(toggleExpanded).not.toHaveBeenCalled();
@@ -121,7 +121,7 @@ describe("TimesheetCards", () => {
       />,
     );
 
-    const deleteBtn = screen.getByLabelText("Delete entry");
+    const deleteBtn = screen.getByTestId("delete-entry-button");
     fireEvent.click(deleteBtn);
     expect(deleteEntry).not.toHaveBeenCalled();
   });
