@@ -6,6 +6,7 @@ import {
   Column,
   Grid,
   InlineNotification,
+  Loading,
   Tag,
   TimesheetActions,
   TimesheetControls,
@@ -170,12 +171,9 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
     setWorkItems((prev) => prev.filter((wi) => wi.id.toString() !== entryId));
   };
 
-  if (isLoading) {
-    return <div className="p-8">Loading...</div>;
-  }
-
   return (
     <div className="w-full bg-slate-50 min-h-full">
+      <Loading active={isLoading} />
       <Grid fullWidth>
         <Column lg={16} md={8} sm={4}>
           <div className="bg-white p-4 sm:p-6 border-b border-slate-200">
