@@ -208,6 +208,34 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
     setWorkItems((prev) => prev.filter((wi) => wi.id.toString() !== entryId));
   };
 
+  const handleCopyWeek = async (weekToCopy: WeekEnding) => {
+    const result = await getTimesheetByWeekEnding(weekToCopy.id);
+
+    if (result.success && result.data) {
+      // Add work items from the copied week
+      setWorkItems((prev) => {
+        const existingIds = new Set(prev.map((w) => w.id));
+        const newWorkItems = result.data.workItems.filter(
+          (w) => !existingIds.has(w.id),
+        );
+        return [...prev, ...newWorkItems];
+      });
+
+      // Add time entries
+      setTimeEntries((prev) => {
+        const existingIds = new Set(prev.map((e) => e.id));
+        const newEntries = result.data.timeEntries
+          .filter((e) => !existingIds.has(e.id))
+          .map((e) => ({
+            ...e,
+            // Keep the hours from previous week
+            hours: e.hours,
+          }));
+        return [...prev, ...newEntries];
+      });
+    }
+  };
+
   return (
     <div className="w-full bg-slate-50 min-h-full">
       <Loading active={isLoading} />
@@ -232,6 +260,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
           <TimesheetControls
             selectedWeek={selectedWeek}
             setSelectedWeek={handleWeekChange}
+            onCopyWeek={handleCopyWeek}
             weekEndings={weekEndings}
           />
 
