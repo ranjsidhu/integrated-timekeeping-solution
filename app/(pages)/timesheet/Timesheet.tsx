@@ -1,18 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getTimesheetByWeekEnding, saveTimesheet } from "@/app/actions";
+import {
+  getTimesheetByWeekEnding,
+  saveTimesheet,
+  submitTimesheet,
+} from "@/app/actions";
 import {
   Column,
   Grid,
-  InlineNotification,
   Loading,
+  Notifications,
   Tag,
   TimesheetActions,
   TimesheetControls,
 } from "@/app/components";
 import TimesheetCards from "@/app/components/Timesheet/TimesheetCards";
-import { useSelectedWeek } from "@/app/providers";
+import { useNotification, useSelectedWeek } from "@/app/providers";
 import type {
   CodeWithWorkItems,
   DayOfWeek,
@@ -31,6 +35,7 @@ type EditingValuesState = Record<string, Partial<Record<DayOfWeek, string>>>;
 export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   const { selectedWeek: contextWeek, setSelectedWeek: setContextWeek } =
     useSelectedWeek();
+  const { addNotification } = useNotification();
 
   const initialWeek = contextWeek || weekEndings[0];
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(initialWeek);
@@ -40,7 +45,6 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [editingValues, setEditingValues] = useState<EditingValuesState>({});
-  const [showNotification, setShowNotification] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load timesheet data whenever week changes
@@ -157,12 +161,45 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
   };
 
   const handleSave = async () => {
-    await saveTimesheet(selectedWeek, timeEntries);
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000);
+    try {
+      await saveTimesheet(selectedWeek, timeEntries);
+      addNotification({
+        kind: "success",
+        type: "inline",
+        title: "Timesheet saved",
+        subtitle: "Your changesd have been saved successfully",
+      });
+    } catch (error: unknown) {
+      console.error("Error saving timesheet:", (error as Error).message);
+      addNotification({
+        kind: "error",
+        type: "inline",
+        title: "Error saving timesheet",
+        subtitle: "There was an issue saving your changes. Please try again.",
+      });
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    try {
+      await submitTimesheet(selectedWeek, timeEntries);
+      addNotification({
+        kind: "success",
+        type: "inline",
+        title: "Timesheet submitted",
+        subtitle: "Your timesheet has been submitted successfully",
+      });
+    } catch (error: unknown) {
+      console.error("Error saving timesheet:", (error as Error).message);
+      addNotification({
+        kind: "error",
+        type: "inline",
+        title: "Error saving timesheet",
+        subtitle: "There was an issue saving your changes. Please try again.",
+      });
+    }
+
+    // TOOD - remove below debug log
     console.log("Submitting timesheet...", { selectedWeek, timeEntries });
   };
 
@@ -190,18 +227,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
             </div>
           </div>
 
-          {showNotification && (
-            <div className="p-3 sm:p-4">
-              <InlineNotification
-                kind="success"
-                title="Timesheet saved"
-                subtitle="Your changes have been saved successfully"
-                hideCloseButton={false}
-                onClose={() => setShowNotification(false)}
-                lowContrast
-              />
-            </div>
-          )}
+          <Notifications />
 
           <TimesheetControls
             selectedWeek={selectedWeek}

@@ -19,13 +19,6 @@ export interface BillCode {
   isExpanded?: boolean;
 }
 
-export interface WorkItem {
-  id: number;
-  codeId: number;
-  workItemCode: string;
-  description: string;
-}
-
 export interface DayHours {
   mon: number;
   tue: number;

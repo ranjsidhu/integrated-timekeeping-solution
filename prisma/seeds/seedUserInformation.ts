@@ -317,7 +317,7 @@ const WORK_ITEMS = [
   },
   {
     work_item_code: "GBSUNBIL",
-    description: "GBS Unbilled for Regualars",
+    description: "GBS Unbilled for Regulars",
     code: "SKSI",
   },
   {
@@ -370,7 +370,7 @@ async function seedWorkItems() {
 const BILL_CODES = [
   {
     bill_code: "GB0020",
-    bill_name: "General Billablle",
+    bill_name: "General Billable",
     is_billable: true,
     is_forecastable: true,
     work_items: ["8DC0WHG0", "8DC0WHG3", "ZWC03PC4", "CF066520"],

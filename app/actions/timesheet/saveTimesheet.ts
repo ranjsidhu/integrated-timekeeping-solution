@@ -74,7 +74,6 @@ const saveTimesheet = async (
       for (const day of daysOfWeek) {
         const hours = entry.hours[day];
 
-        // Only create entry if hours > 0
         if (hours >= 0) {
           entriesToCreate.push({
             timesheet_id: timesheet.id,
