@@ -1,4 +1,4 @@
-import { useSelectedCode } from "./CodeProvider";
 import { useNotification } from "./NotificationProvider";
+import { useSelectedWeek } from "./WeekProvider";
 
-export { useSelectedCode, useNotification };
+export { useSelectedWeek, useNotification };

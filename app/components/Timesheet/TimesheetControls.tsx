@@ -10,7 +10,7 @@ import Dropdown from "../Dropdown/Dropdown";
 type TimesheetControlsProps = {
   selectedWeek: WeekEnding;
   weekEndings: WeekEnding[];
-  setSelectedWeek: React.Dispatch<React.SetStateAction<WeekEnding>>;
+  setSelectedWeek: (week: WeekEnding) => void;
 };
 
 export default function TimesheetControls({

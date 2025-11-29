@@ -1,22 +1,23 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
+import type { DayOfWeek } from "@/types/timesheet.types";
 import { getSession } from "@/utils/auth/getSession";
 
 export async function getTimesheetByWeekEnding(weekEndingId: number) {
   try {
     const session = await getSession();
     if (!session?.user?.id) {
-      return { error: "Unauthorized" };
+      return { success: false, error: "Unauthorized" };
     }
 
-    const userId = session.user.id;
+    const userId = Number(session.user.id);
 
     // Fetch timesheet with all related data
     const timesheet = await prisma.timesheet.findUnique({
       where: {
         user_id_timesheet_week_ending_id: {
-          user_id: Number(userId),
+          user_id: userId,
           timesheet_week_ending_id: weekEndingId,
         },
       },
@@ -39,90 +40,97 @@ export async function getTimesheetByWeekEnding(weekEndingId: number) {
               },
             },
           },
-          orderBy: {
-            id: "asc",
-          },
+          orderBy: { work_date: "asc" },
         },
       },
     });
 
+    // No timesheet exists - return empty state
     if (!timesheet) {
-      return { error: "Timesheet not found" };
+      return {
+        success: true,
+        data: {
+          hasTimesheet: false,
+          workItems: [],
+          timeEntries: [],
+          status: "Draft",
+        },
+      };
     }
 
-    // Calculate total hours
+    // Build work items from timesheet entries
+    const workItemsMap = new Map();
+    const timeEntriesMap = new Map();
+
+    for (const entry of timesheet.timesheet_entries) {
+      const workItem = entry.bill_code.work_item;
+      const workItemId = workItem.id;
+
+      // Add work item if not already in map
+      if (!workItemsMap.has(workItemId)) {
+        workItemsMap.set(workItemId, {
+          id: workItem.id,
+          code_id: workItem.code_id,
+          work_item_code: workItem.work_item_code,
+          description: workItem.description,
+          bill_codes: [
+            {
+              id: entry.bill_code.id,
+              work_item_id: entry.bill_code.work_item_id,
+              bill_code: entry.bill_code.bill_code,
+              bill_name: entry.bill_code.bill_name,
+            },
+          ],
+        });
+      }
+
+      // Build time entry with hours per day
+      if (!timeEntriesMap.has(workItemId)) {
+        timeEntriesMap.set(workItemId, {
+          id: workItemId.toString(),
+          billCodeId: entry.bill_code_id,
+          subCodeId: workItemId,
+          hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+        });
+      }
+
+      const timeEntry = timeEntriesMap.get(workItemId);
+      const workDate = new Date(entry.work_date);
+      const dayOfWeek = workDate.getDay();
+
+      const dayMap: Record<number, DayOfWeek> = {
+        1: "mon",
+        2: "tue",
+        3: "wed",
+        4: "thu",
+        5: "fri",
+      };
+
+      const dayKey = dayMap[dayOfWeek];
+      if (dayKey) {
+        timeEntry.hours[dayKey] = entry.hours;
+      }
+    }
+
     const totalHours = timesheet.timesheet_entries.reduce(
       (sum, entry) => sum + entry.hours,
       0,
     );
 
-    // Group entries by bill code for summary view
-    const billCodeSummary = timesheet.timesheet_entries.reduce(
-      (acc, entry) => {
-        const billCodeId = entry.bill_code_id;
-        if (!acc[billCodeId]) {
-          acc[billCodeId] = {
-            bill_code: entry.bill_code.bill_code,
-            bill_name: entry.bill_code.bill_name,
-            work_item_code: entry.bill_code.work_item.work_item_code,
-            code: entry.bill_code.work_item.code.code,
-            project_name:
-              entry.bill_code.work_item.code.project?.project_name || "N/A",
-            total_hours: 0,
-            daily_breakdown: [],
-          };
-        }
-
-        acc[billCodeId].total_hours += entry.hours;
-        acc[billCodeId].daily_breakdown.push({
-          work_date: entry.work_date,
-          hours: entry.hours,
-        });
-
-        return acc;
-      },
-      {} as Record<
-        string,
-        {
-          bill_code: string;
-          bill_name: string;
-          work_item_code: string;
-          code: string;
-          project_name: string;
-          total_hours: number;
-          daily_breakdown: { work_date: Date; hours: number }[];
-        }
-      >,
-    );
-
-    /**
-     *           setTimeEntries(
-            workItems.map((workItem) => ({
-              id: workItem.id.toString(),
-              billCodeId: workItem.bill_codes[0].id,
-              codeId: workItem.code_id,
-              subCodeId: workItem.id,
-              hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
-            })),
-          );
-     */
-
     return {
       success: true,
       data: {
-        timesheet: {
-          id: timesheet.id,
-          week_ending: timesheet.week_ending.week_ending,
-          status: timesheet.status.name,
-          submitted_at: timesheet.submitted_at,
-          total_hours: totalHours,
-        },
-        entries: timesheet.timesheet_entries,
-        bill_code_summary: Object.values(billCodeSummary),
+        hasTimesheet: true,
+        timesheetId: timesheet.id,
+        workItems: Array.from(workItemsMap.values()),
+        timeEntries: Array.from(timeEntriesMap.values()),
+        status: timesheet.status.name,
+        submittedAt: timesheet.submitted_at,
+        totalHours,
       },
     };
   } catch (error) {
     console.error("Error fetching timesheet:", error);
-    return { error: "Failed to fetch timesheet" };
+    return { success: false, error: "Failed to fetch timesheet" };
   }
 }

@@ -5,14 +5,15 @@ import { getTimesheetByWeekEnding, saveTimesheet } from "@/app/actions";
 import {
   Column,
   Grid,
-  Notifications,
+  InlineNotification,
   Tag,
   TimesheetActions,
   TimesheetControls,
 } from "@/app/components";
 import TimesheetCards from "@/app/components/Timesheet/TimesheetCards";
-import { useNotification, useSelectedCode } from "@/app/providers";
+import { useSelectedWeek } from "@/app/providers";
 import type {
+  CodeWithWorkItems,
   DayOfWeek,
   TimeEntry,
   TimesheetProps,
@@ -27,17 +28,93 @@ import {
 type EditingValuesState = Record<string, Partial<Record<DayOfWeek, string>>>;
 
 export default function TimesheetPage({ weekEndings }: TimesheetProps) {
-  const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(weekEndings[0]);
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set([]));
+  const { selectedWeek: contextWeek, setSelectedWeek: setContextWeek } =
+    useSelectedWeek();
+
+  const initialWeek = contextWeek || weekEndings[0];
+  const [selectedWeek, setSelectedWeek] = useState<WeekEnding>(initialWeek);
+  const [workItems, setWorkItems] = useState<CodeWithWorkItems["work_items"]>(
+    [],
+  );
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [editingValues, setEditingValues] = useState<EditingValuesState>({});
-  const {
-    code: selectedCode,
-    workItems,
-    filterWorkItems,
-    addWorkItems,
-  } = useSelectedCode();
-  const { addNotification } = useNotification();
+  const [showNotification, setShowNotification] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load timesheet data whenever week changes
+  useEffect(() => {
+    async function loadTimesheet() {
+      setIsLoading(true);
+
+      const pendingCodeStr = localStorage.getItem("pendingCode");
+      let pendingWorkItems: CodeWithWorkItems["work_items"] = [];
+      let pendingTimeEntries: TimeEntry[] = [];
+
+      if (pendingCodeStr) {
+        try {
+          const pendingCode = JSON.parse(pendingCodeStr);
+
+          if (pendingCode.work_items?.length) {
+            pendingWorkItems = pendingCode.work_items;
+            pendingTimeEntries = pendingCode.work_items.map(
+              (workItem: (typeof pendingCode.work_items)[0]) => ({
+                id: workItem.id.toString(),
+                billCodeId: workItem.bill_codes[0].id,
+                subCodeId: workItem.id,
+                hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+              }),
+            );
+          }
+
+          localStorage.removeItem("pendingCode");
+        } catch (error) {
+          console.error("Error processing pending code:", error);
+        }
+      }
+
+      const result = await getTimesheetByWeekEnding(selectedWeek.id);
+
+      if (result.success && result.data) {
+        // Merge pending items with loaded items
+        const loadedWorkItems = result.data.workItems;
+        const loadedTimeEntries = result.data.timeEntries;
+
+        // Combine and deduplicate
+        const existingWorkItemIds = new Set(loadedWorkItems.map((w) => w.id));
+        const newPendingWorkItems = pendingWorkItems.filter(
+          (w) => !existingWorkItemIds.has(w.id),
+        );
+
+        const existingEntryIds = new Set(loadedTimeEntries.map((e) => e.id));
+        const newPendingEntries = pendingTimeEntries.filter(
+          (e) => !existingEntryIds.has(e.id),
+        );
+
+        setWorkItems([...loadedWorkItems, ...newPendingWorkItems]);
+        setTimeEntries([...loadedTimeEntries, ...newPendingEntries]);
+
+        if (result.data.hasTimesheet) {
+          const idsWithData = result.data.timeEntries
+            .filter((entry) => {
+              const hours = entry.hours as Record<string, number>;
+              return Object.values(hours).some((h) => h > 0);
+            })
+            .map((entry) => entry.id);
+          setExpandedRows(new Set(idsWithData));
+        }
+      }
+
+      setIsLoading(false);
+    }
+
+    loadTimesheet();
+  }, [selectedWeek.id]);
+
+  const handleWeekChange = (week: WeekEnding) => {
+    setSelectedWeek(week);
+    setContextWeek(week);
+  };
 
   const handleTempChange = (entryId: string, day: DayOfWeek, value: string) => {
     setEditingValues((prev) => ({
@@ -52,45 +129,20 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
     const raw =
       buffer !== undefined ? buffer : String(entry?.hours[day] ?? "0");
     const num = raw === "" ? 0 : Number.parseFloat(raw);
-    // commit numeric value into model
+
     setTimeEntries((prev) =>
       prev.map((e) =>
         e.id === entryId ? { ...e, hours: { ...e.hours, [day]: num } } : e,
       ),
     );
-    // clear buffer for that field
+
     setEditingValues((prev) => ({
       ...prev,
       [entryId]: { ...(prev[entryId] ?? {}), [day]: undefined },
     }));
   };
 
-  useEffect(() => {
-    const fetchUserBillCodes = async () => {
-      try {
-        const timesheet = await getTimesheetByWeekEnding(selectedWeek.id);
-        console.log("🚀 ~ fetchUserBillCodes ~ timesheet:", timesheet);
-        if (!timesheet.data?.bill_code_summary && selectedCode) {
-          setTimeEntries(
-            workItems.map((workItem) => ({
-              id: workItem.id.toString(),
-              billCodeId: workItem.bill_codes[0].id,
-              codeId: workItem.code_id,
-              subCodeId: workItem.id,
-              hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
-            })),
-          );
-        } else if (timesheet.data?.bill_code_summary) {
-          // addWorkItems(timesheet.data.bill_code_summary);
-        }
-      } catch (error: unknown) {
-        console.error("Error fetching bill codes:", (error as Error).message);
-      }
-    };
-    fetchUserBillCodes();
-  }, [selectedWeek.id, selectedCode, workItems]);
-
-  const toggleExpanded = (id: number): void => {
+  const toggleExpanded = (id: number) => {
     const castedId = id.toString();
     setExpandedRows((prev) => {
       const newSet = new Set(prev);
@@ -103,44 +155,29 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
     });
   };
 
-  const handleSave = (): void => {
-    try {
-      saveTimesheet(selectedWeek, timeEntries).then(() => {
-        addNotification({
-          kind: "success",
-          title: "Saved",
-          subtitle: "Your changes were saved",
-          type: "inline",
-        });
-      });
-    } catch (error: unknown) {
-      addNotification({
-        kind: "error",
-        title: "Error",
-        subtitle: "Failed to save timesheet",
-        type: "inline",
-      });
-      console.error(
-        "Error saving timesheet:",
-        error instanceof Error ? error.message : error,
-      );
-    }
+  const handleSave = async () => {
+    await saveTimesheet(selectedWeek, timeEntries);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
   };
 
-  const handleSubmit = (): void => {
+  const handleSubmit = () => {
     console.log("Submitting timesheet...", { selectedWeek, timeEntries });
   };
 
-  const deleteEntry = (entryId: string): void => {
-    filterWorkItems(Number(entryId));
+  const deleteEntry = (entryId: string) => {
     setTimeEntries((prev) => prev.filter((entry) => entry.id !== entryId));
+    setWorkItems((prev) => prev.filter((wi) => wi.id.toString() !== entryId));
   };
+
+  if (isLoading) {
+    return <div className="p-8">Loading...</div>;
+  }
 
   return (
     <div className="w-full bg-slate-50 min-h-full">
       <Grid fullWidth>
         <Column lg={16} md={8} sm={4}>
-          {/* Header */}
           <div className="bg-white p-4 sm:p-6 border-b border-slate-200">
             <div className="flex justify-between items-center flex-wrap gap-3">
               <h1 className="text-2xl sm:text-3xl font-normal text-[#161616] m-0">
@@ -155,18 +192,25 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
             </div>
           </div>
 
-          <div className="p-3 sm:p-4">
-            <Notifications />
-          </div>
+          {showNotification && (
+            <div className="p-3 sm:p-4">
+              <InlineNotification
+                kind="success"
+                title="Timesheet saved"
+                subtitle="Your changes have been saved successfully"
+                hideCloseButton={false}
+                onClose={() => setShowNotification(false)}
+                lowContrast
+              />
+            </div>
+          )}
 
-          {/* Controls */}
           <TimesheetControls
             selectedWeek={selectedWeek}
-            setSelectedWeek={setSelectedWeek}
+            setSelectedWeek={handleWeekChange}
             weekEndings={weekEndings}
           />
 
-          {/* Timesheet Cards */}
           <div className="bg-white min-h-[400px]">
             <div className="p-0 sm:p-4">
               <TimesheetCards
@@ -180,7 +224,6 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
                 timeEntries={timeEntries}
               />
 
-              {/* Totals summary */}
               <div className="mt-4 p-4 bg-slate-50 rounded-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="font-semibold">Week Totals</div>
                 <div className="flex items-center gap-3 text-sm flex-wrap">
@@ -210,7 +253,6 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <TimesheetActions
               handleSave={handleSave}
               handleSubmit={handleSubmit}
