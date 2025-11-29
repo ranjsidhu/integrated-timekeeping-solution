@@ -37,7 +37,7 @@ describe("submitTimesheet", () => {
 
     const result = await submitTimesheet(selectedWeek, timeEntries);
 
-    expect(result).toBeUndefined();
+    expect(result).toEqual({ success: true, status: undefined });
     expect(mockSave).toHaveBeenCalledWith(selectedWeek, timeEntries);
     expect(mockFindFirst).toHaveBeenCalledWith({
       where: { name: "Submitted" },

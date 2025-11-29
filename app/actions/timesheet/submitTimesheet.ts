@@ -27,6 +27,8 @@ const submitTimesheet = async (
         submitted_at: new Date(),
       },
     });
+
+    return { success: true, status: submittedStatus.name };
   } catch (error: unknown) {
     console.error(
       "Error submitting timesheet:",

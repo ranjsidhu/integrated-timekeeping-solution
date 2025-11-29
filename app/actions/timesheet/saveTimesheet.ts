@@ -92,7 +92,7 @@ const saveTimesheet = async (
       });
     }
 
-    return timesheet;
+    return { success: true, id: timesheet.id, status: draftStatus.name };
   } catch (error: unknown) {
     console.error(
       "Error saving timesheet:",

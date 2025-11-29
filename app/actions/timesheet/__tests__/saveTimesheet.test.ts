@@ -65,7 +65,7 @@ describe("saveTimesheet", () => {
     });
     mockFindFirst.mockResolvedValue({ id: 99 });
 
-    const upsertResult = { id: 123 };
+    const upsertResult = { id: 123, status: undefined, success: true };
     mockUpsert.mockResolvedValue(upsertResult);
     mockDeleteMany.mockResolvedValue({ count: 0 });
     mockCreateMany.mockResolvedValue({ count: 5 });
@@ -119,7 +119,7 @@ describe("saveTimesheet", () => {
 
     const result = await saveTimesheet(selectedWeek, [] as TimeEntry[]);
 
-    expect(result).toEqual({ id: 555 });
+    expect(result).toEqual({ id: 555, status: undefined, success: true });
     expect(mockUpsert).toHaveBeenCalled();
     expect(mockDeleteMany).toHaveBeenCalled();
     expect(mockCreateMany).not.toHaveBeenCalled();

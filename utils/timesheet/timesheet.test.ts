@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noTsIgnore: Unit tests */
 import type {
+  CodeWithWorkItems,
   DayHours,
   DayOfWeek,
   TimeEntry,
@@ -9,8 +10,13 @@ import type {
 import {
   calculateDayTotal,
   calculateTotal,
+  createBlankEntry,
   getDayInfo,
+  getEntriesWithHours,
   getStatusColor,
+  mergeTimeEntries,
+  mergeWorkItems,
+  processPendingCode,
 } from "./timesheet.utils";
 
 describe("timesheet utils", () => {
@@ -101,6 +107,256 @@ describe("timesheet utils", () => {
 
       // day not present should return 0
       expect(calculateDayTotal("wed" as DayOfWeek, entries)).toBe(0);
+    });
+  });
+
+  describe("processPendingCode", () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it("returns empty arrays when no pending code in localStorage", () => {
+      const result = processPendingCode();
+      expect(result).toEqual({ workItems: [], timeEntries: [] });
+    });
+
+    it("returns empty arrays when pending code has no work items", () => {
+      localStorage.setItem("pendingCode", JSON.stringify({ work_items: [] }));
+      const result = processPendingCode();
+      expect(result).toEqual({ workItems: [], timeEntries: [] });
+    });
+
+    it("processes pending code and creates time entries", () => {
+      const pendingCode = {
+        work_items: [
+          {
+            id: 1,
+            code_id: 10,
+            work_item_code: "WI001",
+            description: "Test Work Item",
+            bill_codes: [
+              {
+                id: 100,
+                work_item_id: 1,
+                bill_code: "BC001",
+                bill_name: "Test Bill Code",
+              },
+            ],
+          },
+        ],
+      };
+
+      localStorage.setItem("pendingCode", JSON.stringify(pendingCode));
+      const result = processPendingCode();
+
+      expect(result.workItems).toEqual(pendingCode.work_items);
+      expect(result.timeEntries).toEqual([
+        {
+          id: "1",
+          billCodeId: 100,
+          subCodeId: 1,
+          hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+        },
+      ]);
+      expect(localStorage.getItem("pendingCode")).toBeNull();
+    });
+
+    it("handles invalid JSON gracefully", () => {
+      localStorage.setItem("pendingCode", "invalid json");
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      const result = processPendingCode();
+
+      expect(result).toEqual({ workItems: [], timeEntries: [] });
+      expect(consoleSpy).toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe("mergeWorkItems", () => {
+    it("merges work items and deduplicates by id", () => {
+      const existing: CodeWithWorkItems["work_items"] = [
+        {
+          id: 1,
+          code_id: 10,
+          work_item_code: "WI001",
+          description: "Existing",
+          bill_codes: [],
+        },
+      ];
+
+      const newItems: CodeWithWorkItems["work_items"] = [
+        {
+          id: 1,
+          code_id: 10,
+          work_item_code: "WI001",
+          description: "Duplicate",
+          bill_codes: [],
+        },
+        {
+          id: 2,
+          code_id: 20,
+          work_item_code: "WI002",
+          description: "New",
+          bill_codes: [],
+        },
+      ];
+
+      const result = mergeWorkItems(existing, newItems);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe(1);
+      expect(result[0].description).toBe("Existing"); // Original kept
+      expect(result[1].id).toBe(2);
+      expect(result[1].description).toBe("New");
+    });
+
+    it("returns existing items when no new items", () => {
+      const existing: CodeWithWorkItems["work_items"] = [
+        {
+          id: 1,
+          code_id: 10,
+          work_item_code: "WI001",
+          description: "Existing",
+          bill_codes: [],
+        },
+      ];
+
+      const result = mergeWorkItems(existing, []);
+      expect(result).toEqual(existing);
+    });
+  });
+
+  describe("mergeTimeEntries", () => {
+    it("merges time entries and deduplicates by id", () => {
+      const existing: TimeEntry[] = [
+        {
+          id: "1",
+          billCodeId: 100,
+          hours: { mon: 8, tue: 8, wed: 0, thu: 0, fri: 0 },
+        },
+      ];
+
+      const newEntries: TimeEntry[] = [
+        {
+          id: "1",
+          billCodeId: 100,
+          hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+        },
+        {
+          id: "2",
+          billCodeId: 200,
+          hours: { mon: 4, tue: 4, wed: 0, thu: 0, fri: 0 },
+        },
+      ];
+
+      const result = mergeTimeEntries(existing, newEntries);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe("1");
+      expect(result[0].hours.mon).toBe(8); // Original kept
+      expect(result[1].id).toBe("2");
+    });
+
+    it("returns existing entries when no new entries", () => {
+      const existing: TimeEntry[] = [
+        {
+          id: "1",
+          billCodeId: 100,
+          hours: { mon: 8, tue: 8, wed: 0, thu: 0, fri: 0 },
+        },
+      ];
+
+      const result = mergeTimeEntries(existing, []);
+      expect(result).toEqual(existing);
+    });
+  });
+
+  describe("getEntriesWithHours", () => {
+    it("returns IDs of entries with hours greater than 0", () => {
+      const entries: TimeEntry[] = [
+        {
+          id: "1",
+          billCodeId: 100,
+          hours: { mon: 8, tue: 0, wed: 0, thu: 0, fri: 0 },
+        },
+        {
+          id: "2",
+          billCodeId: 200,
+          hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+        },
+        {
+          id: "3",
+          billCodeId: 300,
+          hours: { mon: 0, tue: 4, wed: 0, thu: 0, fri: 0 },
+        },
+      ];
+
+      const result = getEntriesWithHours(entries);
+
+      expect(result).toEqual(["1", "3"]);
+    });
+
+    it("returns empty array when no entries have hours", () => {
+      const entries: TimeEntry[] = [
+        {
+          id: "1",
+          billCodeId: 100,
+          hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+        },
+      ];
+
+      const result = getEntriesWithHours(entries);
+      expect(result).toEqual([]);
+    });
+
+    it("filters out undefined IDs", () => {
+      const entries: TimeEntry[] = [
+        {
+          id: undefined,
+          billCodeId: 100,
+          hours: { mon: 8, tue: 0, wed: 0, thu: 0, fri: 0 },
+        },
+        {
+          id: "2",
+          billCodeId: 200,
+          hours: { mon: 0, tue: 4, wed: 0, thu: 0, fri: 0 },
+        },
+      ];
+
+      const result = getEntriesWithHours(entries);
+      expect(result).toEqual(["2"]);
+    });
+  });
+
+  describe("createBlankEntry", () => {
+    it("creates a blank time entry from work item", () => {
+      const workItem: CodeWithWorkItems["work_items"][0] = {
+        id: 5,
+        code_id: 10,
+        work_item_code: "WI001",
+        description: "Test Work Item",
+        bill_codes: [
+          {
+            id: 100,
+            work_item_id: 5,
+            bill_code: "BC001",
+            bill_name: "Test Bill Code",
+          },
+        ],
+      };
+
+      const result = createBlankEntry(workItem);
+
+      expect(result).toEqual({
+        id: "5",
+        billCodeId: 100,
+        subCodeId: 5,
+        hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
+      });
     });
   });
 });
