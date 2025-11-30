@@ -40,6 +40,7 @@ describe("TimesheetCards", () => {
         onCommit={onCommit}
         deleteEntry={deleteEntry}
         timeEntries={timeEntries}
+        weekEnd={new Date()}
       />,
     );
 
@@ -48,7 +49,7 @@ describe("TimesheetCards", () => {
     expect(totals.length).toBe(2);
 
     // Buffered value should be shown for MON
-    const monInput = screen.getByLabelText("MON") as HTMLInputElement;
+    const monInput = screen.getByLabelText(/^MON/) as HTMLInputElement;
     expect(monInput.value).toBe("5");
 
     // Change input triggers onTempChange with entry id and day
@@ -96,11 +97,12 @@ describe("TimesheetCards", () => {
         onCommit={onCommit}
         deleteEntry={deleteEntry}
         timeEntries={timeEntries}
+        weekEnd={new Date()}
       />,
     );
 
     // Because the entry id is falsy (0), the input value should be empty string
-    const monInput = screen.getByLabelText("MON") as HTMLInputElement;
+    const monInput = screen.getByLabelText(/^MON/) as HTMLInputElement;
     expect(monInput.value).toBe("");
   });
 
@@ -118,6 +120,7 @@ describe("TimesheetCards", () => {
         onCommit={() => {}}
         deleteEntry={deleteEntry}
         timeEntries={[]}
+        weekEnd={new Date()}
       />,
     );
 

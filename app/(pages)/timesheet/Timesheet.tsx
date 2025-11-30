@@ -104,6 +104,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
                 onCommit={handleCommit}
                 deleteEntry={deleteEntry}
                 timeEntries={timeEntries}
+                weekEnd={selectedWeek.week_ending}
               />
 
               {/* Week totals */}

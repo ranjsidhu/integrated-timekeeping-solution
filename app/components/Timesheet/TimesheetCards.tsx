@@ -4,13 +4,17 @@ import type {
   DayOfWeek,
   TimeEntry,
 } from "@/types/timesheet.types";
-import { calculateTotal } from "@/utils/timesheet/timesheet.utils";
+import {
+  calculateTotal,
+  getDateLabel,
+} from "@/utils/timesheet/timesheet.utils";
 import Input from "../Input/Input";
 
 type TimesheetCardsProps = {
   workItems: CodeWithWorkItems["work_items"];
   expandedRows: Set<string>;
   toggleExpanded: (id: number) => void;
+  weekEnd: Date | string;
   editingValues?: Record<string, Partial<Record<DayOfWeek, string>>>;
   onTempChange: (entryId: string, day: DayOfWeek, value: string) => void;
   onCommit: (entryId: string, day: DayOfWeek) => void;
@@ -24,6 +28,7 @@ export default function TimesheetCards({
   workItems,
   expandedRows,
   toggleExpanded,
+  weekEnd,
   editingValues,
   onTempChange,
   onCommit,
@@ -119,37 +124,44 @@ export default function TimesheetCards({
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 mt-3">
-                        {days.map((day) => (
-                          <div
-                            key={day}
-                            className="flex flex-col items-stretch min-w-0"
-                          >
-                            <label
-                              htmlFor={`${entryId}-${day}-card`}
-                              className="text-xs text-slate-500 mb-1 text-left"
+                        {days.map((day) => {
+                          return (
+                            <div
+                              key={day}
+                              className="flex flex-col items-stretch min-w-0"
                             >
-                              {day.toUpperCase()}
-                            </label>
-                            <Input
-                              id={`${entryId}-${day}-card`}
-                              className="w-full"
-                              pattern="[0-9]*"
-                              type="number"
-                              min={0}
-                              hideSteppers
-                              data-invalid={false}
-                              value={getInputValue(entryId, day)}
-                              onChange={(e) =>
-                                onTempChange(
-                                  entryId,
-                                  day,
-                                  e.currentTarget.value,
-                                )
-                              }
-                              onBlur={() => onCommit(entryId, day)}
-                            />
-                          </div>
-                        ))}
+                              <label
+                                htmlFor={`${entryId}-${day}-card`}
+                                className="text-xs text-slate-500 mb-1 text-left"
+                              >
+                                <span className="font-medium">
+                                  {day.toUpperCase()}
+                                </span>
+                                <span className="text-xs text-slate-400 ml-2">
+                                  {getDateLabel(day, weekEnd)}
+                                </span>
+                              </label>
+                              <Input
+                                id={`${entryId}-${day}-card`}
+                                className="w-full"
+                                pattern="[0-9]*"
+                                type="number"
+                                min={0}
+                                hideSteppers
+                                data-invalid={false}
+                                value={getInputValue(entryId, day)}
+                                onChange={(e) =>
+                                  onTempChange(
+                                    entryId,
+                                    day,
+                                    e.currentTarget.value,
+                                  )
+                                }
+                                onBlur={() => onCommit(entryId, day)}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}

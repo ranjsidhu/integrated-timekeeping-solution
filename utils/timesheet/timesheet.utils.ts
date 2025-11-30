@@ -164,3 +164,52 @@ export function createBlankEntry(
     hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
   };
 }
+
+/**
+ *
+ * @param d - day of week string ("mon", "tue", etc.)
+ * @param weekEnd - date string or Date object representing week ending date
+ * @returns formatted date label (e.g., "Jan 1")
+ */
+export const getDateLabel = (d: DayOfWeek, weekEnd: Date | string) => {
+  try {
+    const indexMap: Record<DayOfWeek, number> = {
+      mon: 0,
+      tue: 1,
+      wed: 2,
+      thu: 3,
+      fri: 4,
+      sat: 5,
+      sun: 6,
+    } as const;
+
+    // derive monday either from weekEnd prop (assumed Friday) or calculate from now
+    let monday: Date;
+    if (weekEnd) {
+      const d =
+        typeof weekEnd === "string" ? new Date(weekEnd) : new Date(weekEnd);
+      // If the parsed date is invalid, return empty string to match guard behaviour
+      if (Number.isNaN(d.getTime())) return "";
+      // assume the passed date is the week-ending Friday; monday = friday - 4 days
+      monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 4);
+      monday.setHours(0, 0, 0, 0);
+    } else {
+      const now = new Date();
+      const isoDay = (now.getDay() + 6) % 7; // 0 = Monday
+      monday = new Date(now);
+      monday.setDate(now.getDate() - isoDay);
+      monday.setHours(0, 0, 0, 0);
+    }
+
+    const offset = indexMap[d] ?? 0;
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + offset);
+
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return "";
+  }
+};

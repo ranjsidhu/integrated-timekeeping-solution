@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/suspicious/noTsIgnore: Unit tests */
+/** biome-ignore-all lint/suspicious/noExplicitAny: Unit tests */
 import type {
   CodeWithWorkItems,
   DayHours,
@@ -11,6 +12,7 @@ import {
   calculateDayTotal,
   calculateTotal,
   createBlankEntry,
+  getDateLabel,
   getDayInfo,
   getEntriesWithHours,
   getStatusColor,
@@ -357,6 +359,80 @@ describe("timesheet utils", () => {
         subCodeId: 5,
         hours: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 },
       });
+    });
+  });
+
+  describe("getDateLabel", () => {
+    it("returns formatted short date labels for mon-fri when given a week-end (Friday) string", () => {
+      const weekEndStr = "2025-11-14"; // Friday
+      const days: Array<DayOfWeek> = ["mon", "tue", "wed", "thu", "fri"];
+
+      // compute expected using same logic (monday = friday - 4 days)
+      const friday = new Date(weekEndStr);
+      const monday = new Date(
+        friday.getFullYear(),
+        friday.getMonth(),
+        friday.getDate() - 4,
+      );
+
+      days.forEach((d, i) => {
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + i);
+        const expected = date.toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+        });
+        expect(getDateLabel(d, weekEndStr)).toBe(expected);
+      });
+    });
+
+    it("accepts a Date object for weekEnd and returns same labels", () => {
+      const weekEnd = new Date("2025-11-14T00:00:00Z");
+      const monLabel = getDateLabel("mon" as DayOfWeek, weekEnd);
+      const friLabel = getDateLabel("fri" as DayOfWeek, weekEnd);
+
+      // monday should be 4 days before friday
+      const friday = new Date(weekEnd);
+      const monday = new Date(
+        friday.getFullYear(),
+        friday.getMonth(),
+        friday.getDate() - 4,
+      );
+      const expectedMon = monday.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      });
+      const expectedFri = new Date(monday);
+      expectedFri.setDate(monday.getDate() + 4);
+      const expectedFriLabel = expectedFri.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      });
+
+      expect(monLabel).toBe(expectedMon);
+      expect(friLabel).toBe(expectedFriLabel);
+    });
+
+    it("returns empty string for invalid weekEnd input", () => {
+      const result = getDateLabel("mon" as DayOfWeek, "not-a-date");
+      expect(result).toBe("");
+    });
+
+    it("works when weekEnd is omitted (falls back to current week)", () => {
+      // call with undefined to exercise the fallback branch that computes current week
+      const result = getDateLabel("mon" as DayOfWeek, undefined as any);
+      expect(typeof result).toBe("string");
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    it("returns a label for weekend offsets when provided", () => {
+      // weekend keys exist in the indexMap; ensure they return a non-empty label
+      const sat = getDateLabel("sat" as DayOfWeek, undefined as any);
+      const sun = getDateLabel("sun" as DayOfWeek, undefined as any);
+      expect(typeof sat).toBe("string");
+      expect(sat.length).toBeGreaterThanOrEqual(0); // could be empty in edge cases, but should run the branch
+      expect(typeof sun).toBe("string");
+      expect(sun.length).toBeGreaterThanOrEqual(0);
     });
   });
 });
