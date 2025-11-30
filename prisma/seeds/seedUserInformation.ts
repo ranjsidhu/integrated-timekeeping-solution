@@ -90,24 +90,19 @@ async function seedUsers() {
   for (const userData of users) {
     const { email, password_hash, name, availability_date } = userData;
 
-    const existingUser = await prisma.user.findUnique({
+    const createdUser = await prisma.user.upsert({
       where: { email },
-    });
+      update: { password_hash },
 
-    if (!existingUser) {
-      const createdUser = await prisma.user.create({
-        data: {
-          email,
-          password_hash,
-          name,
-          availability_date: availability_date,
-        },
-      });
-      console.log(`Created user: ${email}`);
-      createdUsers.push(createdUser);
-    } else {
-      console.log(`User already exists: ${email}`);
-    }
+      create: {
+        email,
+        password_hash,
+        name,
+        availability_date: availability_date,
+      },
+    });
+    console.log(`Ensured user exists: ${email}`);
+    createdUsers.push(createdUser);
   }
   return createdUsers;
 }
