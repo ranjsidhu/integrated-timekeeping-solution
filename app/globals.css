@@ -15,15 +15,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-div .cds--number,
-div .cds--number__input-wrapper,
-div .cds--number__input-wrapper input,
-div .cds--number input[type="number"] {
+div .timesheet-card-input .cds--number,
+div .timesheet-card-input .cds--number__input-wrapper,
+div .timesheet-card-input .cds--number__input-wrapper input,
+div .timesheet-card-input .cds--number input[type="number"] {
   width: 75px !important;
   min-width: 75px !important;
   max-width: 75px !important;
 }
 
-div .cds--form-item {
+div .timesheet-card-input .cds--form-item {
   width: 75px !important;
 }

@@ -128,7 +128,7 @@ export default function TimesheetCards({
                           return (
                             <div
                               key={day}
-                              className="flex flex-col items-stretch min-w-0"
+                              className="flex flex-col items-stretch min-w-0 timesheet-card-input"
                             >
                               <label
                                 htmlFor={`${entryId}-${day}-card`}
