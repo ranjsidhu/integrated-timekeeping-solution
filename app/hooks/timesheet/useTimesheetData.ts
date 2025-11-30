@@ -12,7 +12,10 @@ import {
   processPendingCode,
 } from "@/utils/timesheet/timesheet.utils";
 
-export function useTimesheetData(selectedWeek: WeekEnding) {
+export function useTimesheetData(
+  selectedWeek: WeekEnding,
+  setTimesheetStatus: (status: string) => void,
+) {
   const [workItems, setWorkItems] = useState<CodeWithWorkItems["work_items"]>(
     [],
   );
@@ -49,13 +52,15 @@ export function useTimesheetData(selectedWeek: WeekEnding) {
           const idsWithData = getEntriesWithHours(result.data.timeEntries);
           setExpandedRows(new Set(idsWithData));
         }
+
+        setTimesheetStatus(result.data.status);
       }
 
       setIsLoading(false);
     }
 
     loadTimesheet();
-  }, [selectedWeek.id]);
+  }, [selectedWeek.id, setTimesheetStatus]);
 
   return {
     workItems,

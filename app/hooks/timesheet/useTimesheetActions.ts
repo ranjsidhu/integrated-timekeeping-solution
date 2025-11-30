@@ -86,6 +86,8 @@ export function useTimesheetActions(
         return mergeTimeEntries(prev, newEntries);
       });
 
+      setTimesheetStatus(result.data.status);
+
       addNotification({
         kind: "success",
         type: "inline",

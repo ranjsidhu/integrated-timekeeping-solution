@@ -8,6 +8,7 @@ const mockGetEntriesWithHours = jest.fn();
 const mockMergeTimeEntries = jest.fn();
 const mockMergeWorkItems = jest.fn();
 const mockProcessPendingCode = jest.fn();
+const mockSetTimesheetStatus = jest.fn();
 
 jest.mock("@/app/actions", () => ({
   getTimesheetByWeekEnding: (...args: any[]) =>
@@ -21,9 +22,17 @@ jest.mock("@/utils/timesheet/timesheet.utils", () => ({
   processPendingCode: (...args: any[]) => mockProcessPendingCode(...args),
 }));
 
-function TestHarness({ selectedWeek }: { selectedWeek: any }) {
-  const { workItems, timeEntries, expandedRows, isLoading } =
-    useTimesheetData(selectedWeek);
+function TestHarness({
+  selectedWeek,
+  setTimesheetStatus,
+}: {
+  selectedWeek: any;
+  setTimesheetStatus?: any;
+}) {
+  const { workItems, timeEntries, expandedRows, isLoading } = useTimesheetData(
+    selectedWeek,
+    setTimesheetStatus,
+  );
 
   return (
     <div>
@@ -67,7 +76,12 @@ describe("useTimesheetData (DOM harness)", () => {
     mockMergeTimeEntries.mockImplementation((a, b) => [...a, ...b]);
     mockGetEntriesWithHours.mockReturnValue(["e1"]);
 
-    render(<TestHarness selectedWeek={selectedWeek} />);
+    render(
+      <TestHarness
+        selectedWeek={selectedWeek}
+        setTimesheetStatus={mockSetTimesheetStatus}
+      />,
+    );
 
     await waitFor(() =>
       expect(screen.getByTestId("isLoading").textContent).toBe("0"),
@@ -97,7 +111,12 @@ describe("useTimesheetData (DOM harness)", () => {
     mockProcessPendingCode.mockReturnValue({ workItems: [], timeEntries: [] });
     mockGetTimesheetByWeekEnding.mockResolvedValue({ success: false });
 
-    render(<TestHarness selectedWeek={selectedWeek} />);
+    render(
+      <TestHarness
+        selectedWeek={selectedWeek}
+        setTimesheetStatus={mockSetTimesheetStatus}
+      />,
+    );
 
     await waitFor(() =>
       expect(screen.getByTestId("isLoading").textContent).toBe("0"),
@@ -128,7 +147,12 @@ describe("useTimesheetData (DOM harness)", () => {
     mockMergeTimeEntries.mockImplementation((a) => a);
     mockGetEntriesWithHours.mockReturnValue([]);
 
-    render(<TestHarness selectedWeek={selectedWeek} />);
+    render(
+      <TestHarness
+        selectedWeek={selectedWeek}
+        setTimesheetStatus={mockSetTimesheetStatus}
+      />,
+    );
 
     await waitFor(() =>
       expect(screen.getByTestId("isLoading").textContent).toBe("0"),

@@ -41,7 +41,7 @@ export default function TimesheetPage({ weekEndings }: TimesheetProps) {
     setWorkItems,
     setTimeEntries,
     setExpandedRows,
-  } = useTimesheetData(selectedWeek);
+  } = useTimesheetData(selectedWeek, setTimesheetStatus);
 
   // Handle editing interactions
   const { editingValues, handleTempChange, handleCommit, toggleExpanded } =
