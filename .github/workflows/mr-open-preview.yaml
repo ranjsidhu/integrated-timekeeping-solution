@@ -1,7 +1,8 @@
-name: Vercel Preview Deployment
+name: Open MR Deployment Checks
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 on:
   pull_request:
@@ -20,6 +21,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+      
+      - name: Generate Prisma Client
+        run: npx prisma generate
 
       - name: Unit Tests
         run: npm run test
@@ -31,13 +35,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Docker Build Check
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: false
-          load: false
+      - name: Docker Build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          LOCAL_DATABASE_URL: ${{ secrets.LOCAL_DATABASE_URL }}
+        run: |
+          docker build --no-cache \
+            --build-arg DATABASE_URL="$DATABASE_URL" \
+            --build-arg LOCAL_DATABASE_URL="$LOCAL_DATABASE_URL" \
+            -t its:latest .

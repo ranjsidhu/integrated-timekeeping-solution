@@ -1,65 +1,87 @@
+// biome-ignore assist/source/organizeImports: Unit tests
 import { getUserDetails } from "../serveractions";
 
+// Mocks
+jest.mock("@/utils/auth/getSession", () => ({
+  getSession: jest.fn(),
+}));
+
+jest.mock("@/prisma/prisma", () => ({
+  prisma: {
+    user: {
+      findUnique: jest.fn(),
+    },
+  },
+}));
+
+import { getSession } from "@/utils/auth/getSession";
+import { prisma } from "@/prisma/prisma";
+
 describe("getUserDetails server action", () => {
-  const ORIGINAL_ENV = process.env;
-
   beforeEach(() => {
-    jest.resetModules();
-    process.env = { ...ORIGINAL_ENV };
-    global.fetch = jest.fn();
+    jest.resetAllMocks();
   });
 
-  afterEach(() => {
-    (global.fetch as jest.Mock).mockRestore?.();
-    process.env = ORIGINAL_ENV;
-    jest.clearAllMocks();
-  });
+  it("returns user details when session matches and user exists", async () => {
+    const email = "test+1@example.com";
+    // mock session
+    (getSession as jest.Mock).mockResolvedValue({ user: { email, id: "1" } });
 
-  it("fetches user details and returns parsed JSON when response is ok", async () => {
-    process.env.BASE_URL = "https://api.example.com";
-    const mockResponse = { user: { roles: ["admin"] } };
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse,
+    // mock prisma response
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+      id: 1,
+      name: "Test User",
+      email,
+      user_roles: [{ role: { id: 1, name: "admin" } }],
     });
 
-    const email = "test+1@example.com";
     const data = await getUserDetails(email);
 
-    expect(data).toEqual(mockResponse);
-
-    const expectedUrl = `${process.env.BASE_URL}/api/user/${encodeURIComponent(
+    expect(data).toEqual({
+      id: 1,
+      name: "Test User",
       email,
-    )}`;
-
-    expect(global.fetch).toHaveBeenCalledWith(
-      expectedUrl,
-      expect.objectContaining({
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-      }),
-    );
-  });
-
-  it("throws when response.ok is false", async () => {
-    process.env.BASE_URL = "https://api.example.com";
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      status: 500,
+      roles: ["admin"],
     });
 
-    await expect(getUserDetails("u@x.com")).rejects.toThrow(
-      "Failed to fetch user details",
-    );
+    expect(getSession).toHaveBeenCalled();
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: { email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        user_roles: { select: { role: { select: { id: true, name: true } } } },
+      },
+    });
   });
 
-  it("propagates network errors from fetch", async () => {
-    process.env.BASE_URL = "https://api.example.com";
-    (global.fetch as jest.Mock).mockRejectedValueOnce(
-      new Error("network down"),
+  it("returns unauthorised error when session email doesn't match", async () => {
+    (getSession as jest.Mock).mockResolvedValue({
+      user: { email: "other@example.com" },
+    });
+    const result = await getUserDetails("user@example.com");
+    expect(result).toEqual({ error: "unauthorised-access-attempted" });
+    expect(prisma.user.findUnique).not.toHaveBeenCalled();
+  });
+
+  it("returns user-not-found when prisma returns null", async () => {
+    const email = "missing@example.com";
+    (getSession as jest.Mock).mockResolvedValue({ user: { email } });
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
+
+    const result = await getUserDetails(email);
+    expect(result).toEqual({ error: "user-not-found" });
+  });
+
+  it("returns null on unexpected errors", async () => {
+    const email = "err@example.com";
+    (getSession as jest.Mock).mockResolvedValue({ user: { email } });
+    (prisma.user.findUnique as jest.Mock).mockRejectedValue(
+      new Error("db down"),
     );
 
-    await expect(getUserDetails("u@x.com")).rejects.toThrow("network down");
+    const result = await getUserDetails(email);
+    expect(result).toBeNull();
   });
 });
