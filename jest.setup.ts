@@ -1,4 +1,10 @@
 import "@testing-library/jest-dom";
+
+// Polyfill TextEncoder/TextDecoder for the Jest (Node) environment
+import { TextEncoder, TextDecoder } from "util";
+(global as any).TextEncoder = TextEncoder;
+(global as any).TextDecoder = TextDecoder;
+
 jest.useFakeTimers();
 jest.spyOn(global, "setTimeout");
 
