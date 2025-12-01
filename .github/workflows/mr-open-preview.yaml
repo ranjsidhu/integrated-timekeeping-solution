@@ -38,7 +38,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Docker Build (match local)
+      - name: Docker Build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           LOCAL_DATABASE_URL: ${{ secrets.LOCAL_DATABASE_URL }}

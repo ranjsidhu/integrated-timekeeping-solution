@@ -6,6 +6,9 @@ import Column from "./Column/Column";
 import CopyButton from "./CopyButton/CopyButton";
 import Dropdown from "./Dropdown/Dropdown";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
+import ForecastActions from "./Forecast/ForecastActions";
+import ForecastControls from "./Forecast/ForecastControls";
+import ForecastTable from "./Forecast/ForecastTable";
 import Form from "./Form/Form";
 import Grid from "./Grid/Grid";
 import IconButton from "./IconButton/IconButton";
@@ -35,6 +38,9 @@ export {
   CopyButton,
   Dropdown,
   ErrorBoundary,
+  ForecastActions,
+  ForecastControls,
+  ForecastTable,
   Form,
   Grid,
   IconButton,
