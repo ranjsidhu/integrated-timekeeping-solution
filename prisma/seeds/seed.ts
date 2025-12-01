@@ -1,5 +1,5 @@
-// npx tsx prisma/seed.ts
-import { prisma } from "./prisma";
+// npx tsx prisma/seeds/seed.ts
+import { prisma } from "../prisma";
 
 // Seed TimesheetWeekEndings for every Friday between 2025-10-01 and 2026-12-26 using upsert logic
 const seedTimesheetWeekEndings = async () => {
