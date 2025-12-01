@@ -3,6 +3,11 @@
 import { prisma } from "@/prisma/prisma";
 import type { CodeWithWorkItems } from "@/types/timesheet.types";
 
+/**
+ * Fetches codes matching the search term along with their associated work items and bill codes.
+ * @param searchTerm - the term to search for in codes and descriptions
+ * @returns - an array of codes with their associated work items and bill codes
+ */
 const getCodesBySearch = async (
   searchTerm: string,
 ): Promise<CodeWithWorkItems[]> => {

@@ -14,6 +14,15 @@ import {
   mergeWorkItems,
 } from "@/utils/timesheet/timesheet.utils";
 
+/**
+ * Hook providing actions for timesheet management.
+ * @param selectedWeek - the selected week ending for the timesheet
+ * @param timeEntries - the current time entries in the timesheet
+ * @param setWorkItems - function to set work items
+ * @param setTimeEntries - function to set time entries
+ * @param setTimesheetStatus - function to set the timesheet status
+ * @returns - an object with handlers for saving, submitting, copying weeks, and deleting entries
+ */
 export function useTimesheetActions(
   selectedWeek: WeekEnding,
   timeEntries: TimeEntry[],
@@ -25,6 +34,10 @@ export function useTimesheetActions(
 ) {
   const { addNotification } = useNotification();
 
+  /**
+   * Handles saving the timesheet.
+   * @returns - void
+   */
   const handleSave = async () => {
     try {
       const result = await saveTimesheet(selectedWeek, timeEntries);
@@ -48,6 +61,10 @@ export function useTimesheetActions(
     }
   };
 
+  /**
+   * Handles submitting the timesheet.
+   * @returns - void
+   */
   const handleSubmit = async () => {
     try {
       const result = await submitTimesheet(selectedWeek, timeEntries);
@@ -72,6 +89,11 @@ export function useTimesheetActions(
     }
   };
 
+  /**
+   * Handles copying a previous week's timesheet data.
+   * @param weekToCopy - the week ending to copy from
+   * @returns - void
+   */
   const handleCopyWeek = async (weekToCopy: WeekEnding) => {
     const result = await getTimesheetByWeekEnding(weekToCopy.id);
 
@@ -97,6 +119,11 @@ export function useTimesheetActions(
     }
   };
 
+  /**
+   * Deletes a time entry and its associated work item.
+   * @param entryId - the ID of the time entry to delete
+   * @returns - void
+   */
   const deleteEntry = (entryId: string) => {
     setTimeEntries((prev) => prev.filter((entry) => entry.id !== entryId));
     setWorkItems((prev) => prev.filter((wi) => wi.id.toString() !== entryId));

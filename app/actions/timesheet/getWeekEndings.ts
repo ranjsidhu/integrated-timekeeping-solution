@@ -3,6 +3,10 @@
 import { prisma } from "@/prisma/prisma";
 import type { WeekEnding } from "@/types/timesheet.types";
 
+/**
+ * Fetches week endings up to the next week along with their statuses.
+ * @returns - an array of week endings with their statuses
+ */
 export const getWeekEndings = async (): Promise<WeekEnding[]> => {
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);

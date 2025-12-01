@@ -4,6 +4,12 @@ import { prisma } from "@/prisma/prisma";
 import type { TimeEntry, WeekEnding } from "@/types/timesheet.types";
 import { saveTimesheet } from "./saveTimesheet";
 
+/**
+ * Submits the timesheet for the selected week with the provided time entries.
+ * @param selectedWeek - the selected week ending for the timesheet
+ * @param timeEntries - the time entries to be submitted in the timesheet
+ * @returns - an object containing success status and updated status or null if failed
+ */
 const submitTimesheet = async (
   selectedWeek: WeekEnding,
   timeEntries: TimeEntry[],

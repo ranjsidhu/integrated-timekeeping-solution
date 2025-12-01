@@ -10,6 +10,11 @@ type WeekContextType = {
 
 const WeekContext = createContext<WeekContextType | undefined>(undefined);
 
+/**
+ * Provides week context to its children.
+ * @param children - React children nodes
+ * @returns React element
+ */
 export const WeekProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedWeek, setSelectedWeek] = useState<WeekEnding | null>(null);
 
@@ -20,6 +25,10 @@ export const WeekProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+/**
+ * Custom hook to use week context.
+ * @returns React context for selected week
+ */
 export function useSelectedWeek() {
   const context = useContext(WeekContext);
   if (!context)
