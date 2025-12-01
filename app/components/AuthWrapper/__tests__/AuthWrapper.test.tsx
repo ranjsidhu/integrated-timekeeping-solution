@@ -62,9 +62,9 @@ describe("AuthWrapper", () => {
         rolesRequired: undefined,
         session: { user: { email: "a@b" } },
       }),
-    ).rejects.toThrow("redirect:/error?type=user-fetch-failed");
+    ).rejects.toThrow("redirect:/error");
 
-    expect(redirect).toHaveBeenCalledWith("/error?type=user-fetch-failed");
+    expect(redirect).toHaveBeenCalledWith("/error");
   });
 
   it("redirects to error page when getUserDetails returns an error field", async () => {
@@ -76,9 +76,9 @@ describe("AuthWrapper", () => {
         rolesRequired: undefined,
         session: { user: { email: "a@b" } },
       }),
-    ).rejects.toThrow("redirect:/error?type=some-error");
+    ).rejects.toThrow("redirect:/error");
 
-    expect(redirect).toHaveBeenCalledWith("/error?type=some-error");
+    expect(redirect).toHaveBeenCalledWith("/error");
   });
 
   it("redirects to /timesheet when rolesRequired not satisfied", async () => {
@@ -118,8 +118,8 @@ describe("AuthWrapper", () => {
         rolesRequired: undefined,
         session: { user: { email: "a@b" } },
       }),
-    ).rejects.toThrow("redirect:/error?type=user-roles-missing");
+    ).rejects.toThrow("redirect:/error");
 
-    expect(redirect).toHaveBeenCalledWith("/error?type=user-roles-missing");
+    expect(redirect).toHaveBeenCalledWith("/error");
   });
 });

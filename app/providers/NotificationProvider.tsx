@@ -20,6 +20,11 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
   undefined,
 );
 
+/**
+ * Provides notification context to its children.
+ * @param children - React children nodes
+ * @returns React element
+ */
 export const NotificationProvider = ({
   children,
 }: {
@@ -28,6 +33,11 @@ export const NotificationProvider = ({
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const timersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
+  /**
+   * Adds a new notification.
+   * @param notification - notification details without timeout
+   * @returns void
+   */
   const addNotification = useCallback(
     (notification: Omit<NotificationType, "timeout">) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -54,6 +64,10 @@ export const NotificationProvider = ({
     [],
   );
 
+  /**   * Removes a notification by index.
+   * @param index - index of the notification to remove
+   * @returns void
+   */
   const removeNotification = useCallback((index: number) => {
     setNotifications((prev) => {
       const notif = prev[index] as unknown as { id?: string } | undefined;
@@ -85,6 +99,10 @@ export const NotificationProvider = ({
   );
 };
 
+/**
+ * Custom hook to use notification context.
+ * @returns React context for notifications
+ */
 export function useNotification() {
   const context = useContext(NotificationContext);
   if (!context) {

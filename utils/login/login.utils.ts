@@ -1,5 +1,10 @@
 import type { FormErrors, LoginFormData } from "@/types/login.types";
 
+/**
+ * Validates the login form data.
+ * @param formData - The login form data to validate
+ * @returns FormErrors object containing validation errors
+ */
 const validateForm = (formData: LoginFormData): FormErrors => {
   const newErrors: FormErrors = {};
 

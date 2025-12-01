@@ -4,6 +4,11 @@ import { prisma } from "@/prisma/prisma";
 import type { DayOfWeek } from "@/types/timesheet.types";
 import { getSession } from "@/utils/auth/getSession";
 
+/**
+ * Fetches the timesheet for a given week ending ID.
+ * @param weekEndingId - the ID of the week ending for which to fetch the timesheet
+ * @returns - an object containing success status and either data or error message
+ */
 export async function getTimesheetByWeekEnding(weekEndingId: number) {
   try {
     const session = await getSession();
