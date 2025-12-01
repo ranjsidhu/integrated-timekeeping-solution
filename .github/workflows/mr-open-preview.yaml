@@ -20,9 +20,11 @@ jobs:
 
       - name: Lint
         run: npm run lint
+      
+      - name: Generate Prisma Client
+        run: npx prisma generate
 
       - name: Unit Tests
-        run: npx prisma generate
         run: npm run test
 
       - name: Type Check
