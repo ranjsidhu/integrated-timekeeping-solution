@@ -35,13 +35,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Docker Build Check
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: false
-          load: false
+      - name: Docker Build (match local)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          LOCAL_DATABASE_URL: ${{ secrets.LOCAL_DATABASE_URL }}
+        run: |
+          docker build --no-cache \
+            --build-arg DATABASE_URL="$DATABASE_URL" \
+            --build-arg LOCAL_DATABASE_URL="$LOCAL_DATABASE_URL" \
+            -t its:latest .
