@@ -14,3 +14,16 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+div .timesheet-card-input .cds--number,
+div .timesheet-card-input .cds--number__input-wrapper,
+div .timesheet-card-input .cds--number__input-wrapper input,
+div .timesheet-card-input .cds--number input[type="number"] {
+  width: 75px !important;
+  min-width: 75px !important;
+  max-width: 75px !important;
+}
+
+div .timesheet-card-input .cds--form-item {
+  width: 75px !important;
+}
