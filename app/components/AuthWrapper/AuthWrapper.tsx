@@ -13,17 +13,17 @@ export default async function AuthWrapper({
 
   const userDetails = await getUserDetails(session.user.email);
   if (!userDetails) {
-    redirect("/error?type=user-fetch-failed");
+    redirect("/error");
   }
 
   if (userDetails.error) {
-    redirect(`/error?type=${userDetails.error}`);
+    redirect("/error");
   }
 
-  const userRoles = userDetails?.roles;
+  const userRoles = userDetails?.roles as Role[];
 
   if (!userRoles) {
-    redirect("/error?type=user-roles-missing");
+    redirect("/error");
   }
 
   // Compare the user roles with the required roles

@@ -2,6 +2,11 @@
 
 import { prisma } from "@/prisma/prisma";
 
+/**
+ * Adds a code along with its associated work items and bill codes to the timesheet.
+ * @param codeId - the ID of the code to be added to the timesheet
+ * @returns - an object containing success status and either data or error message
+ */
 export async function addCodeToTimesheet(codeId: number) {
   try {
     const code = await prisma.code.findUnique({

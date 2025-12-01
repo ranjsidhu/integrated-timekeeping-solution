@@ -6,6 +6,11 @@ type SignInCallbackParams = {
   account: Account | null | undefined;
 };
 
+/**
+ * Callback function to handle user sign-in.
+ * @param param0 - Object containing user and account information
+ * @returns Promise resolving to boolean indicating sign-in success
+ */
 export async function signInCallback({ user }: SignInCallbackParams) {
   try {
     if (!user?.email) {

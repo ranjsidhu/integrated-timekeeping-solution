@@ -4,6 +4,12 @@ import { prisma } from "@/prisma/prisma";
 import type { TimeEntry, WeekEnding } from "@/types/timesheet.types";
 import { getSession } from "@/utils/auth/getSession";
 
+/**
+ * Saves the timesheet for the selected week with the provided time entries.
+ * @param selectedWeek - the selected week ending for the timesheet
+ * @param timeEntries - the time entries to be saved in the timesheet
+ * @returns - an object containing success status and timesheet ID or null if failed
+ */
 const saveTimesheet = async (
   selectedWeek: WeekEnding,
   timeEntries: TimeEntry[],

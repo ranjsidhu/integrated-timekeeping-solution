@@ -12,6 +12,12 @@ import {
   processPendingCode,
 } from "@/utils/timesheet/timesheet.utils";
 
+/**
+ * Hook for managing timesheet data.
+ * @param selectedWeek - the selected week ending for the timesheet
+ * @param setTimesheetStatus - function to set the timesheet status
+ * @returns - an object containing timesheet data and state setters
+ */
 export function useTimesheetData(
   selectedWeek: WeekEnding,
   setTimesheetStatus: (status: string) => void,
