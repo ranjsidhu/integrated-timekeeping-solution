@@ -5,6 +5,7 @@ import type { WeekEnding } from "@/types/timesheet.types";
 
 /**
  * Get the next 12 week endings starting from current week for forecasting
+ * @returns - array of WeekEnding objects
  */
 export const getForecastWeekEndings = async (): Promise<WeekEnding[]> => {
   const today = new Date();

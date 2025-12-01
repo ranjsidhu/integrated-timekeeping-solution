@@ -21,3 +21,16 @@ export type ForecastEntry = {
 export type ForecastProps = {
   weekEndings: WeekEnding[];
 };
+
+export type Category = {
+  id: number;
+  category_name: string;
+  assignment_type: "Productive" | "Non-Productive";
+  description: string;
+};
+
+export type Project = {
+  id: number;
+  project_name: string;
+  client_name?: string;
+};

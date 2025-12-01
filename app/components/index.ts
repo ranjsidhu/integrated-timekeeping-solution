@@ -6,9 +6,13 @@ import Column from "./Column/Column";
 import CopyButton from "./CopyButton/CopyButton";
 import Dropdown from "./Dropdown/Dropdown";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
-import ForecastActions from "./Forecast/ForecastActions";
-import ForecastControls from "./Forecast/ForecastControls";
-import ForecastTable from "./Forecast/ForecastTable";
+import AddEntryModal from "./Forecast/AddEntryModal";
+import AddEntryStep1 from "./Forecast/AddEntrySteps/AddEntryStep1";
+import AddEntryStep2 from "./Forecast/AddEntrySteps/AddEntryStep2";
+import ForecastEntriesList from "./Forecast/ForecastEntriesList";
+import ForecastHeader from "./Forecast/ForecastHeader";
+import ForecastSummary from "./Forecast/ForecastSummary";
+import ForecastTimeline from "./Forecast/ForecastTimeline";
 import Form from "./Form/Form";
 import Grid from "./Grid/Grid";
 import IconButton from "./IconButton/IconButton";
@@ -16,6 +20,7 @@ import Input from "./Input/Input";
 import Layout from "./Layout/Layout";
 import Link from "./Link/Link";
 import Loading from "./Loading/Loading";
+import Modal from "./Modal/Modal";
 import InlineNotification from "./Notifications/InlineNotification/InlineNotification";
 import Notifications from "./Notifications/Notifications";
 import ToastNotification from "./Notifications/ToastNotification/ToastNotification";
@@ -38,9 +43,13 @@ export {
   CopyButton,
   Dropdown,
   ErrorBoundary,
-  ForecastActions,
-  ForecastControls,
-  ForecastTable,
+  AddEntryModal,
+  AddEntryStep1,
+  AddEntryStep2,
+  ForecastEntriesList,
+  ForecastHeader,
+  ForecastSummary,
+  ForecastTimeline,
   Form,
   Grid,
   IconButton,
@@ -48,6 +57,7 @@ export {
   Layout,
   Link,
   Loading,
+  Modal,
   InlineNotification,
   Notifications,
   ToastNotification,
