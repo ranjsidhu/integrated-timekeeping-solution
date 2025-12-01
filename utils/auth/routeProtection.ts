@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-import type { RouteHandler } from "@/types/auth.types";
 import { getSession } from "@/utils/auth/getSession";
 import { checkUserRole } from "@/utils/auth/userAuth";
 
@@ -9,17 +7,18 @@ import { checkUserRole } from "@/utils/auth/userAuth";
  * @param allowedRoles Roles allowed to access endpoint
  * @returns Either a 4xx error or the result of the handler
  */
-export function withRoleProtection(
-  handler: RouteHandler,
+export async function withRoleProtection<T, Args extends unknown[]>(
+  handler: (...args: Args) => Promise<T>,
   allowedRoles: string[],
-): RouteHandler {
-  return async (req, context) => {
-    const { isAuthorized, response } = await checkUserRole(allowedRoles);
-    if (!isAuthorized && response) {
-      return response;
-    }
-    return handler(req, context);
-  };
+  ...args: Args
+): Promise<T> {
+  const { isAuthorized, response } = await checkUserRole(allowedRoles);
+  if (!isAuthorized && response) {
+    throw new Error(
+      `Unauthorized: ${allowedRoles.join(" or ")} access required`,
+    );
+  }
+  return await handler(...args);
 }
 
 /**
@@ -27,19 +26,17 @@ export function withRoleProtection(
  * @param handler API code in route.ts
  * @returns Either a 4xx error or the result of the handler
  */
-export function withSessionProtection(handler: RouteHandler): RouteHandler {
-  return async (req, context) => {
-    const session = await getSession();
+export async function withSessionProtection<T, Args extends unknown[]>(
+  handler: (...args: Args) => Promise<T>,
+  ...args: Args
+): Promise<T> {
+  const session = await getSession();
 
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { isAuthorized: false, error: "Unauthorized: No session found" },
-        { status: 401 },
-      );
-    }
+  if (!session?.user?.email) {
+    throw new Error("Unauthorized: No session found");
+  }
 
-    return handler(req, context);
-  };
+  return await handler(...args);
 }
 
 /**

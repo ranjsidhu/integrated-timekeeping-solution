@@ -1,22 +1,29 @@
 import { redirect } from "next/navigation";
 import type { AuthWrapperProps, Role } from "@/types/login.types";
-import { getSession } from "@/utils/auth/getSession";
 import { getUserDetails } from "./serveractions";
 
 export default async function AuthWrapper({
   children,
+  session,
   rolesRequired,
 }: AuthWrapperProps) {
-  const session = await getSession();
   if (!session?.user) {
     redirect("/");
   }
 
   const userDetails = await getUserDetails(session.user.email);
-  const userRoles: string[] = userDetails?.user?.roles || [];
+  if (!userDetails) {
+    redirect("/error");
+  }
 
-  if (!userDetails?.user?.roles) {
-    redirect("/");
+  if (userDetails.error) {
+    redirect("/error");
+  }
+
+  const userRoles = userDetails?.roles as Role[];
+
+  if (!userRoles) {
+    redirect("/error");
   }
 
   // Compare the user roles with the required roles

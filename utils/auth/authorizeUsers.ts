@@ -8,6 +8,11 @@ interface Credentials {
   password: string;
 }
 
+/**
+ * Authorizes a user based on provided credentials.
+ * @param credentials - Partial record containing email and password
+ * @returns User object if authorized, otherwise null
+ */
 const authorizeUsers = async (
   credentials: Partial<Record<"email" | "password", unknown>>,
 ) => {

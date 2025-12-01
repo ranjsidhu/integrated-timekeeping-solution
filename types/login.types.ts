@@ -2,6 +2,8 @@
  * TypeScript type definitions for login components
  */
 
+import type { Session } from "next-auth";
+
 export interface LoginFormData {
   email: string;
   password: string;
@@ -51,5 +53,6 @@ export type Role = "Employee" | "Resource Manager";
 
 export interface AuthWrapperProps {
   children: React.ReactNode;
+  session: Session | null;
   rolesRequired?: Role[];
 }
