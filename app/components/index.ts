@@ -5,6 +5,8 @@ import Checkbox from "./Checkbox/Checkbox";
 import CheckboxGroup from "./Checkbox/CheckboxGroup";
 import Column from "./Column/Column";
 import CopyButton from "./CopyButton/CopyButton";
+import DatePicker from "./DatePicker/DatePicker";
+import DatePickerInput from "./DatePickerInput/DatePickerInput";
 import Dropdown from "./Dropdown/Dropdown";
 import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
 import AddEntryModal from "./Forecast/AddEntryModal";
@@ -25,6 +27,8 @@ import Modal from "./Modal/Modal";
 import InlineNotification from "./Notifications/InlineNotification/InlineNotification";
 import Notifications from "./Notifications/Notifications";
 import ToastNotification from "./Notifications/ToastNotification/ToastNotification";
+import ProgressIndicator from "./ProgressIndicator/ProgressIndicator";
+import ProgressStep from "./ProgressIndicator/ProgressStep";
 import Search from "./Search/Search";
 import SearchCodes from "./SearchCodes/SearchCodes";
 import Tag from "./Tag/Tag";
@@ -43,6 +47,8 @@ export {
   CheckboxGroup,
   Column,
   CopyButton,
+  DatePicker,
+  DatePickerInput,
   Dropdown,
   ErrorBoundary,
   AddEntryModal,
@@ -63,6 +69,8 @@ export {
   InlineNotification,
   Notifications,
   ToastNotification,
+  ProgressIndicator,
+  ProgressStep,
   Search,
   SearchCodes,
   Tag,
