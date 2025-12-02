@@ -1,4 +1,15 @@
 import { render, screen } from "@testing-library/react";
+
+// Mock Header to avoid importing ESM modules (@carbon/react, next-auth)
+jest.mock("../Header/Header", () => {
+  return () => (
+    <header>
+      <a href="/">Integrated Timekeeping</a>
+      <span>IBM</span>
+    </header>
+  );
+});
+
 import Layout from "./Layout";
 
 describe("Layout component", () => {

@@ -5,6 +5,16 @@ jest.mock("@/utils/auth/signIn", () => ({
   handleCredentialsSignIn: jest.fn(),
 }));
 
+// Mock Header to avoid importing ESM modules (@carbon/react, next-auth)
+jest.mock("../Header/Header", () => {
+  return () => (
+    <header>
+      <a href="/">Integrated Timekeeping</a>
+      <span>IBM</span>
+    </header>
+  );
+});
+
 import { handleCredentialsSignIn } from "@/utils/auth/signIn";
 
 describe("LoginForm", () => {
