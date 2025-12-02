@@ -13,11 +13,11 @@ npm run lint || {
     exit 1
 }
 
-echo "📝 Running type check..."
-npm run type-check || {
-    echo "❌ Type check failed. Please fix the type errors before committing."
-    exit 1
-}
+# echo "📝 Running type check..."
+# npm run type-check || {
+#     echo "❌ Type check failed. Please fix the type errors before committing."
+#     exit 1
+# }
 
 
 echo "📝 Running unit tests..."

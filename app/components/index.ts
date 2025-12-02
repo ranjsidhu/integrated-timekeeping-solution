@@ -1,5 +1,6 @@
 import AuthWrapper from "./AuthWrapper/AuthWrapper";
 import Button from "./Button/Button";
+import Category from "./Category/Category";
 import Checkbox from "./Checkbox/Checkbox";
 import CheckboxGroup from "./Checkbox/CheckboxGroup";
 import Column from "./Column/Column";
@@ -13,6 +14,7 @@ import Input from "./Input/Input";
 import Layout from "./Layout/Layout";
 import Link from "./Link/Link";
 import Loading from "./Loading/Loading";
+import Modal from "./Modal/Modal";
 import InlineNotification from "./Notifications/InlineNotification/InlineNotification";
 import Notifications from "./Notifications/Notifications";
 import ToastNotification from "./Notifications/ToastNotification/ToastNotification";
@@ -29,6 +31,7 @@ import TimesheetWorkItems from "./Timesheet/TimesheetWorkItems";
 export {
   AuthWrapper,
   Button,
+  Category,
   Checkbox,
   CheckboxGroup,
   Column,
@@ -42,6 +45,7 @@ export {
   Layout,
   Link,
   Loading,
+  Modal,
   InlineNotification,
   Notifications,
   ToastNotification,
