@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { searchProjects } from "@/app/actions";
 import type { Project } from "@/types/forecast.types";
 import Button from "../../Button/Button";
+import Input from "../../Input/Input";
 
 type AddEntryStep2Props = {
   categoryId: number | undefined;
@@ -79,19 +80,15 @@ export default function AddEntryStep2({
 
       {/* Project Search */}
       <div>
-        <label
-          htmlFor="project-search"
-          className="block text-sm font-medium text-[#161616] mb-2"
-        >
-          Project *
-        </label>
-        <input
-          id="project-search"
+        <Input
           type="text"
+          labelText="Project *"
+          id="project-search"
           value={projectSearch}
           onChange={(e) => setProjectSearch(e.target.value)}
           placeholder="Search for a project..."
-          className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
+          data-testid="add-entry-project-search"
+          className="w-full rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
         />
         {projects.length > 0 && (
           <div className="mt-2 max-h-48 overflow-y-auto border border-[#e0e0e0] rounded-md">
@@ -163,24 +160,18 @@ export default function AddEntryStep2({
 
       {/* Hours Per Week */}
       <div>
-        <label
-          htmlFor="hours-per-week"
-          className="block text-sm font-medium text-[#161616] mb-2"
-        >
-          Hours Per Week *
-        </label>
-        <input
-          id="hours-per-week"
+        <Input
           type="number"
+          id="hours-per-week"
+          label="Hours Per Week *"
+          helperText="Enter hours between 0 and 40"
           min={0}
           max={40}
-          value={hoursPerWeek}
-          onChange={(e) => setHoursPerWeek(Number(e.target.value))}
-          className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
+          value={String(hoursPerWeek)}
+          hideSteppers
+          onChange={(e) => setHoursPerWeek(Number(e.currentTarget.value))}
+          className="w-full rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
         />
-        <p className="text-xs text-[#525252] mt-1">
-          Enter hours between 0 and 40
-        </p>
       </div>
 
       {/* Potential Extension (Optional) */}

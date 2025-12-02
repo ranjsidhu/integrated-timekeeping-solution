@@ -61,7 +61,7 @@ export default function Header() {
           </HeaderNavigation>
           <HeaderGlobalBar data-testid="header-global-bar">
             <HeaderGlobalAction
-              aria-label="initials"
+              aria-label={initials}
               tooltipAlignment="center"
               data-testid="header-global-action-initials"
             >

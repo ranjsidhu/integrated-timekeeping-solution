@@ -1,21 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import type { Category } from "@/types/forecast.types";
+import type {
+  AddEntryStep1Props,
+  Category as CategoryType,
+} from "@/types/forecast.types";
 import Button from "../../Button/Button";
-
-type AddEntryStep1Props = {
-  categories: Category[];
-  onNext: (data: { category_id: number }) => void;
-  onCancel: () => void;
-};
+import Category from "../../Category/Category";
 
 export default function AddEntryStep1({
   categories,
   onNext,
   onCancel,
 }: AddEntryStep1Props) {
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     null,
   );
 
@@ -51,23 +49,12 @@ export default function AddEntryStep1({
         </p>
         <div className="space-y-2">
           {productiveCategories.map((category) => (
-            <button
+            <Category
               key={category.id}
-              type="button"
-              onClick={() => setSelectedCategory(category)}
-              className={`w-full p-4 rounded-md border-2 text-left transition-all ${
-                selectedCategory?.id === category.id
-                  ? "border-[#0f62fe] bg-[#e0e0e0]"
-                  : "border-[#e0e0e0] hover:border-[#8d8d8d] bg-white"
-              }`}
-            >
-              <div className="font-medium text-[#161616]">
-                {category.category_name}
-              </div>
-              <div className="text-sm text-[#525252] mt-1">
-                {category.description}
-              </div>
-            </button>
+              category={category}
+              onSelect={setSelectedCategory}
+              isSelected={selectedCategory?.id === category.id}
+            />
           ))}
         </div>
       </div>
@@ -79,23 +66,12 @@ export default function AddEntryStep1({
         </p>
         <div className="space-y-2">
           {nonProductiveCategories.map((category) => (
-            <button
+            <Category
               key={category.id}
-              type="button"
-              onClick={() => setSelectedCategory(category)}
-              className={`w-full p-4 rounded-md border-2 text-left transition-all ${
-                selectedCategory?.id === category.id
-                  ? "border-[#8a3ffc] bg-[#e8daff]"
-                  : "border-[#e0e0e0] hover:border-[#8d8d8d] bg-white"
-              }`}
-            >
-              <div className="font-medium text-[#161616]">
-                {category.category_name}
-              </div>
-              <div className="text-sm text-[#525252] mt-1">
-                {category.description}
-              </div>
-            </button>
+              category={category}
+              onSelect={setSelectedCategory}
+              isSelected={selectedCategory?.id === category.id}
+            />
           ))}
         </div>
       </div>

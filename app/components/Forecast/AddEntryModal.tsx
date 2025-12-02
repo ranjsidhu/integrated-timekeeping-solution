@@ -61,7 +61,7 @@ export default function AddEntryModal({
       open={isOpen}
       onRequestClose={handleClose}
       modalHeading="Add Forecast Entry"
-      passiveModal={false}
+      passiveModal
       size="lg"
       preventCloseOnClickOutside
     >
