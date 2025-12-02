@@ -1,5 +1,6 @@
 import AuthWrapper from "./AuthWrapper/AuthWrapper";
 import Button from "./Button/Button";
+import Category from "./Category/Category";
 import Checkbox from "./Checkbox/Checkbox";
 import CheckboxGroup from "./Checkbox/CheckboxGroup";
 import Column from "./Column/Column";
@@ -37,6 +38,7 @@ import TimesheetWorkItems from "./Timesheet/TimesheetWorkItems";
 export {
   AuthWrapper,
   Button,
+  Category,
   Checkbox,
   CheckboxGroup,
   Column,

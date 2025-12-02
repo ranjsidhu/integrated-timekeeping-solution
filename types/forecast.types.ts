@@ -13,7 +13,7 @@ export type ForecastEntry = {
   to_date: Date | string;
   potential_extension?: Date | string | null;
   hours_per_week: number;
-  weekly_hours?: Record<number, number>; // weekEndingId -> hours
+  weekly_hours?: Record<number, number>;
   created_at?: Date | string;
   updated_at?: Date | string;
 };
@@ -33,4 +33,16 @@ export type Project = {
   id: number;
   project_name: string;
   client_name?: string;
+};
+
+export type CategoryProps = {
+  category: Category;
+  onSelect: (category: Category) => void;
+  isSelected: boolean;
+};
+
+export type AddEntryStep1Props = {
+  categories: Category[];
+  onNext: (data: { category_id: number }) => void;
+  onCancel: () => void;
 };
