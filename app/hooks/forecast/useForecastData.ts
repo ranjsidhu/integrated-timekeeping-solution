@@ -13,11 +13,12 @@ export function useForecastData(setForecastStatus: (status: string) => void) {
       // const result = await getForecastPlan(userId);
 
       // Mock data for now
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setForecastEntries([]);
         setForecastStatus("Draft");
         setIsLoading(false);
       }, 500);
+      return () => clearTimeout(timeoutId);
     }
 
     loadForecast();

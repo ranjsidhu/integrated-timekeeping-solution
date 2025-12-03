@@ -49,8 +49,9 @@ export default function ForecastHeader({
         {/* Right side - Actions */}
         <div className="flex items-center gap-3 flex-wrap">
           {/* View Toggle */}
-          <div className="flex items-center bg-[#f4f4f4] rounded-md p-1">
+          <fieldset className="flex items-center bg-[#f4f4f4] rounded-md p-1">
             <button
+              aria-label="Timeline View"
               type="button"
               onClick={() => onViewModeChange("timeline")}
               className={`${baseClassname} ${
@@ -62,6 +63,7 @@ export default function ForecastHeader({
               <Grid size={20} />
             </button>
             <button
+              aria-label="List View"
               type="button"
               onClick={() => onViewModeChange("list")}
               className={`${baseClassname} ${
@@ -70,7 +72,7 @@ export default function ForecastHeader({
             >
               <List size={20} />
             </button>
-          </div>
+          </fieldset>
 
           {/* Action Buttons */}
           <Button

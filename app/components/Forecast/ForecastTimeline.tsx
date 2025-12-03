@@ -118,6 +118,7 @@ function ForecastTimelineCard({
               {entry.category_name}
             </span>
             <button
+              aria-label="Edit entry"
               type="button"
               onClick={() => onEditEntry(entry.id)}
               className="p-2 text-[#525252] hover:text-[#0f62fe] hover:bg-[#e0e0e0] rounded-md transition-colors"
@@ -125,6 +126,7 @@ function ForecastTimelineCard({
               <Edit size={18} />
             </button>
             <button
+              aria-label="Delete entry"
               type="button"
               onClick={() => onDeleteEntry(entry.id)}
               className="p-2 text-[#525252] hover:text-[#da1e28] hover:bg-[#e0e0e0] rounded-md transition-colors"
@@ -179,7 +181,7 @@ function ForecastTimelineCard({
 
         {/* Weekly Hours Timeline */}
         <div className="bg-[#f4f4f4] rounded-lg p-4">
-          <div className="grid grid-cols-12 gap-2">
+          <div className={`grid grid-cols-${weekEndings.length} gap-2`}>
             {weekEndings.map((week, index) => {
               const weekHours =
                 entry.weekly_hours?.[week.id] || entry.hours_per_week || 0;

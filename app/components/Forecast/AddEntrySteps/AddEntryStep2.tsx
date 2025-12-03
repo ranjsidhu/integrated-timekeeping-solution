@@ -64,8 +64,8 @@ export default function AddEntryStep2({
 
   const isValid =
     selectedProject &&
-    fromDate &&
-    toDate &&
+    fromDate.length > 0 &&
+    toDate.length > 0 &&
     hoursPerWeek > 0 &&
     hoursPerWeek <= 40;
 
@@ -93,9 +93,14 @@ export default function AddEntryStep2({
           className="w-full rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
         />
         {projects.length > 0 && (
-          <div className="mt-2 max-h-48 overflow-y-auto border border-[#e0e0e0] rounded-md">
+          <div
+            className="mt-2 max-h-48 overflow-y-auto border border-[#e0e0e0] rounded-md"
+            role="listbox"
+            aria-label="Project results"
+          >
             {projects.map((project) => (
               <button
+                role="option"
                 key={project.id}
                 type="button"
                 onClick={() => {

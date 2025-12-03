@@ -48,6 +48,9 @@ export default function ForecastEntriesList({
             className={`${index !== 0 ? "border-t border-[#e0e0e0]" : ""}`}
           >
             <button
+              aria-label="Toggle entry details"
+              aria-expanded={isExpanded}
+              aria-controls="entry-details"
               type="button"
               onClick={() => setExpandedId(isExpanded ? null : entry.id)}
               className="w-full p-6 flex items-center justify-between hover:bg-[#f4f4f4] transition-colors"
@@ -82,7 +85,7 @@ export default function ForecastEntriesList({
             </button>
 
             {isExpanded && (
-              <div className="px-6 pb-6 bg-[#f4f4f4]">
+              <section className="px-6 pb-6 bg-[#f4f4f4]" id="entry-details">
                 <div className="bg-white rounded-lg p-4 space-y-4 border border-[#e0e0e0]">
                   {/* Details */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
@@ -132,7 +135,7 @@ export default function ForecastEntriesList({
                     </button>
                   </div>
                 </div>
-              </div>
+              </section>
             )}
           </div>
         );

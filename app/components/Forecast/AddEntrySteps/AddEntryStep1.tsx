@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type {
   AddEntryStep1Props,
   Category as CategoryType,
@@ -24,11 +24,14 @@ export default function AddEntryStep1({
   };
 
   // Group categories by assignment type
-  const productiveCategories = categories.filter(
-    (c) => c.assignment_type === "Productive",
+  const productiveCategories = useMemo(
+    () => categories.filter((c) => c.assignment_type === "Productive"),
+    [categories.filter],
   );
-  const nonProductiveCategories = categories.filter(
-    (c) => c.assignment_type === "Non-Productive",
+
+  const nonProductiveCategories = useMemo(
+    () => categories.filter((c) => c.assignment_type === "Non-Productive"),
+    [categories.filter],
   );
 
   return (
