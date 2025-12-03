@@ -45,4 +45,25 @@ export type AddEntryStep1Props = {
   categories: Category[];
   onNext: (data: { category_id: number }) => void;
   onCancel: () => void;
+  initialCategoryId?: number;
+};
+
+export type AddEntryStep2Props = {
+  categoryId: number | undefined;
+  onNext: (data: {
+    project_id: number;
+    from_date: Date[];
+    to_date: Date[];
+    hours_per_week: number;
+    potential_extension?: Date[];
+  }) => void;
+  onBack: () => void;
+  onCancel: () => void;
+  initialData?: {
+    project_id?: number;
+    from_date?: Date[];
+    to_date?: Date[];
+    hours_per_week?: number;
+    potential_extension?: Date[];
+  };
 };

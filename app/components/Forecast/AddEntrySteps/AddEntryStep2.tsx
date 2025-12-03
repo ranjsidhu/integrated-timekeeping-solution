@@ -2,27 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { searchProjects } from "@/app/actions";
-import type { Project } from "@/types/forecast.types";
+import type { AddEntryStep2Props, Project } from "@/types/forecast.types";
 import Button from "../../Button/Button";
 import DatePicker from "../../DatePicker/DatePicker";
 import DatePickerInput from "../../DatePickerInput/DatePickerInput";
 import Input from "../../Input/Input";
 
-type AddEntryStep2Props = {
-  categoryId: number | undefined;
-  onNext: (data: {
-    project_id: number;
-    from_date: Date[];
-    to_date: Date[];
-    hours_per_week: number;
-    potential_extension?: Date[];
-  }) => void;
-  onBack: () => void;
-  onCancel: () => void;
-};
-
 export default function AddEntryStep2({
   categoryId,
+  initialData,
   onNext,
   onBack,
   onCancel,
@@ -30,10 +18,32 @@ export default function AddEntryStep2({
   const [projectSearch, setProjectSearch] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [fromDate, setFromDate] = useState<Date[]>([]);
-  const [toDate, setToDate] = useState<Date[]>([]);
-  const [hoursPerWeek, setHoursPerWeek] = useState(40);
-  const [potentialExtension, setPotentialExtension] = useState<Date[]>([]);
+  const [fromDate, setFromDate] = useState<Date[]>(
+    initialData?.from_date || [],
+  );
+  const [toDate, setToDate] = useState<Date[]>(initialData?.to_date || []);
+  const [hoursPerWeek, setHoursPerWeek] = useState(
+    initialData?.hours_per_week || 40,
+  );
+  const [potentialExtension, setPotentialExtension] = useState<Date[]>(
+    initialData?.potential_extension || [],
+  );
+
+  // Load initial project if editing
+  useEffect(() => {
+    if (initialData?.project_id) {
+      // Fetch project details
+      const loadProject = async () => {
+        const results = await searchProjects("", categoryId || 0);
+        const project = results.find((p) => p.id === initialData.project_id);
+        if (project) {
+          setSelectedProject(project);
+          setProjectSearch(project.project_name);
+        }
+      };
+      loadProject();
+    }
+  }, [initialData?.project_id, categoryId]);
 
   // Search projects
   useEffect(() => {

@@ -187,7 +187,7 @@ model TimesheetEntry {
 model ForecastPlan {
   id           Int      @id @default(autoincrement())
   user_id      Int
-  submitted_at DateTime @db.Timestamptz(6)
+  submitted_at DateTime? @db.Timestamptz(6)
   created_at   DateTime @default(now()) @db.Timestamptz(6)
   updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
@@ -206,6 +206,7 @@ model ForecastEntry {
   from_date        DateTime @db.Date
   to_date          DateTime @db.Date
   hours_per_week   Int
+  potential_extension DateTime? @db.Date
   created_at       DateTime @default(now()) @db.Timestamptz(6)
   updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
