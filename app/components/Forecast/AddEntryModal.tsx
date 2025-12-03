@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Modal } from "@/app/components";
+import { Modal, ProgressIndicator, ProgressStep } from "@/app/components";
 import type { Category } from "@/types/forecast.types";
 import AddEntryStep1 from "./AddEntrySteps/AddEntryStep1";
 import AddEntryStep2 from "./AddEntrySteps/AddEntryStep2";
@@ -68,29 +68,18 @@ export default function AddEntryModal({
       <div className="p-4">
         {/* Progress Indicator */}
         <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center gap-4">
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                currentStep >= 1
-                  ? "bg-[#0f62fe] text-white"
-                  : "bg-[#e0e0e0] text-[#8d8d8d]"
-              }`}
-            >
-              1
-            </div>
-            <div
-              className={`w-16 h-1 ${currentStep >= 2 ? "bg-[#0f62fe]" : "bg-[#e0e0e0]"}`}
+          <ProgressIndicator currentIndex={currentStep - 1}>
+            <ProgressStep
+              complete={currentStep > 1}
+              label="Category"
+              description="Select category"
             />
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                currentStep >= 2
-                  ? "bg-[#0f62fe] text-white"
-                  : "bg-[#e0e0e0] text-[#8d8d8d]"
-              }`}
-            >
-              2
-            </div>
-          </div>
+            <ProgressStep
+              complete={currentStep > 2}
+              label="Details"
+              description="Enter details"
+            />
+          </ProgressIndicator>
         </div>
 
         {/* Step Content */}
