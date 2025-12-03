@@ -16,10 +16,10 @@ type AddEntryModalProps = {
 export type NewForecastEntry = {
   category_id: number;
   project_id: number;
-  from_date: string;
-  to_date: string;
+  from_date: Date[];
+  to_date: Date[];
   hours_per_week: number;
-  potential_extension?: string;
+  potential_extension?: Date[];
 };
 
 export default function AddEntryModal({

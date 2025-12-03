@@ -4,16 +4,18 @@ import { useEffect, useState } from "react";
 import { searchProjects } from "@/app/actions";
 import type { Project } from "@/types/forecast.types";
 import Button from "../../Button/Button";
+import DatePicker from "../../DatePicker/DatePicker";
+import DatePickerInput from "../../DatePickerInput/DatePickerInput";
 import Input from "../../Input/Input";
 
 type AddEntryStep2Props = {
   categoryId: number | undefined;
   onNext: (data: {
     project_id: number;
-    from_date: string;
-    to_date: string;
+    from_date: Date[];
+    to_date: Date[];
     hours_per_week: number;
-    potential_extension?: string;
+    potential_extension?: Date[];
   }) => void;
   onBack: () => void;
   onCancel: () => void;
@@ -28,10 +30,10 @@ export default function AddEntryStep2({
   const [projectSearch, setProjectSearch] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [fromDate, setFromDate] = useState<Date[]>([]);
+  const [toDate, setToDate] = useState<Date[]>([]);
   const [hoursPerWeek, setHoursPerWeek] = useState(40);
-  const [potentialExtension, setPotentialExtension] = useState("");
+  const [potentialExtension, setPotentialExtension] = useState<Date[]>([]);
 
   // Search projects
   useEffect(() => {
@@ -127,34 +129,30 @@ export default function AddEntryStep2({
       {/* Date Range */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label
-            htmlFor="from-date"
-            className="block text-sm font-medium text-[#161616] mb-2"
+          <DatePicker
+            datePickerType="single"
+            className="w-full"
+            onChange={(e) => setFromDate(e)}
           >
-            Start Date *
-          </label>
-          <input
-            id="from-date"
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
-          />
+            <DatePickerInput
+              id="from-date"
+              size="lg"
+              labelText="Start date"
+              className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
+              placeholder="mm/dd/yyyy"
+            />
+          </DatePicker>
         </div>
         <div>
-          <label
-            htmlFor="to-date"
-            className="block text-sm font-medium text-[#161616] mb-2"
-          >
-            End Date *
-          </label>
-          <input
-            id="to-date"
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
-          />
+          <DatePicker datePickerType="single" onChange={(e) => setToDate(e)}>
+            <DatePickerInput
+              id="to-date"
+              size="lg"
+              labelText="End date"
+              className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
+              placeholder="mm/dd/yyyy"
+            />
+          </DatePicker>
         </div>
       </div>
 
@@ -176,19 +174,18 @@ export default function AddEntryStep2({
 
       {/* Potential Extension (Optional) */}
       <div>
-        <label
-          htmlFor="extension-date"
-          className="block text-sm font-medium text-[#161616] mb-2"
+        <DatePicker
+          datePickerType="single"
+          onChange={(e) => setPotentialExtension(e)}
         >
-          Potential Extension (Optional)
-        </label>
-        <input
-          id="extension-date"
-          type="date"
-          value={potentialExtension}
-          onChange={(e) => setPotentialExtension(e.target.value)}
-          className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
-        />
+          <DatePickerInput
+            id="extension-date"
+            size="lg"
+            labelText="Potential Extension (Optional)"
+            className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
+            placeholder="mm/dd/yyyy"
+          />
+        </DatePicker>
       </div>
 
       {/* Actions */}
