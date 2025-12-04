@@ -67,3 +67,13 @@ export type AddEntryStep2Props = {
     potential_extension?: Date[];
   };
 };
+
+export type AddEntryStep3Props = {
+  fromDate: Date[];
+  toDate: Date[];
+  weekEndings: WeekEnding[];
+  onNext: (weeklyHours: Record<number, number>) => void;
+  onBack: () => void;
+  onCancel: () => void;
+  initialWeeklyHours?: Record<number, number>;
+};

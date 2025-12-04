@@ -2,21 +2,23 @@
 
 import { ChartLine, Time } from "@carbon/icons-react";
 import type { ForecastEntry } from "@/types/forecast.types";
-import type { WeekEnding } from "@/types/timesheet.types";
 
 type ForecastSummaryProps = {
   forecastEntries: ForecastEntry[];
-  weekEndings: WeekEnding[];
 };
 
 export default function ForecastSummary({
   forecastEntries,
-  weekEndings,
 }: ForecastSummaryProps) {
-  const totalHours = forecastEntries.reduce(
-    (sum, entry) => sum + (entry.hours_per_week || 0) * weekEndings.length,
-    0,
-  );
+  // Calculate total hours from actual weekly breakdowns, not weekEndings.length
+  const totalHours = forecastEntries.reduce((sum, entry) => {
+    // Sum up the actual hours from weekly_hours
+    const entryTotal = Object.values(entry.weekly_hours || {}).reduce(
+      (entrySum, hours) => entrySum + hours,
+      0,
+    );
+    return sum + entryTotal;
+  }, 0);
 
   const activeProjects = new Set(forecastEntries.map((e) => e.project_id)).size;
 

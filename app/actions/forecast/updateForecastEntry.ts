@@ -66,12 +66,11 @@ export async function updateForecastEntry(
       where: { forecast_entry_id: entryId },
     });
 
-    // Generate new weekly breakdown for each week between from_date and to_date
+    // IMPORTANT: Only get weeks that fall WITHIN the from_date to to_date range
     const weekEndings = await prisma.timesheetWeekEnding.findMany({
       where: {
         week_ending: {
           gte: fromDate,
-          lte: toDate,
         },
       },
       orderBy: {
@@ -79,14 +78,26 @@ export async function updateForecastEntry(
       },
     });
 
-    // Create new weekly breakdown entries
-    await prisma.forecastWeeklyBreakdown.createMany({
-      data: weekEndings.map((week) => ({
-        forecast_entry_id: entryId,
-        forecast_week_ending_id: week.id,
-        hours: entry.hours_per_week,
-      })),
+    // Filter to only include weeks where to_date falls within or before the week
+    const filteredWeeks = weekEndings.filter((week) => {
+      // A week ending on 'week_ending' starts 6 days before
+      const weekStart = new Date(week.week_ending);
+      weekStart.setDate(weekStart.getDate() - 6);
+
+      // Include this week if to_date is on or after the week start
+      return toDate >= weekStart;
     });
+
+    // Create new weekly breakdown entries
+    if (filteredWeeks.length > 0) {
+      await prisma.forecastWeeklyBreakdown.createMany({
+        data: filteredWeeks.map((week) => ({
+          forecast_entry_id: entryId,
+          forecast_week_ending_id: week.id,
+          hours: entry.hours_per_week,
+        })),
+      });
+    }
 
     return { success: true };
   } catch (error) {

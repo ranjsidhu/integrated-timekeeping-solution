@@ -195,10 +195,7 @@ export default function ForecastPage({
 
         <Notifications />
 
-        <ForecastSummary
-          forecastEntries={forecastEntries}
-          weekEndings={weekEndings}
-        />
+        <ForecastSummary forecastEntries={forecastEntries} />
 
         <div className="mt-8">
           {viewMode === "timeline" ? (
@@ -211,7 +208,6 @@ export default function ForecastPage({
           ) : (
             <ForecastEntriesList
               forecastEntries={forecastEntries}
-              weekEndings={weekEndings}
               onEditEntry={handleEditEntry}
               onDeleteEntry={handleDeleteEntry}
             />
@@ -225,6 +221,7 @@ export default function ForecastPage({
         onClose={() => setIsAddModalOpen(false)}
         onSave={handleSaveNewEntry}
         categories={categories}
+        weekEndings={weekEndings}
       />
 
       <EditEntryModal

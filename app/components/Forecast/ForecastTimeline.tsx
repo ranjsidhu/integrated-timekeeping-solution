@@ -183,8 +183,7 @@ function ForecastTimelineCard({
         <div className="bg-[#f4f4f4] rounded-lg p-4">
           <div className={`grid grid-cols-${weekEndings.length} gap-2`}>
             {weekEndings.map((week, index) => {
-              const weekHours =
-                entry.weekly_hours?.[week.id] || entry.hours_per_week || 0;
+              const weekHours = entry.weekly_hours?.[week.id] || 0;
               const hasHours = weekHours > 0;
 
               return (
@@ -217,7 +216,11 @@ function ForecastTimelineCard({
         <div className="mt-4 flex items-center justify-between text-sm">
           <span className="text-[#525252]">Total Hours</span>
           <span className="text-lg font-semibold text-[#161616]">
-            {(entry.hours_per_week || 0) * weekEndings.length}h
+            {Object.values(entry.weekly_hours || {}).reduce(
+              (sum, hours) => sum + hours,
+              0,
+            )}
+            h
           </span>
         </div>
       </div>

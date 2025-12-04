@@ -57,11 +57,32 @@ jest.mock("../AddEntrySteps/AddEntryStep2", () => (props: any) => {
   );
 });
 
+jest.mock("../AddEntrySteps/AddEntryStep3", () => (props: any) => {
+  return (
+    <div>
+      <button
+        type="button"
+        data-testid="step3-back"
+        onClick={() => props.onBack?.()}
+      >
+        Back
+      </button>
+      <button
+        type="button"
+        data-testid="step3-complete"
+        onClick={() => props.onNext?.({ 1: 8, 2: 8, 3: 8 })}
+      >
+        Complete
+      </button>
+    </div>
+  );
+});
+
 import AddEntryModal from "../AddEntryModal";
 import type { Category } from "@/types/forecast.types";
 
 describe("AddEntryModal", () => {
-  it("completes flow: step1 -> step2 -> save and close", () => {
+  it("completes flow: step1 -> step2 -> step3 -> save and close", () => {
     const onClose = jest.fn();
     const onSave = jest.fn();
     const categories: Category[] = [
@@ -79,6 +100,7 @@ describe("AddEntryModal", () => {
         onClose={onClose}
         onSave={onSave}
         categories={categories}
+        weekEndings={[]}
       />,
     );
 
@@ -87,8 +109,12 @@ describe("AddEntryModal", () => {
     fireEvent.click(step1Next);
 
     // Step2 complete button should be visible
-    const complete = screen.getByTestId("step2-complete");
-    fireEvent.click(complete);
+    const step2Complete = screen.getByTestId("step2-complete");
+    fireEvent.click(step2Complete);
+
+    // Step3 complete button should be visible
+    const step3Complete = screen.getByTestId("step3-complete");
+    fireEvent.click(step3Complete);
 
     // onSave should be called with the combined entry (category_id from step1)
     expect(onSave).toHaveBeenCalledTimes(1);
@@ -96,6 +122,7 @@ describe("AddEntryModal", () => {
     expect(payload.category_id).toBe(10);
     expect(payload.project_id).toBe(20);
     expect(payload.hours_per_week).toBe(8);
+    expect(payload.weekly_hours).toEqual({ 1: 8, 2: 8, 3: 8 });
 
     // modal should close via onClose
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -119,6 +146,7 @@ describe("AddEntryModal", () => {
         onClose={onClose}
         onSave={onSave}
         categories={categories}
+        weekEndings={[]}
       />,
     );
 

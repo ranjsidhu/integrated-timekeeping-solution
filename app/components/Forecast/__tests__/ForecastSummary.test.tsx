@@ -11,26 +11,23 @@ import ForecastSummary from "../ForecastSummary";
 
 describe("ForecastSummary", () => {
   it("calculates total hours and active projects correctly (distinct projects)", () => {
-    const weekEndings = [
-      { id: 1, label: "A", week_ending: new Date(), status: "" },
-      { id: 2, label: "B", week_ending: new Date(), status: "" },
-      { id: 3, label: "C", week_ending: new Date(), status: "" },
-    ];
-
     const forecastEntries = [
-      { project_id: 1, hours_per_week: 5 } as any,
-      { project_id: 2, hours_per_week: 10 } as any,
+      {
+        project_id: 1,
+        hours_per_week: 5,
+        weekly_hours: { 1: 5, 2: 5, 3: 5 },
+      } as any,
+      {
+        project_id: 2,
+        hours_per_week: 10,
+        weekly_hours: { 1: 10, 2: 10, 3: 10 },
+      } as any,
     ];
 
-    render(
-      <ForecastSummary
-        forecastEntries={forecastEntries}
-        weekEndings={weekEndings}
-      />,
-    );
+    render(<ForecastSummary forecastEntries={forecastEntries} />);
 
-    // totalHours = (5 + 10) * 3 = 45
-    expect(screen.getByText("45h")).toBeInTheDocument();
+    // totalHours = (5 + 5 + 5) + (10 + 10 + 10) = 45
+    expect(screen.getByText(/45h/)).toBeInTheDocument();
     // active projects = 2
     expect(screen.getByText("2")).toBeInTheDocument();
 
@@ -40,24 +37,15 @@ describe("ForecastSummary", () => {
   });
 
   it("counts active projects correctly when same project appears multiple times", () => {
-    const weekEndings = [
-      { id: 1, label: "A", week_ending: new Date(), status: "" },
-    ];
-
     const forecastEntries = [
-      { project_id: 1, hours_per_week: 8 } as any,
-      { project_id: 1, hours_per_week: 8 } as any,
+      { project_id: 1, hours_per_week: 8, weekly_hours: { 1: 8, 2: 8 } } as any,
+      { project_id: 1, hours_per_week: 8, weekly_hours: { 1: 8, 2: 8 } } as any,
     ];
 
-    render(
-      <ForecastSummary
-        forecastEntries={forecastEntries}
-        weekEndings={weekEndings}
-      />,
-    );
+    render(<ForecastSummary forecastEntries={forecastEntries} />);
 
-    // totalHours = (8 + 8) * 1 = 16
-    expect(screen.getByText("16h")).toBeInTheDocument();
+    // totalHours = (8 + 8) + (8 + 8) = 32
+    expect(screen.getByText(/32h/)).toBeInTheDocument();
     // active projects = 1
     expect(screen.getByText("1")).toBeInTheDocument();
   });

@@ -3,14 +3,17 @@
 import { useState } from "react";
 import { Modal, ProgressIndicator, ProgressStep } from "@/app/components";
 import type { Category } from "@/types/forecast.types";
+import type { WeekEnding } from "@/types/timesheet.types";
 import AddEntryStep1 from "./AddEntrySteps/AddEntryStep1";
 import AddEntryStep2 from "./AddEntrySteps/AddEntryStep2";
+import AddEntryStep3 from "./AddEntrySteps/AddEntryStep3";
 
 type AddEntryModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSave: (entry: NewForecastEntry) => void;
   categories: Category[];
+  weekEndings: WeekEnding[];
 };
 
 export type NewForecastEntry = {
@@ -20,6 +23,7 @@ export type NewForecastEntry = {
   to_date: Date[];
   hours_per_week: number;
   potential_extension?: Date[];
+  weekly_hours?: Record<number, number>;
 };
 
 export default function AddEntryModal({
@@ -27,6 +31,7 @@ export default function AddEntryModal({
   onClose,
   onSave,
   categories,
+  weekEndings,
 }: AddEntryModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<NewForecastEntry>>({});
@@ -36,10 +41,17 @@ export default function AddEntryModal({
     setCurrentStep(2);
   };
 
-  const handleStep2Complete = (data: Omit<NewForecastEntry, "category_id">) => {
+  const handleStep2Complete = (
+    data: Omit<NewForecastEntry, "category_id" | "weekly_hours">,
+  ) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+    setCurrentStep(3);
+  };
+
+  const handleStep3Complete = (weeklyHours: Record<number, number>) => {
     const completeEntry: NewForecastEntry = {
       ...formData,
-      ...data,
+      weekly_hours: weeklyHours,
     } as NewForecastEntry;
 
     onSave(completeEntry);
@@ -79,6 +91,11 @@ export default function AddEntryModal({
               label="Details"
               description="Enter details"
             />
+            <ProgressStep
+              complete={currentStep > 3}
+              label="Hours"
+              description="Customize hours"
+            />
           </ProgressIndicator>
         </div>
 
@@ -99,6 +116,20 @@ export default function AddEntryModal({
             onCancel={handleClose}
           />
         )}
+
+        {currentStep === 3 &&
+          formData.from_date &&
+          formData.to_date &&
+          formData.hours_per_week && (
+            <AddEntryStep3
+              fromDate={formData.from_date}
+              toDate={formData.to_date}
+              weekEndings={weekEndings}
+              onNext={handleStep3Complete}
+              onBack={handleBack}
+              onCancel={handleClose}
+            />
+          )}
       </div>
     </Modal>
   );

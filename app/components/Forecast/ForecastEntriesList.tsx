@@ -3,18 +3,15 @@
 import { ChevronRight, Edit, TrashCan } from "@carbon/icons-react";
 import { useState } from "react";
 import type { ForecastEntry } from "@/types/forecast.types";
-import type { WeekEnding } from "@/types/timesheet.types";
 
 type ForecastEntriesListProps = {
   forecastEntries: ForecastEntry[];
-  weekEndings: WeekEnding[];
   onEditEntry: (entryId: number) => void;
   onDeleteEntry: (entryId: number) => void;
 };
 
 export default function ForecastEntriesList({
   forecastEntries,
-  weekEndings,
   onEditEntry,
   onDeleteEntry,
 }: ForecastEntriesListProps) {
@@ -71,7 +68,11 @@ export default function ForecastEntriesList({
                 </div>
                 <div className="text-right mr-4">
                   <div className="text-2xl font-semibold text-[#161616]">
-                    {(entry.hours_per_week || 0) * weekEndings.length}h
+                    {Object.values(entry.weekly_hours || {}).reduce(
+                      (sum, hours) => sum + hours,
+                      0,
+                    )}
+                    h
                   </div>
                   <div className="text-xs text-[#8d8d8d]">total</div>
                 </div>

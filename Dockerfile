@@ -5,7 +5,7 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json package-lock.json* prisma.config.ts ./
+COPY package.json package-lock.json* prisma.config.ts .npmrc* ./
 COPY prisma ./prisma
 RUN npm ci
 
@@ -18,6 +18,9 @@ COPY . .
 
 
 ENV NEXT_TELEMETRY_DISABLED=1
+
+ENV DATABASE_URL="default-string"
+ENV LOCAL_DATABASE_URL="default-string"
 
 ARG DATABASE_URL
 ARG LOCAL_DATABASE_URL
