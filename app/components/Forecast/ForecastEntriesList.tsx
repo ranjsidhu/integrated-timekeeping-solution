@@ -91,12 +91,6 @@ export default function ForecastEntriesList({
                   {/* Details */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-[#525252]">Client:</span>
-                      <span className="ml-2 font-medium text-[#161616]">
-                        {entry.client_name || "N/A"}
-                      </span>
-                    </div>
-                    <div>
                       <span className="text-[#525252]">Start:</span>
                       <span className="ml-2 font-medium text-[#161616]">
                         {new Date(entry.from_date).toLocaleDateString()}

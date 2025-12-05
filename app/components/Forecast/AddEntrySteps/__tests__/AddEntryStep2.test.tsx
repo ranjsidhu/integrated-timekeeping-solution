@@ -86,9 +86,7 @@ describe("AddEntryStep2 minimal tests", () => {
   });
 
   it("searches, selects project, sets dates/hours and calls onNext", async () => {
-    mockSearchProjects.mockResolvedValueOnce([
-      { id: 1, project_name: "Proj", client_name: "C" },
-    ]);
+    mockSearchProjects.mockResolvedValueOnce([{ id: 1, project_name: "Proj" }]);
 
     const onNext = jest.fn();
     const onBack = jest.fn();

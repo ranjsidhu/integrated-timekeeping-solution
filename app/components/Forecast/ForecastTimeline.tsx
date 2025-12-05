@@ -47,7 +47,10 @@ export default function ForecastTimeline({
     );
   }
 
-  // Calculate totals per week
+  // Only display first 12 weeks in the UI
+  const displayWeeks = weekEndings.slice(0, 12);
+
+  // Calculate totals per week (only for displayed weeks)
   const calculateWeekTotal = (weekId: number) => {
     return forecastEntries.reduce((sum, entry) => {
       const weekHours = entry.weekly_hours?.[weekId] || 0;
@@ -73,7 +76,7 @@ export default function ForecastTimeline({
               <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-[140px]">
                 Extension
               </th>
-              {weekEndings.map((week, index) => (
+              {displayWeeks.map((week, index) => (
                 <th
                   key={week.id}
                   className="px-2 py-3 text-center font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-[70px]"
@@ -103,11 +106,6 @@ export default function ForecastTimeline({
                     ? "bg-[#0f62fe]"
                     : "bg-[#24a148]";
 
-              const totalHours = Object.values(entry.weekly_hours || {}).reduce(
-                (sum, hours) => sum + hours,
-                0,
-              );
-
               return (
                 <tr
                   key={entry.id}
@@ -129,9 +127,6 @@ export default function ForecastTimeline({
                         </div>
                         <div className="text-xs text-[#525252] truncate">
                           {entry.category_name}
-                        </div>
-                        <div className="text-xs text-[#8d8d8d] mt-1">
-                          Total: {totalHours}h
                         </div>
                       </div>
                     </div>
@@ -173,8 +168,8 @@ export default function ForecastTimeline({
                     )}
                   </td>
 
-                  {/* Weekly Hours */}
-                  {weekEndings.map((week) => {
+                  {/* Weekly Hours - Only display first 12 weeks */}
+                  {displayWeeks.map((week) => {
                     const weekHours = entry.weekly_hours?.[week.id] || 0;
                     const hasHours = weekHours > 0;
 
@@ -185,7 +180,7 @@ export default function ForecastTimeline({
                       >
                         {hasHours ? (
                           <div className="inline-flex items-center justify-center px-2 py-1 bg-[#0f62fe] text-white rounded text-sm font-semibold min-w-[50px]">
-                            {weekHours}h
+                            {weekHours}
                           </div>
                         ) : (
                           <span className="text-[#c6c6c6]">-</span>
@@ -227,7 +222,7 @@ export default function ForecastTimeline({
               >
                 Total Assigned
               </td>
-              {weekEndings.map((week) => {
+              {displayWeeks.map((week) => {
                 const total = calculateWeekTotal(week.id);
                 return (
                   <td

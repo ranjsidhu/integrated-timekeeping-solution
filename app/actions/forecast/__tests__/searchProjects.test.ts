@@ -42,7 +42,6 @@ describe("searchProjects", () => {
     expect(results[0]).toMatchObject({
       id: 1,
       project_name: "Test Project",
-      client_name: undefined,
     });
   });
 

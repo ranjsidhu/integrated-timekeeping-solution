@@ -86,7 +86,12 @@ export default function AddEntryStep2({
   }, [projectSearch, categoryId]);
 
   const handleNext = () => {
-    if (selectedProject && fromDate && toDate && hoursPerWeek > 0) {
+    if (
+      selectedProject &&
+      fromDate.length > 0 &&
+      toDate.length > 0 &&
+      hoursPerWeek > 0
+    ) {
       onNext({
         project_id: selectedProject.id,
         from_date: fromDate,
@@ -149,11 +154,6 @@ export default function AddEntryStep2({
                 <div className="font-medium text-[#161616]">
                   {project.project_name}
                 </div>
-                {project.client_name && (
-                  <div className="text-sm text-[#525252]">
-                    {project.client_name}
-                  </div>
-                )}
               </button>
             ))}
           </div>
@@ -173,7 +173,7 @@ export default function AddEntryStep2({
           <DatePicker
             datePickerType="single"
             className="w-full"
-            onChange={(e) => setFromDate(e)}
+            onChange={(dates) => setFromDate(dates)}
             value={fromDate.length > 0 ? fromDate[0] : undefined}
           >
             <DatePickerInput
@@ -188,7 +188,7 @@ export default function AddEntryStep2({
         <div>
           <DatePicker
             datePickerType="single"
-            onChange={(e) => setToDate(e)}
+            onChange={(dates) => setToDate(dates)}
             value={toDate.length > 0 ? toDate[0] : undefined}
           >
             <DatePickerInput
@@ -222,7 +222,7 @@ export default function AddEntryStep2({
       <div>
         <DatePicker
           datePickerType="single"
-          onChange={(e) => setPotentialExtension(e)}
+          onChange={(dates) => setPotentialExtension(dates)}
           value={
             potentialExtension.length > 0 ? potentialExtension[0] : undefined
           }

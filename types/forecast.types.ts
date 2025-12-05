@@ -8,7 +8,6 @@ export type ForecastEntry = {
   assignment_type: string;
   project_id: number;
   project_name: string;
-  client_name?: string;
   from_date: Date | string;
   to_date: Date | string;
   potential_extension?: Date | string | null;
@@ -32,7 +31,6 @@ export type Category = {
 export type Project = {
   id: number;
   project_name: string;
-  client_name?: string;
 };
 
 export type CategoryProps = {

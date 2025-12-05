@@ -206,6 +206,8 @@ export default function ForecastPage({
     }
   };
 
+  const displayWeeks = weekEndings.slice(0, 12);
+
   return (
     <div className="w-full bg-[#f4f4f4] min-h-screen">
       <Loading active={isLoading} />
@@ -222,13 +224,16 @@ export default function ForecastPage({
 
         <Notifications />
 
-        <ForecastSummary forecastEntries={forecastEntries} />
+        <ForecastSummary
+          forecastEntries={forecastEntries}
+          weekEndings={displayWeeks}
+        />
 
         <div className="mt-8">
           {viewMode === "timeline" ? (
             <ForecastTimeline
               forecastEntries={forecastEntries}
-              weekEndings={weekEndings}
+              weekEndings={displayWeeks}
               onEditEntry={handleEditEntry}
               onDeleteEntry={handleDeleteEntry}
             />

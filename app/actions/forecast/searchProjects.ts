@@ -36,7 +36,6 @@ export async function searchProjects(
     return projects.map((p) => ({
       id: p.id,
       project_name: p.project_name,
-      client_name: undefined, // TODO: Add client relation if needed
     }));
   } catch (error) {
     console.error("Error searching projects:", error);

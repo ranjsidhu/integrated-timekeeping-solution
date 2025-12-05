@@ -86,7 +86,19 @@ export default function AddEntryStep3({
   // Initialize weekly hours with suggested hours
   useEffect(() => {
     if (initialWeeklyHours && Object.keys(initialWeeklyHours).length > 0) {
-      setWeeklyHours(initialWeeklyHours);
+      // When editing, merge initial hours with new weeks
+      const initial: Record<number, number> = { ...initialWeeklyHours };
+
+      // For any NEW weeks not in initialWeeklyHours, calculate suggested hours
+      relevantWeeks.forEach((week) => {
+        if (!(week.id in initial)) {
+          const workingDays = getWorkingDaysInWeek(week);
+          const suggestedHours = workingDays * 8;
+          initial[week.id] = suggestedHours;
+        }
+      });
+
+      setWeeklyHours(initial);
     } else if (relevantWeeks.length > 0) {
       const initial: Record<number, number> = {};
       relevantWeeks.forEach((week) => {
@@ -183,7 +195,7 @@ export default function AddEntryStep3({
                     onClick={() =>
                       handleHoursChange(week.id, String(remaining))
                     }
-                    className="text-xs text-[#0f62fe] hover:underline whitespace-nowrap"
+                    className="text-xs text-[#0f62fe] hover:underline whitespace-nowrap ml-4"
                   >
                     Use {remaining}h
                   </button>

@@ -30,8 +30,8 @@ describe("ForecastTimeline", () => {
 
   const weekEndings: WeekEnding[] = [
     { id: 1, week_ending: new Date(2025, 0, 7), label: "W1", status: "s" },
-    { id: 2, week_ending: new Date(2025, 0, 14), label: "W1", status: "s" },
-    { id: 3, week_ending: new Date(2025, 0, 21), label: "W1", status: "s" },
+    { id: 2, week_ending: new Date(2025, 0, 14), label: "W2", status: "s" },
+    { id: 3, week_ending: new Date(2025, 0, 21), label: "W3", status: "s" },
   ];
 
   it("renders empty state when no entries", () => {
@@ -58,15 +58,21 @@ describe("ForecastTimeline", () => {
       />,
     );
 
-    // Project and client info
+    // Project name and category
     expect(screen.getByText("Alpha")).toBeInTheDocument();
+    expect(screen.getByText("Category")).toBeInTheDocument();
 
-    // Weekly hours blocks W1/W2 should show 5h and 3h
-    expect(screen.getByText("5h")).toBeInTheDocument();
-    expect(screen.getByText("3h")).toBeInTheDocument();
+    // Weekly hours badges should show 5 and 3
+    const badges = screen.getAllByRole("cell");
+    const badge5 = badges.find((cell) => cell.textContent === "5");
+    const badge3 = badges.find((cell) => cell.textContent === "3");
+    expect(badge5).toBeInTheDocument();
+    expect(badge3).toBeInTheDocument();
 
-    // Total hours shown (5 + 3 = 8)
-    expect(screen.getAllByText(/8h/).length).toBeGreaterThanOrEqual(1);
+    // Check table headers
+    expect(screen.getByText("Assignment")).toBeInTheDocument();
+    expect(screen.getByText("Start Date")).toBeInTheDocument();
+    expect(screen.getByText("End Date")).toBeInTheDocument();
   });
 
   it("calls edit and delete handlers", () => {
@@ -87,5 +93,105 @@ describe("ForecastTimeline", () => {
 
     fireEvent.click(screen.getByLabelText("Delete entry"));
     expect(onDelete).toHaveBeenCalledWith(1);
+  });
+
+  it("shows totals row with correct weekly totals", () => {
+    render(
+      <ForecastTimeline
+        forecastEntries={[baseEntry]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    // Should show "Total Assigned" row
+    expect(screen.getByText("Total Assigned")).toBeInTheDocument();
+
+    // Week totals: Week 1 = 5, Week 2 = 3, Week 3 = 0
+    const totalCells = screen.getAllByRole("cell");
+
+    // Find cells in the totals row (after "Total Assigned")
+    const totalAssignedIndex = totalCells.findIndex(
+      (cell) => cell.textContent === "Total Assigned",
+    );
+
+    // The next cells after "Total Assigned" should contain the weekly totals
+    expect(totalCells[totalAssignedIndex + 1].textContent).toBe("5");
+    expect(totalCells[totalAssignedIndex + 2].textContent).toBe("3");
+    expect(totalCells[totalAssignedIndex + 3].textContent).toBe("0");
+  });
+
+  it("renders multiple entries correctly", () => {
+    const entry2: ForecastEntry = {
+      ...baseEntry,
+      id: 2,
+      project_name: "Beta",
+      weekly_hours: { 1: 8, 2: 8 },
+    };
+
+    render(
+      <ForecastTimeline
+        forecastEntries={[baseEntry, entry2]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    // Both projects shown
+    expect(screen.getByText("Alpha")).toBeInTheDocument();
+    expect(screen.getByText("Beta")).toBeInTheDocument();
+
+    // Total Assigned row should show combined hours
+    expect(screen.getByText("Total Assigned")).toBeInTheDocument();
+
+    // Week 1 = 5+8=13, Week 2 = 3+8=11
+    const totalCells = screen.getAllByRole("cell");
+    const totalAssignedIndex = totalCells.findIndex(
+      (cell) => cell.textContent === "Total Assigned",
+    );
+
+    expect(totalCells[totalAssignedIndex + 1].textContent).toBe("13");
+    expect(totalCells[totalAssignedIndex + 2].textContent).toBe("11");
+  });
+
+  it("displays week headers correctly", () => {
+    render(
+      <ForecastTimeline
+        forecastEntries={[baseEntry]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    // Check for week headers W1, W2, W3
+    expect(screen.getByText("W1")).toBeInTheDocument();
+    expect(screen.getByText("W2")).toBeInTheDocument();
+    expect(screen.getByText("W3")).toBeInTheDocument();
+
+    // Check for dates
+    expect(screen.getByText("Jan 7")).toBeInTheDocument();
+    expect(screen.getByText("Jan 14")).toBeInTheDocument();
+    expect(screen.getByText("Jan 21")).toBeInTheDocument();
+  });
+
+  it("shows empty cell for weeks with no hours", () => {
+    render(
+      <ForecastTimeline
+        forecastEntries={[baseEntry]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    // Week 3 should show "-" since no hours are assigned
+    const cells = screen.getAllByRole("cell");
+    const emptyCells = cells.filter((cell) => cell.textContent === "-");
+
+    // Should have at least one "-" for week 3 and one for extension
+    expect(emptyCells.length).toBeGreaterThanOrEqual(2);
   });
 });

@@ -4,32 +4,31 @@ import { prisma } from "@/prisma/prisma";
 import type { WeekEnding } from "@/types/timesheet.types";
 
 /**
- * Get the next 12 week endings starting from current week for forecasting
- * @returns - array of WeekEnding objects
+ * Get week endings for forecasting (next 52 weeks to allow for flexible planning)
  */
-export const getForecastWeekEndings = async (): Promise<WeekEnding[]> => {
+export async function getForecastWeekEndings(): Promise<WeekEnding[]> {
   const today = new Date();
 
-  // Get current week and 12 weeks ahead
-  const twelveWeeksAhead = new Date();
-  twelveWeeksAhead.setDate(twelveWeeksAhead.getDate() + 12 * 7);
+  // Get current week and 52 weeks ahead (1 year of planning)
+  const fiftyTwoWeeksAhead = new Date();
+  fiftyTwoWeeksAhead.setDate(fiftyTwoWeeksAhead.getDate() + 52 * 7);
 
   try {
     const weekEndings = await prisma.timesheetWeekEnding.findMany({
       where: {
         week_ending: {
           gte: today,
-          lte: twelveWeeksAhead,
+          lte: fiftyTwoWeeksAhead,
         },
       },
       orderBy: { week_ending: "asc" },
-      take: 12,
+      take: 52, // Get up to 52 weeks
     });
 
     return weekEndings.map((we) => ({
       id: we.id,
       week_ending: we.week_ending,
-      status: "",
+      status: "Draft",
       label: new Date(we.week_ending).toLocaleDateString("en-GB", {
         month: "short",
         day: "2-digit",
@@ -43,4 +42,4 @@ export const getForecastWeekEndings = async (): Promise<WeekEnding[]> => {
     );
     return [];
   }
-};
+}
