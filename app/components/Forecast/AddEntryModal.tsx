@@ -131,6 +131,7 @@ export default function AddEntryModal({
               onNext={handleStep3Complete}
               onBack={handleBack}
               onCancel={handleClose}
+              defaultHoursPerWeek={formData.hours_per_week}
             />
           )}
       </div>

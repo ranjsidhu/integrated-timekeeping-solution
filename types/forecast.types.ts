@@ -94,6 +94,7 @@ export type AddEntryStep3Props = {
   onBack: () => void;
   onCancel: () => void;
   initialWeeklyHours?: Record<number, number>;
+  defaultHoursPerWeek: number;
 };
 
 export type EditEntryModalProps = {

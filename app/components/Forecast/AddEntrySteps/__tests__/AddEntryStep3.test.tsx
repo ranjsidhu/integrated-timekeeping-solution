@@ -69,6 +69,7 @@ describe("AddEntryStep3", () => {
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
+        defaultHoursPerWeek={40}
       />,
     );
 
@@ -99,6 +100,7 @@ describe("AddEntryStep3", () => {
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
+        defaultHoursPerWeek={40}
       />,
     );
 
@@ -132,6 +134,7 @@ describe("AddEntryStep3", () => {
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
+        defaultHoursPerWeek={40}
       />,
     );
 
@@ -161,6 +164,7 @@ describe("AddEntryStep3", () => {
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
+        defaultHoursPerWeek={40}
       />,
     );
 
@@ -184,6 +188,7 @@ describe("AddEntryStep3", () => {
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
+        defaultHoursPerWeek={40}
       />,
     );
 
@@ -209,6 +214,7 @@ describe("AddEntryStep3", () => {
         onBack={onBack}
         onCancel={onCancel}
         initialWeeklyHours={initialWeeklyHours}
+        defaultHoursPerWeek={40}
       />,
     );
 
@@ -237,6 +243,7 @@ describe("AddEntryStep3", () => {
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
+        defaultHoursPerWeek={40}
       />,
     );
 
@@ -285,6 +292,7 @@ describe("AddEntryStep3", () => {
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
+        defaultHoursPerWeek={40}
       />,
     );
 

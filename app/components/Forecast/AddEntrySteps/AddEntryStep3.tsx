@@ -16,6 +16,7 @@ export default function AddEntryStep3({
   onBack,
   onCancel,
   initialWeeklyHours,
+  defaultHoursPerWeek = 40,
 }: AddEntryStep3Props) {
   const [weeklyHours, setWeeklyHours] = useState<Record<number, number>>({});
 
@@ -65,6 +66,17 @@ export default function AddEntryStep3({
     [from, to],
   );
 
+  const calculateSuggestedHours = useCallback(
+    (week: WeekEnding) => {
+      const workingDaysInWeek = getWorkingDaysInWeek(week);
+      // Proportion of the week worked (out of 5 working days)
+      const proportion = workingDaysInWeek / 5;
+      // Apply proportion to the defaultHoursPerWeek
+      return Math.round(defaultHoursPerWeek * proportion);
+    },
+    [getWorkingDaysInWeek, defaultHoursPerWeek],
+  );
+
   // Calculate current week totals (excluding editing entry)
   const currentWeekTotals = useMemo(() => {
     const totals: Record<number, number> = {};
@@ -84,6 +96,7 @@ export default function AddEntryStep3({
   }, [existingEntries, editingEntryId]);
 
   // Initialize weekly hours with suggested hours
+
   useEffect(() => {
     if (initialWeeklyHours && Object.keys(initialWeeklyHours).length > 0) {
       // When editing, merge initial hours with new weeks
@@ -92,8 +105,7 @@ export default function AddEntryStep3({
       // For any NEW weeks not in initialWeeklyHours, calculate suggested hours
       relevantWeeks.forEach((week) => {
         if (!(week.id in initial)) {
-          const workingDays = getWorkingDaysInWeek(week);
-          const suggestedHours = workingDays * 8;
+          const suggestedHours = calculateSuggestedHours(week);
           initial[week.id] = suggestedHours;
         }
       });
@@ -102,13 +114,12 @@ export default function AddEntryStep3({
     } else if (relevantWeeks.length > 0) {
       const initial: Record<number, number> = {};
       relevantWeeks.forEach((week) => {
-        const workingDays = getWorkingDaysInWeek(week);
-        const suggestedHours = workingDays * 8;
+        const suggestedHours = calculateSuggestedHours(week);
         initial[week.id] = suggestedHours;
       });
       setWeeklyHours(initial);
     }
-  }, [relevantWeeks, getWorkingDaysInWeek, initialWeeklyHours]);
+  }, [relevantWeeks, calculateSuggestedHours, initialWeeklyHours]);
 
   const handleHoursChange = (weekId: number, hours: string) => {
     const numHours = Math.max(0, Math.min(40, Number(hours) || 0));
@@ -131,9 +142,9 @@ export default function AddEntryStep3({
           Customize Weekly Hours
         </h3>
         <p className="text-sm text-[#525252] mb-4">
-          Hours are pre-filled based on working days (8h/day). You can adjust as
-          needed. Final validation will occur when you submit your forecast
-          plan.
+          Hours are pre-filled based on working days in each week (proportional
+          to {defaultHoursPerWeek}h/week). You can adjust as needed. Final
+          validation will occur when you submit your forecast plan.
         </p>
       </div>
 
@@ -168,6 +179,13 @@ export default function AddEntryStep3({
                     </span>
                   )}
                   {currentTotal === 0 && <span>Available: 40h</span>}
+                  {workingDays < 5 && (
+                    <span>
+                      {" "}
+                      • Suggested:{" "}
+                      {Math.round(defaultHoursPerWeek * (workingDays / 5))}h
+                    </span>
+                  )}
                 </div>
               </div>
 

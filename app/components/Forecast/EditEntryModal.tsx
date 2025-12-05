@@ -160,6 +160,7 @@ export default function EditEntryModal({
               onBack={handleBack}
               onCancel={handleClose}
               initialWeeklyHours={formData.weekly_hours}
+              defaultHoursPerWeek={formData.hours_per_week}
             />
           )}
       </div>
