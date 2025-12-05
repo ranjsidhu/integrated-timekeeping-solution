@@ -19,6 +19,13 @@ type AddEntryStep2Props = {
   }) => void;
   onBack: () => void;
   onCancel: () => void;
+  initialData?: {
+    project_id?: number;
+    from_date?: Date[];
+    to_date?: Date[];
+    hours_per_week?: number;
+    potential_extension?: Date[];
+  };
 };
 
 export default function AddEntryStep2({
@@ -26,14 +33,42 @@ export default function AddEntryStep2({
   onNext,
   onBack,
   onCancel,
+  initialData,
 }: AddEntryStep2Props) {
   const [projectSearch, setProjectSearch] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [fromDate, setFromDate] = useState<Date[]>([]);
-  const [toDate, setToDate] = useState<Date[]>([]);
-  const [hoursPerWeek, setHoursPerWeek] = useState(40);
-  const [potentialExtension, setPotentialExtension] = useState<Date[]>([]);
+  const [fromDate, setFromDate] = useState<Date[]>(
+    initialData?.from_date || [],
+  );
+  const [toDate, setToDate] = useState<Date[]>(initialData?.to_date || []);
+  const [hoursPerWeek, setHoursPerWeek] = useState(
+    initialData?.hours_per_week || 40,
+  );
+  const [potentialExtension, setPotentialExtension] = useState<Date[]>(
+    initialData?.potential_extension || [],
+  );
+
+  // Load initial project if editing
+  useEffect(() => {
+    const loadInitialProject = async () => {
+      if (initialData?.project_id && categoryId !== undefined) {
+        try {
+          // Search for all projects to find the one we need
+          const results = await searchProjects("", categoryId);
+          const project = results.find((p) => p.id === initialData.project_id);
+          if (project) {
+            setSelectedProject(project);
+            setProjectSearch(project.project_name);
+          }
+        } catch (error) {
+          console.error("Error loading initial project:", error);
+        }
+      }
+    };
+
+    loadInitialProject();
+  }, [initialData?.project_id, categoryId]);
 
   // Search projects
   useEffect(() => {
@@ -51,13 +86,19 @@ export default function AddEntryStep2({
   }, [projectSearch, categoryId]);
 
   const handleNext = () => {
-    if (selectedProject && fromDate && toDate && hoursPerWeek > 0) {
+    if (
+      selectedProject &&
+      fromDate.length > 0 &&
+      toDate.length > 0 &&
+      hoursPerWeek > 0
+    ) {
       onNext({
         project_id: selectedProject.id,
         from_date: fromDate,
         to_date: toDate,
         hours_per_week: hoursPerWeek,
-        potential_extension: potentialExtension || undefined,
+        potential_extension:
+          potentialExtension.length > 0 ? potentialExtension : undefined,
       });
     }
   };
@@ -105,7 +146,7 @@ export default function AddEntryStep2({
                 type="button"
                 onClick={() => {
                   setSelectedProject(project);
-                  setProjectSearch("");
+                  setProjectSearch(project.project_name);
                   setProjects([]);
                 }}
                 className="w-full p-3 text-left hover:bg-[#e0e0e0] transition-colors border-b border-[#e0e0e0] last:border-b-0"
@@ -113,11 +154,6 @@ export default function AddEntryStep2({
                 <div className="font-medium text-[#161616]">
                   {project.project_name}
                 </div>
-                {project.client_name && (
-                  <div className="text-sm text-[#525252]">
-                    {project.client_name}
-                  </div>
-                )}
               </button>
             ))}
           </div>
@@ -137,23 +173,28 @@ export default function AddEntryStep2({
           <DatePicker
             datePickerType="single"
             className="w-full"
-            onChange={(e) => setFromDate(e)}
+            onChange={(dates) => setFromDate(dates)}
+            value={fromDate.length > 0 ? fromDate[0] : undefined}
           >
             <DatePickerInput
               id="from-date"
               size="lg"
-              labelText="Start date"
+              labelText="Start date *"
               className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
               placeholder="mm/dd/yyyy"
             />
           </DatePicker>
         </div>
         <div>
-          <DatePicker datePickerType="single" onChange={(e) => setToDate(e)}>
+          <DatePicker
+            datePickerType="single"
+            onChange={(dates) => setToDate(dates)}
+            value={toDate.length > 0 ? toDate[0] : undefined}
+          >
             <DatePickerInput
               id="to-date"
               size="lg"
-              labelText="End date"
+              labelText="End date *"
               className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
               placeholder="mm/dd/yyyy"
             />
@@ -181,7 +222,10 @@ export default function AddEntryStep2({
       <div>
         <DatePicker
           datePickerType="single"
-          onChange={(e) => setPotentialExtension(e)}
+          onChange={(dates) => setPotentialExtension(dates)}
+          value={
+            potentialExtension.length > 0 ? potentialExtension[0] : undefined
+          }
         >
           <DatePickerInput
             id="extension-date"
@@ -208,7 +252,7 @@ export default function AddEntryStep2({
             onClick={handleNext}
             disabled={!isValid}
           >
-            Create Entry
+            Next
           </Button>
         </div>
       </div>

@@ -10,11 +10,14 @@ import Category from "../../Category/Category";
 
 export default function AddEntryStep1({
   categories,
+  initialCategoryId,
   onNext,
   onCancel,
 }: AddEntryStep1Props) {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
-    null,
+    initialCategoryId
+      ? categories.find((c) => c.id === initialCategoryId) || null
+      : null,
   );
 
   const handleNext = () => {

@@ -8,7 +8,6 @@ export type ForecastEntry = {
   assignment_type: string;
   project_id: number;
   project_name: string;
-  client_name?: string;
   from_date: Date | string;
   to_date: Date | string;
   potential_extension?: Date | string | null;
@@ -32,7 +31,6 @@ export type Category = {
 export type Project = {
   id: number;
   project_name: string;
-  client_name?: string;
 };
 
 export type CategoryProps = {
@@ -45,4 +43,78 @@ export type AddEntryStep1Props = {
   categories: Category[];
   onNext: (data: { category_id: number }) => void;
   onCancel: () => void;
+  initialCategoryId?: number;
+};
+
+export type AddEntryStep2Props = {
+  categoryId: number | undefined;
+  onNext: (data: {
+    project_id: number;
+    from_date: Date[];
+    to_date: Date[];
+    hours_per_week: number;
+    potential_extension?: Date[];
+  }) => void;
+  onBack: () => void;
+  onCancel: () => void;
+  initialData?: {
+    project_id?: number;
+    from_date?: Date[];
+    to_date?: Date[];
+    hours_per_week?: number;
+    potential_extension?: Date[];
+  };
+};
+
+export type AddEntryModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (entry: NewForecastEntry) => void;
+  categories: Category[];
+  weekEndings: WeekEnding[];
+};
+
+export type NewForecastEntry = {
+  category_id: number;
+  project_id: number;
+  from_date: Date[];
+  to_date: Date[];
+  hours_per_week: number;
+  potential_extension?: Date[];
+  weekly_hours?: Record<number, number>;
+};
+
+export type AddEntryStep3Props = {
+  fromDate: Date[];
+  toDate: Date[];
+  weekEndings: WeekEnding[];
+  existingEntries: ForecastEntry[];
+  editingEntryId?: number;
+  onNext: (weeklyHours: Record<number, number>) => void;
+  onBack: () => void;
+  onCancel: () => void;
+  initialWeeklyHours?: Record<number, number>;
+  defaultHoursPerWeek: number;
+};
+
+export type EditEntryModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (entryId: number, entry: NewForecastEntry) => void;
+  categories: Category[];
+  weekEndings: WeekEnding[];
+  entry: ForecastEntry | null;
+};
+
+export type WeeklyValidationError = {
+  weekId: number;
+  weekLabel: string;
+  currentTotal: number;
+  newHours: number;
+  finalTotal: number;
+};
+
+export type ValidationResult = {
+  isValid: boolean;
+  errors: WeeklyValidationError[];
 };

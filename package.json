@@ -13,7 +13,7 @@
     "prepare": "husky",
     "test": "jest",
     "test:watch": "jest --watch",
-    "localbuild": "docker build --no-cache --build-arg DATABASE_URL='test' --build-arg LOCAL_DATABASE_URL='test' -t its-local:latest ."
+    "localbuild": "docker build --no-cache -t its-local:latest ."
   },
   "dependencies": {
     "@carbon/react": "1.96.0",
