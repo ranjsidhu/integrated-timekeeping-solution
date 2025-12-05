@@ -117,19 +117,16 @@ export default function AddEntryModal({
           />
         )}
 
-        {currentStep === 3 &&
-          formData.from_date &&
-          formData.to_date &&
-          formData.hours_per_week && (
-            <AddEntryStep3
-              fromDate={formData.from_date}
-              toDate={formData.to_date}
-              weekEndings={weekEndings}
-              onNext={handleStep3Complete}
-              onBack={handleBack}
-              onCancel={handleClose}
-            />
-          )}
+        {currentStep === 3 && (
+          <AddEntryStep3
+            fromDate={formData.from_date || []}
+            toDate={formData.to_date || []}
+            weekEndings={weekEndings}
+            onNext={handleStep3Complete}
+            onBack={handleBack}
+            onCancel={handleClose}
+          />
+        )}
       </div>
     </Modal>
   );

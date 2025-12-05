@@ -68,6 +68,24 @@ export type AddEntryStep2Props = {
   };
 };
 
+export type AddEntryModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (entry: NewForecastEntry) => void;
+  categories: Category[];
+  weekEndings: WeekEnding[];
+};
+
+export type NewForecastEntry = {
+  category_id: number;
+  project_id: number;
+  from_date: Date[];
+  to_date: Date[];
+  hours_per_week: number;
+  potential_extension?: Date[];
+  weekly_hours?: Record<number, number>;
+};
+
 export type AddEntryStep3Props = {
   fromDate: Date[];
   toDate: Date[];
@@ -76,4 +94,13 @@ export type AddEntryStep3Props = {
   onBack: () => void;
   onCancel: () => void;
   initialWeeklyHours?: Record<number, number>;
+};
+
+export type EditEntryModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (entryId: number, entry: NewForecastEntry) => void;
+  categories: Category[];
+  weekEndings: WeekEnding[];
+  entry: ForecastEntry | null;
 };

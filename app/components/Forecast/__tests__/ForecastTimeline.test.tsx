@@ -19,7 +19,6 @@ describe("ForecastTimeline", () => {
     assignment_type: "Productive",
     project_id: 10,
     project_name: "Alpha",
-    client_name: "Client A",
     from_date: new Date(2025, 0, 1),
     to_date: new Date(2025, 0, 7),
     potential_extension: null,
@@ -61,7 +60,6 @@ describe("ForecastTimeline", () => {
 
     // Project and client info
     expect(screen.getByText("Alpha")).toBeInTheDocument();
-    expect(screen.getByText("Client A")).toBeInTheDocument();
 
     // Weekly hours blocks W1/W2 should show 5h and 3h
     expect(screen.getByText("5h")).toBeInTheDocument();

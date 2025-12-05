@@ -32,8 +32,11 @@ describe("ForecastSummary", () => {
     expect(screen.getByText("2")).toBeInTheDocument();
 
     // icons rendered
-    expect(screen.getByTestId("icon-time")).toBeInTheDocument();
-    expect(screen.getByTestId("icon-chartline")).toBeInTheDocument();
+    const timeIcons = screen.getAllByTestId("icon-time");
+    expect(timeIcons).toHaveLength(2);
+
+    const chartIcons = screen.getAllByTestId("icon-chartline");
+    expect(chartIcons).toHaveLength(2);
   });
 
   it("counts active projects correctly when same project appears multiple times", () => {

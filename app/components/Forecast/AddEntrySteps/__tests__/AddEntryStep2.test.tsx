@@ -72,9 +72,9 @@ describe("AddEntryStep2 minimal tests", () => {
       />,
     );
 
-    // Create Entry should be disabled (no selection)
-    const createBtn = screen.getByTestId("button-create entry");
-    expect(createBtn).toBeDisabled();
+    // "Next" (primary action) should be disabled (no selection)
+    const nextBtn = screen.getByTestId("button-next");
+    expect(nextBtn).toBeDisabled();
 
     // Back and Cancel should call handlers
     fireEvent.click(screen.getByTestId("button-back"));
@@ -107,14 +107,14 @@ describe("AddEntryStep2 minimal tests", () => {
     const search = screen.getByTestId("add-entry-project-search");
     fireEvent.change(search, { target: { value: "Pr" } });
 
-    // advance debounce (use real timers in test runner; waitFor will handle async)
+    // advance debounce if fake timers are used; waitFor will handle async either way
     jest.advanceTimersByTime?.(300);
 
     await waitFor(() =>
       expect(mockSearchProjects).toHaveBeenCalledWith("Pr", 2),
     );
 
-    // Project item should render (component maps project_name)
+    // Project item should render
     await waitFor(() => expect(screen.getByText("Proj")).toBeInTheDocument());
 
     // Select the project
@@ -129,12 +129,12 @@ describe("AddEntryStep2 minimal tests", () => {
     const hours = screen.getByTestId("hours-per-week");
     fireEvent.change(hours, { target: { value: "30" } });
 
-    // Create Entry should now be enabled
-    const createBtn = screen.getByTestId("button-create entry");
-    expect(createBtn).not.toBeDisabled();
+    // Primary action ("Next") should now be enabled
+    const nextBtn = screen.getByTestId("button-next");
+    expect(nextBtn).not.toBeDisabled();
 
-    // Click to create
-    fireEvent.click(createBtn);
+    // Click to proceed
+    fireEvent.click(nextBtn);
 
     expect(onNext).toHaveBeenCalledTimes(1);
     const payload = onNext.mock.calls[0][0];

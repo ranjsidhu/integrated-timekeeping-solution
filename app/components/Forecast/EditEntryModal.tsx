@@ -1,17 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Modal, ProgressIndicator, ProgressStep } from "@/app/components";
-import type { Category, ForecastEntry } from "@/types/forecast.types";
-import type { NewForecastEntry } from "./AddEntryModal";
-import AddEntryStep1 from "./AddEntrySteps/AddEntryStep1";
-import AddEntryStep2 from "./AddEntrySteps/AddEntryStep2";
+import {
+  AddEntryStep1,
+  AddEntryStep2,
+  AddEntryStep3,
+  Modal,
+  ProgressIndicator,
+  ProgressStep,
+} from "@/app/components";
+import type {
+  Category,
+  ForecastEntry,
+  NewForecastEntry,
+} from "@/types/forecast.types";
+import type { WeekEnding } from "@/types/timesheet.types";
 
 type EditEntryModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSave: (entryId: number, entry: NewForecastEntry) => void;
   categories: Category[];
+  weekEndings: WeekEnding[];
   entry: ForecastEntry | null;
 };
 
@@ -20,9 +30,10 @@ export default function EditEntryModal({
   onClose,
   onSave,
   categories,
+  weekEndings,
   entry,
 }: EditEntryModalProps) {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [formData, setFormData] = useState<Partial<NewForecastEntry>>({});
 
   // Initialize form with existing entry data
@@ -37,6 +48,7 @@ export default function EditEntryModal({
         potential_extension: entry.potential_extension
           ? [new Date(entry.potential_extension)]
           : undefined,
+        weekly_hours: entry.weekly_hours,
       });
     }
   }, [entry]);
@@ -46,10 +58,17 @@ export default function EditEntryModal({
     setCurrentStep(2);
   };
 
-  const handleStep2Complete = (data: Omit<NewForecastEntry, "category_id">) => {
+  const handleStep2Complete = (
+    data: Omit<NewForecastEntry, "category_id" | "weekly_hours">,
+  ) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+    setCurrentStep(3);
+  };
+
+  const handleStep3Complete = (weeklyHours: Record<number, number>) => {
     const completeEntry: NewForecastEntry = {
       ...formData,
-      ...data,
+      weekly_hours: weeklyHours,
     } as NewForecastEntry;
 
     if (entry) {
@@ -91,6 +110,11 @@ export default function EditEntryModal({
               label="Details"
               description="Enter details"
             />
+            <ProgressStep
+              complete={currentStep > 3}
+              label="Hours"
+              description="Customize hours"
+            />
           </ProgressIndicator>
         </div>
 
@@ -119,6 +143,21 @@ export default function EditEntryModal({
             }}
           />
         )}
+
+        {currentStep === 3 &&
+          formData.from_date &&
+          formData.to_date &&
+          formData.hours_per_week && (
+            <AddEntryStep3
+              fromDate={formData.from_date}
+              toDate={formData.to_date}
+              weekEndings={weekEndings}
+              onNext={handleStep3Complete}
+              onBack={handleBack}
+              onCancel={handleClose}
+              initialWeeklyHours={formData.weekly_hours}
+            />
+          )}
       </div>
     </Modal>
   );

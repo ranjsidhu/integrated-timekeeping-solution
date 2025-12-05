@@ -63,7 +63,7 @@ export default function ForecastEntriesList({
                     {entry.project_name}
                   </div>
                   <div className="text-sm text-[#525252]">
-                    {entry.category_name} • {entry.hours_per_week}h/week
+                    {entry.category_name}
                   </div>
                 </div>
                 <div className="text-right mr-4">

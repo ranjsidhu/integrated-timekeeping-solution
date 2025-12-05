@@ -233,6 +233,7 @@ export default function ForecastPage({
         onSave={handleUpdateEntry}
         categories={categories}
         entry={editingEntry}
+        weekEndings={weekEndings}
       />
     </div>
   );

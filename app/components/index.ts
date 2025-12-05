@@ -12,6 +12,7 @@ import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
 import AddEntryModal from "./Forecast/AddEntryModal";
 import AddEntryStep1 from "./Forecast/AddEntrySteps/AddEntryStep1";
 import AddEntryStep2 from "./Forecast/AddEntrySteps/AddEntryStep2";
+import AddEntryStep3 from "./Forecast/AddEntrySteps/AddEntryStep3";
 import EditEntryModal from "./Forecast/EditEntryModal";
 import ForecastEntriesList from "./Forecast/ForecastEntriesList";
 import ForecastHeader from "./Forecast/ForecastHeader";
@@ -55,6 +56,7 @@ export {
   AddEntryModal,
   AddEntryStep1,
   AddEntryStep2,
+  AddEntryStep3,
   EditEntryModal,
   ForecastEntriesList,
   ForecastHeader,

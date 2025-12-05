@@ -19,7 +19,6 @@ describe("ForecastEntriesList", () => {
     assignment_type: "Productive",
     project_id: 10,
     project_name: "Alpha",
-    client_name: "Client A",
     from_date: new Date(2025, 0, 1),
     to_date: new Date(2025, 0, 7),
     potential_extension: null,
@@ -51,17 +50,18 @@ describe("ForecastEntriesList", () => {
     );
 
     // Total hours displayed from weekly_hours (5 + 3 = 8)
-    expect(screen.getByText(/8h\/week/)).toBeInTheDocument();
-    expect(screen.getAllByText(/8h/).length).toBeGreaterThanOrEqual(1);
+    const totalHoursNode = screen.getByText(
+      (_content, node) => node?.textContent?.replace(/\s/g, "") === "8h",
+    );
+    expect(totalHoursNode).toBeInTheDocument();
+    expect(screen.getByText(/total/i)).toBeInTheDocument();
 
     const toggle = screen.getByLabelText("Toggle entry details");
     fireEvent.click(toggle);
 
     // Details should appear when expanded
-    expect(screen.getByText("Client:")).toBeInTheDocument();
-    expect(screen.getByText("Client A")).toBeInTheDocument();
-    expect(screen.getByText("Category:")).toBeInTheDocument();
-    expect(screen.getByText("Category")).toBeInTheDocument();
+    const categories = screen.getAllByText("Category");
+    expect(categories.length).toBeGreaterThanOrEqual(1);
 
     // Collapse hides details
     fireEvent.click(toggle);
