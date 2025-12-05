@@ -22,6 +22,7 @@ type EditEntryModalProps = {
   onSave: (entryId: number, entry: NewForecastEntry) => void;
   categories: Category[];
   weekEndings: WeekEnding[];
+  existingEntries: ForecastEntry[];
   entry: ForecastEntry | null;
 };
 
@@ -32,6 +33,7 @@ export default function EditEntryModal({
   categories,
   weekEndings,
   entry,
+  existingEntries,
 }: EditEntryModalProps) {
   const [currentStep, setCurrentStep] = useState(2);
   const [formData, setFormData] = useState<Partial<NewForecastEntry>>({});
@@ -152,6 +154,8 @@ export default function EditEntryModal({
               fromDate={formData.from_date}
               toDate={formData.to_date}
               weekEndings={weekEndings}
+              existingEntries={existingEntries}
+              editingEntryId={entry?.id}
               onNext={handleStep3Complete}
               onBack={handleBack}
               onCancel={handleClose}

@@ -78,6 +78,33 @@ export default function ForecastPage({
         title: "Forecast submitted",
         subtitle: "Your forecast has been submitted successfully",
       });
+    } else if (result.validationErrors && result.validationErrors.length > 0) {
+      // Format validation errors
+      const errorMessage = result.validationErrors
+        .map((err) => {
+          const weekLabel = new Date(err.weekEnding).toLocaleDateString(
+            "en-US",
+            {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            },
+          );
+
+          if (err.total > 40) {
+            return `${weekLabel}: ${err.total}h (over by ${err.total - 40}h)`;
+          } else {
+            return `${weekLabel}: ${err.total}h (under by ${40 - err.total}h)`;
+          }
+        })
+        .join("\n");
+
+      addNotification({
+        kind: "error",
+        type: "inline",
+        title: "Cannot submit forecast",
+        subtitle: `Each week must total exactly 40 hours:\n${errorMessage}`,
+      });
     } else {
       addNotification({
         kind: "error",
@@ -222,6 +249,7 @@ export default function ForecastPage({
         onSave={handleSaveNewEntry}
         categories={categories}
         weekEndings={weekEndings}
+        existingEntries={forecastEntries}
       />
 
       <EditEntryModal
@@ -234,6 +262,7 @@ export default function ForecastPage({
         categories={categories}
         entry={editingEntry}
         weekEndings={weekEndings}
+        existingEntries={forecastEntries}
       />
     </div>
   );

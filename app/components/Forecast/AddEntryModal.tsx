@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Modal, ProgressIndicator, ProgressStep } from "@/app/components";
-import type { Category } from "@/types/forecast.types";
+import type { Category, ForecastEntry } from "@/types/forecast.types";
 import type { WeekEnding } from "@/types/timesheet.types";
 import AddEntryStep1 from "./AddEntrySteps/AddEntryStep1";
 import AddEntryStep2 from "./AddEntrySteps/AddEntryStep2";
@@ -14,6 +14,7 @@ type AddEntryModalProps = {
   onSave: (entry: NewForecastEntry) => void;
   categories: Category[];
   weekEndings: WeekEnding[];
+  existingEntries: ForecastEntry[];
 };
 
 export type NewForecastEntry = {
@@ -32,6 +33,7 @@ export default function AddEntryModal({
   onSave,
   categories,
   weekEndings,
+  existingEntries,
 }: AddEntryModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<NewForecastEntry>>({});
@@ -117,16 +119,20 @@ export default function AddEntryModal({
           />
         )}
 
-        {currentStep === 3 && (
-          <AddEntryStep3
-            fromDate={formData.from_date || []}
-            toDate={formData.to_date || []}
-            weekEndings={weekEndings}
-            onNext={handleStep3Complete}
-            onBack={handleBack}
-            onCancel={handleClose}
-          />
-        )}
+        {currentStep === 3 &&
+          formData.from_date &&
+          formData.to_date &&
+          formData.hours_per_week && (
+            <AddEntryStep3
+              fromDate={formData.from_date}
+              toDate={formData.to_date}
+              weekEndings={weekEndings}
+              existingEntries={existingEntries}
+              onNext={handleStep3Complete}
+              onBack={handleBack}
+              onCancel={handleClose}
+            />
+          )}
       </div>
     </Modal>
   );

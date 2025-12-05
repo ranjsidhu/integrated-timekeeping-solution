@@ -101,6 +101,7 @@ describe("AddEntryModal", () => {
         onSave={onSave}
         categories={categories}
         weekEndings={[]}
+        existingEntries={[]}
       />,
     );
 
@@ -147,6 +148,7 @@ describe("AddEntryModal", () => {
         onSave={onSave}
         categories={categories}
         weekEndings={[]}
+        existingEntries={[]}
       />,
     );
 

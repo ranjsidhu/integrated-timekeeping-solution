@@ -8,6 +8,7 @@ jest.mock("../../../Button/Button", () => (props: any) => (
     type="button"
     data-testid={`button-${props.kind}`}
     onClick={props.onClick}
+    disabled={props.disabled}
   >
     {props.children}
   </button>
@@ -28,6 +29,7 @@ jest.mock("../../../Input/Input", () => (props: any) => (
 
 import AddEntryStep3 from "../AddEntryStep3";
 import type { WeekEnding } from "@/types/timesheet.types";
+import type { ForecastEntry } from "@/types/forecast.types";
 
 describe("AddEntryStep3", () => {
   const mockWeekEndings: WeekEnding[] = [
@@ -40,16 +42,18 @@ describe("AddEntryStep3", () => {
     {
       id: 2,
       week_ending: new Date(2025, 0, 17),
-      label: "Week 1",
+      label: "Week 2",
       status: "Open",
     },
     {
       id: 3,
       week_ending: new Date(2025, 0, 24),
-      label: "Week 1",
+      label: "Week 3",
       status: "Open",
     },
   ];
+
+  const mockExistingEntries: ForecastEntry[] = [];
 
   it("initializes with suggested hours based on working days", () => {
     const onNext = jest.fn();
@@ -61,6 +65,7 @@ describe("AddEntryStep3", () => {
         fromDate={[new Date(2025, 0, 1)]}
         toDate={[new Date(2025, 0, 31)]}
         weekEndings={mockWeekEndings}
+        existingEntries={mockExistingEntries}
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
@@ -75,7 +80,7 @@ describe("AddEntryStep3", () => {
     expect(screen.getByTestId("input-week-2")).toBeInTheDocument();
     expect(screen.getByTestId("input-week-3")).toBeInTheDocument();
 
-    // Buttons should be rendered (use text queries to distinguish Back from Cancel)
+    // Buttons should be rendered
     expect(screen.getByText("Back")).toBeInTheDocument();
     expect(screen.getByText("Create Entry")).toBeInTheDocument();
   });
@@ -90,6 +95,7 @@ describe("AddEntryStep3", () => {
         fromDate={[new Date(2025, 0, 1)]}
         toDate={[new Date(2025, 0, 31)]}
         weekEndings={mockWeekEndings}
+        existingEntries={mockExistingEntries}
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
@@ -106,9 +112,9 @@ describe("AddEntryStep3", () => {
 
     // Third week should have default value
     const input3 = screen.getByTestId("input-week-3") as HTMLInputElement;
-    expect(input3.value).toBeTruthy(); // has some default value
+    expect(input3.value).toBeTruthy();
 
-    // Total hours should be displayed (exact value depends on defaults)
+    // Total hours should be displayed
     expect(screen.getByText(/Total Hours/i)).toBeInTheDocument();
   });
 
@@ -122,6 +128,7 @@ describe("AddEntryStep3", () => {
         fromDate={[new Date(2025, 0, 1)]}
         toDate={[new Date(2025, 0, 31)]}
         weekEndings={mockWeekEndings}
+        existingEntries={mockExistingEntries}
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
@@ -135,9 +142,9 @@ describe("AddEntryStep3", () => {
     // Should pass object with week IDs as keys
     const payload = onNext.mock.calls[0][0];
     expect(typeof payload).toBe("object");
-    expect(payload).toHaveProperty("1"); // week id 1
-    expect(payload).toHaveProperty("2"); // week id 2
-    expect(payload).toHaveProperty("3"); // week id 3
+    expect(payload).toHaveProperty("1");
+    expect(payload).toHaveProperty("2");
+    expect(payload).toHaveProperty("3");
   });
 
   it("calls onBack when Back button clicked", () => {
@@ -150,6 +157,7 @@ describe("AddEntryStep3", () => {
         fromDate={[new Date(2025, 0, 1)]}
         toDate={[new Date(2025, 0, 31)]}
         weekEndings={mockWeekEndings}
+        existingEntries={mockExistingEntries}
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
@@ -172,6 +180,7 @@ describe("AddEntryStep3", () => {
         fromDate={[new Date(2025, 0, 1)]}
         toDate={[new Date(2025, 0, 31)]}
         weekEndings={mockWeekEndings}
+        existingEntries={mockExistingEntries}
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
@@ -195,6 +204,7 @@ describe("AddEntryStep3", () => {
         fromDate={[new Date(2025, 0, 1)]}
         toDate={[new Date(2025, 0, 31)]}
         weekEndings={mockWeekEndings}
+        existingEntries={mockExistingEntries}
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
@@ -223,6 +233,7 @@ describe("AddEntryStep3", () => {
         fromDate={[new Date(2025, 0, 1)]}
         toDate={[new Date(2025, 0, 31)]}
         weekEndings={mockWeekEndings}
+        existingEntries={mockExistingEntries}
         onNext={onNext}
         onBack={onBack}
         onCancel={onCancel}
@@ -238,5 +249,47 @@ describe("AddEntryStep3", () => {
     // Try to set to -5 (should be clamped to 0)
     fireEvent.change(input1, { target: { value: "-5" } });
     expect(input1.value).toBe("0");
+  });
+
+  it("shows available hours when there are existing entries", () => {
+    const onNext = jest.fn();
+    const onBack = jest.fn();
+    const onCancel = jest.fn();
+
+    const existingEntries: ForecastEntry[] = [
+      {
+        id: 1,
+        forecast_plan_id: 1,
+        category_id: 1,
+        category_name: "Billable",
+        assignment_type: "Productive",
+        project_id: 1,
+        project_name: "Project A",
+        from_date: new Date(2025, 0, 1),
+        to_date: new Date(2025, 0, 31),
+        hours_per_week: 32,
+        weekly_hours: {
+          1: 32,
+          2: 32,
+          3: 32,
+        },
+      },
+    ] as ForecastEntry[];
+
+    render(
+      <AddEntryStep3
+        fromDate={[new Date(2025, 0, 1)]}
+        toDate={[new Date(2025, 0, 31)]}
+        weekEndings={mockWeekEndings}
+        existingEntries={existingEntries}
+        onNext={onNext}
+        onBack={onBack}
+        onCancel={onCancel}
+      />,
+    );
+
+    // Should show available hours (40 - 32 = 8) for each week
+    const availableHoursElements = screen.getAllByText(/Available: 8h/i);
+    expect(availableHoursElements).toHaveLength(3); // One for each week
   });
 });

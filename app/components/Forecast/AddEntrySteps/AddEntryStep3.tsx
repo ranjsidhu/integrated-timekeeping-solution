@@ -10,6 +10,8 @@ export default function AddEntryStep3({
   fromDate,
   toDate,
   weekEndings,
+  existingEntries,
+  editingEntryId,
   onNext,
   onBack,
   onCancel,
@@ -47,14 +49,12 @@ export default function AddEntryStep3({
       const actualStart = from > weekStart ? from : weekStart;
       const actualEnd = to < weekEnd ? to : weekEnd;
 
-      // Calculate business days (Mon-Fri) between dates
       let days = 0;
       const current = new Date(actualStart);
 
       while (current <= actualEnd) {
         const dayOfWeek = current.getDay();
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-          // Not weekend
           days++;
         }
         current.setDate(current.getDate() + 1);
@@ -65,7 +65,25 @@ export default function AddEntryStep3({
     [from, to],
   );
 
-  // Initialize weekly hours with suggested hours (working days * 8) or provided values
+  // Calculate current week totals (excluding editing entry)
+  const currentWeekTotals = useMemo(() => {
+    const totals: Record<number, number> = {};
+
+    existingEntries.forEach((entry) => {
+      if (editingEntryId && entry.id === editingEntryId) {
+        return;
+      }
+
+      Object.entries(entry.weekly_hours || {}).forEach(([weekIdStr, hours]) => {
+        const weekId = Number(weekIdStr);
+        totals[weekId] = (totals[weekId] || 0) + hours;
+      });
+    });
+
+    return totals;
+  }, [existingEntries, editingEntryId]);
+
+  // Initialize weekly hours with suggested hours
   useEffect(() => {
     if (initialWeeklyHours && Object.keys(initialWeeklyHours).length > 0) {
       setWeeklyHours(initialWeeklyHours);
@@ -73,7 +91,7 @@ export default function AddEntryStep3({
       const initial: Record<number, number> = {};
       relevantWeeks.forEach((week) => {
         const workingDays = getWorkingDaysInWeek(week);
-        const suggestedHours = workingDays * 8; // 8 hours per day
+        const suggestedHours = workingDays * 8;
         initial[week.id] = suggestedHours;
       });
       setWeeklyHours(initial);
@@ -101,7 +119,9 @@ export default function AddEntryStep3({
           Customize Weekly Hours
         </h3>
         <p className="text-sm text-[#525252] mb-4">
-          Hours are pre-filled based on working days (8h/day). Adjust as needed.
+          Hours are pre-filled based on working days (8h/day). You can adjust as
+          needed. Final validation will occur when you submit your forecast
+          plan.
         </p>
       </div>
 
@@ -109,11 +129,13 @@ export default function AddEntryStep3({
       <div className="space-y-3 max-h-96 overflow-y-auto">
         {relevantWeeks.map((week, index) => {
           const workingDays = getWorkingDaysInWeek(week);
+          const currentTotal = currentWeekTotals[week.id] || 0;
+          const remaining = 40 - currentTotal;
 
           return (
             <div
               key={week.id}
-              className="flex items-center gap-4 p-4 bg-[#f4f4f4] rounded-lg"
+              className="flex items-center gap-4 p-4 rounded-lg bg-[#f4f4f4]"
             >
               <div className="flex-1">
                 <div className="font-medium text-[#161616]">
@@ -127,7 +149,13 @@ export default function AddEntryStep3({
                   })}
                 </div>
                 <div className="text-xs text-[#8d8d8d] mt-1">
-                  {workingDays} working day{workingDays !== 1 ? "s" : ""}
+                  {workingDays} working day{workingDays !== 1 ? "s" : ""} •{" "}
+                  {currentTotal > 0 && (
+                    <span>
+                      Other entries: {currentTotal}h • Available: {remaining}h
+                    </span>
+                  )}
+                  {currentTotal === 0 && <span>Available: 40h</span>}
                 </div>
               </div>
 
@@ -142,19 +170,24 @@ export default function AddEntryStep3({
                   onChange={(e) =>
                     handleHoursChange(week.id, e.currentTarget.value)
                   }
+                  label=""
                   className="text-center"
                 />
               </div>
 
-              {weeklyHours[week.id] !== 40 && (
-                <button
-                  type="button"
-                  onClick={() => handleHoursChange(week.id, "40")}
-                  className="text-xs text-[#0f62fe] hover:underline whitespace-nowrap ml-4"
-                >
-                  Use 40h
-                </button>
-              )}
+              {weeklyHours[week.id] !== remaining &&
+                remaining > 0 &&
+                remaining <= 40 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleHoursChange(week.id, String(remaining))
+                    }
+                    className="text-xs text-[#0f62fe] hover:underline whitespace-nowrap"
+                  >
+                    Use {remaining}h
+                  </button>
+                )}
             </div>
           );
         })}
@@ -163,7 +196,9 @@ export default function AddEntryStep3({
       {/* Total */}
       <div className="p-4 bg-[#e0e0e0] rounded-lg">
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-[#161616]">Total Hours</span>
+          <span className="font-semibold text-[#161616]">
+            Total Hours (This Entry)
+          </span>
           <span className="text-xl font-semibold text-[#161616]">
             {totalHours}h
           </span>
@@ -180,7 +215,7 @@ export default function AddEntryStep3({
             Cancel
           </Button>
           <Button kind="primary" size="md" onClick={handleNext}>
-            Create Entry
+            {editingEntryId ? "Update Entry" : "Create Entry"}
           </Button>
         </div>
       </div>

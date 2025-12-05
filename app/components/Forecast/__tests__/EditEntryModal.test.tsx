@@ -104,6 +104,7 @@ describe("EditEntryModal", () => {
         categories={categories}
         entry={entry}
         weekEndings={[]}
+        existingEntries={[]}
       />,
     );
 
@@ -147,6 +148,7 @@ describe("EditEntryModal", () => {
         categories={categories}
         entry={entry}
         weekEndings={[]}
+        existingEntries={[]}
       />,
     );
 

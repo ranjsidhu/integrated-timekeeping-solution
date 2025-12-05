@@ -90,6 +90,8 @@ export type AddEntryStep3Props = {
   fromDate: Date[];
   toDate: Date[];
   weekEndings: WeekEnding[];
+  existingEntries: ForecastEntry[];
+  editingEntryId?: number;
   onNext: (weeklyHours: Record<number, number>) => void;
   onBack: () => void;
   onCancel: () => void;
@@ -103,4 +105,17 @@ export type EditEntryModalProps = {
   categories: Category[];
   weekEndings: WeekEnding[];
   entry: ForecastEntry | null;
+};
+
+export type WeeklyValidationError = {
+  weekId: number;
+  weekLabel: string;
+  currentTotal: number;
+  newHours: number;
+  finalTotal: number;
+};
+
+export type ValidationResult = {
+  isValid: boolean;
+  errors: WeeklyValidationError[];
 };
