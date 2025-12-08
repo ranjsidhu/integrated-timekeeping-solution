@@ -13,7 +13,8 @@
     "prepare": "husky",
     "test": "jest",
     "test:watch": "jest --watch",
-    "localbuild": "docker build --no-cache -t its-local:latest ."
+    "localbuild": "docker build --no-cache -t its-local:latest .",
+    "localquality": "npm run lint && npm run test && npm run type-check && npm run localbuild"
   },
   "dependencies": {
     "@carbon/react": "1.96.0",

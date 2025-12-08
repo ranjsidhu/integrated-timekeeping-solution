@@ -146,7 +146,7 @@ export default function AddEntryStep2({
                 type="button"
                 onClick={() => {
                   setSelectedProject(project);
-                  setProjectSearch(project.project_name);
+                  setProjectSearch("");
                   setProjects([]);
                 }}
                 className="w-full p-3 text-left hover:bg-[#e0e0e0] transition-colors border-b border-[#e0e0e0] last:border-b-0"
