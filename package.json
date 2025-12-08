@@ -45,7 +45,7 @@
     "prisma": "7.1.0",
     "sass": "1.94.2",
     "tailwindcss": "4.1.17",
-    "ts-jest": "29.4.5",
+    "ts-jest": "29.4.6",
     "ts-node": "10.9.2",
     "typescript": "5.9.3"
   }
