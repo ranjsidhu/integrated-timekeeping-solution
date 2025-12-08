@@ -37,6 +37,8 @@ export default function EditEntryModal({
 }: EditEntryModalProps) {
   const [currentStep, setCurrentStep] = useState(2);
   const [formData, setFormData] = useState<Partial<NewForecastEntry>>({});
+  const [currentHoursPerWeek, setCurrentHoursPerWeek] = useState(40);
+  const [hoursPerWeekChanged, setHoursPerWeekChanged] = useState(false);
 
   // Initialize form with existing entry data
   useEffect(() => {
@@ -52,6 +54,8 @@ export default function EditEntryModal({
           : undefined,
         weekly_hours: entry.weekly_hours,
       });
+      setCurrentHoursPerWeek(entry.hours_per_week);
+      setHoursPerWeekChanged(false);
     }
   }, [entry]);
 
@@ -64,12 +68,20 @@ export default function EditEntryModal({
     data: Omit<NewForecastEntry, "category_id" | "weekly_hours">,
   ) => {
     setFormData((prev) => ({ ...prev, ...data }));
+
+    // Check if hours per week changed
+    if (data.hours_per_week !== currentHoursPerWeek) {
+      setHoursPerWeekChanged(true);
+    }
+
+    setCurrentHoursPerWeek(data.hours_per_week);
     setCurrentStep(3);
   };
 
   const handleStep3Complete = (weeklyHours: Record<number, number>) => {
     const completeEntry: NewForecastEntry = {
       ...formData,
+      hours_per_week: currentHoursPerWeek,
       weekly_hours: weeklyHours,
     } as NewForecastEntry;
 
@@ -82,6 +94,8 @@ export default function EditEntryModal({
   const handleClose = () => {
     setCurrentStep(2);
     setFormData({});
+    setCurrentHoursPerWeek(40);
+    setHoursPerWeekChanged(false);
     onClose();
   };
 
@@ -140,29 +154,29 @@ export default function EditEntryModal({
               project_id: formData.project_id,
               from_date: formData.from_date,
               to_date: formData.to_date,
-              hours_per_week: formData.hours_per_week,
+              hours_per_week: currentHoursPerWeek,
               potential_extension: formData.potential_extension,
             }}
           />
         )}
 
-        {currentStep === 3 &&
-          formData.from_date &&
-          formData.to_date &&
-          formData.hours_per_week && (
-            <AddEntryStep3
-              fromDate={formData.from_date}
-              toDate={formData.to_date}
-              weekEndings={weekEndings}
-              existingEntries={existingEntries}
-              editingEntryId={entry?.id}
-              onNext={handleStep3Complete}
-              onBack={handleBack}
-              onCancel={handleClose}
-              initialWeeklyHours={formData.weekly_hours}
-              defaultHoursPerWeek={formData.hours_per_week}
-            />
-          )}
+        {currentStep === 3 && formData.from_date && formData.to_date && (
+          <AddEntryStep3
+            fromDate={formData.from_date}
+            toDate={formData.to_date}
+            weekEndings={weekEndings}
+            existingEntries={existingEntries}
+            editingEntryId={entry?.id}
+            onNext={handleStep3Complete}
+            onBack={handleBack}
+            onCancel={handleClose}
+            // Only pass initialWeeklyHours if hours per week hasn't changed
+            initialWeeklyHours={
+              hoursPerWeekChanged ? undefined : formData.weekly_hours
+            }
+            defaultHoursPerWeek={currentHoursPerWeek}
+          />
+        )}
       </div>
     </Modal>
   );
