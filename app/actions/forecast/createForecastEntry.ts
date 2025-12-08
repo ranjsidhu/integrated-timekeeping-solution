@@ -102,8 +102,8 @@ export async function createForecastEntry(
         const weekStart = new Date(week.week_ending);
         weekStart.setDate(weekStart.getDate() - 6);
 
-        // Include this week if to_date is on or after the week start
-        return toDate >= weekStart;
+        // Include this week only if the date range overlaps with the week
+        return toDate >= weekStart && fromDate <= new Date(week.week_ending);
       });
 
       // Create weekly breakdown entries ONLY for weeks in the date range

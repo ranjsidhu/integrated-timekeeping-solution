@@ -98,7 +98,7 @@ export async function updateForecastEntry(
       const filteredWeeks = weekEndings.filter((week) => {
         const weekStart = new Date(week.week_ending);
         weekStart.setDate(weekStart.getDate() - 6);
-        return toDate >= weekStart;
+        return toDate >= weekStart && fromDate <= new Date(week.week_ending);
       });
 
       if (filteredWeeks.length > 0) {

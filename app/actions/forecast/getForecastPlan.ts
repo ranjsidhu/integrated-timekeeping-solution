@@ -77,7 +77,13 @@ export async function getForecastPlan(): Promise<GetForecastPlanResult> {
 
     const status = forecastPlan.submitted_at ? "Submitted" : "Draft";
 
-    return { success: true, entries, status };
+    return {
+      success: true,
+      entries: entries.sort((a, b) =>
+        a.project_name.localeCompare(b.project_name),
+      ),
+      status,
+    };
   } catch (error) {
     console.error("Error fetching forecast plan:", error);
     return { success: false, error: "Failed to fetch forecast plan" };

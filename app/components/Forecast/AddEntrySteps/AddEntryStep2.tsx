@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { searchProjects } from "@/app/actions";
 import type { Project } from "@/types/forecast.types";
 import Button from "../../Button/Button";
@@ -49,20 +49,39 @@ export default function AddEntryStep2({
     initialData?.potential_extension || [],
   );
 
+  const hasInitialized = useRef(false);
+  // Store initial data in ref to avoid dependency issues
+  const initialDataRef = useRef(initialData);
+
+  // Update ref when initialData changes
+  useEffect(() => {
+    initialDataRef.current = initialData;
+  }, [initialData]);
+
   // Load initial project if editing
   useEffect(() => {
     const loadInitialProject = async () => {
-      if (initialData?.project_id && categoryId !== undefined) {
+      const currentInitialData = initialDataRef.current;
+
+      if (
+        currentInitialData?.project_id &&
+        categoryId !== undefined &&
+        !hasInitialized.current
+      ) {
         try {
           // Search for all projects to find the one we need
           const results = await searchProjects("", categoryId);
-          const project = results.find((p) => p.id === initialData.project_id);
+          const project = results.find(
+            (p) => p.id === currentInitialData.project_id,
+          );
           if (project) {
             setSelectedProject(project);
-            setFromDate(initialData.from_date || []);
-            setToDate(initialData.to_date || []);
-            setHoursPerWeek(initialData.hours_per_week || 40);
+            setFromDate(currentInitialData.from_date || []);
+            setToDate(currentInitialData.to_date || []);
+            setPotentialExtension(currentInitialData.potential_extension || []);
+            setHoursPerWeek(currentInitialData.hours_per_week || 40);
           }
+          hasInitialized.current = true;
         } catch (error) {
           console.error("Error loading initial project:", error);
         }
@@ -70,13 +89,12 @@ export default function AddEntryStep2({
     };
 
     loadInitialProject();
-  }, [
-    initialData?.project_id,
-    categoryId,
-    initialData?.from_date,
-    initialData?.to_date,
-    initialData?.hours_per_week,
-  ]);
+  }, [categoryId]); // Only depend on categoryId
+
+  // Reset initialization flag when initialData changes
+  useEffect(() => {
+    hasInitialized.current = false;
+  }, []);
 
   // Search projects
   useEffect(() => {
@@ -105,16 +123,15 @@ export default function AddEntryStep2({
         from_date: fromDate,
         to_date: toDate,
         hours_per_week: hoursPerWeek,
-        potential_extension:
-          potentialExtension.length > 0 ? potentialExtension : undefined,
+        potential_extension: potentialExtension,
       });
     }
   };
 
   const isValid =
     selectedProject &&
-    fromDate.length > 0 &&
-    toDate.length > 0 &&
+    fromDate &&
+    toDate &&
     hoursPerWeek > 0 &&
     hoursPerWeek <= 40;
 
@@ -231,9 +248,7 @@ export default function AddEntryStep2({
         <DatePicker
           datePickerType="single"
           onChange={(dates) => setPotentialExtension(dates)}
-          value={
-            potentialExtension.length > 0 ? potentialExtension[0] : undefined
-          }
+          value={potentialExtension}
         >
           <DatePickerInput
             id="extension-date"
