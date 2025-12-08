@@ -23,14 +23,9 @@ import type { NewForecastEntry } from "@/app/components/Forecast/AddEntryModal";
 import { useForecastData } from "@/app/hooks";
 import { useNotification } from "@/app/providers";
 import type {
-  Category,
   ForecastEntry,
-  ForecastProps,
+  ForecastPageExtendedProps,
 } from "@/types/forecast.types";
-
-type ForecastPageExtendedProps = ForecastProps & {
-  categories: Category[];
-};
 
 export default function ForecastPage({
   weekEndings,

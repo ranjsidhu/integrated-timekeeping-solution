@@ -1,18 +1,8 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
+import type { SubmitForecastPlanResult } from "@/types/forecast.types";
 import { getSession } from "@/utils/auth/getSession";
-
-type SubmitForecastPlanResult = {
-  success: boolean;
-  status?: string;
-  error?: string;
-  validationErrors?: Array<{
-    weekId: number;
-    weekEnding: Date;
-    total: number;
-  }>;
-};
 
 export async function submitForecastPlan(): Promise<SubmitForecastPlanResult> {
   try {

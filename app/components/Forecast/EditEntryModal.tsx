@@ -10,21 +10,9 @@ import {
   ProgressStep,
 } from "@/app/components";
 import type {
-  Category,
-  ForecastEntry,
+  EditEntryModalProps,
   NewForecastEntry,
 } from "@/types/forecast.types";
-import type { WeekEnding } from "@/types/timesheet.types";
-
-type EditEntryModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (entryId: number, entry: NewForecastEntry) => void;
-  categories: Category[];
-  weekEndings: WeekEnding[];
-  existingEntries: ForecastEntry[];
-  entry: ForecastEntry | null;
-};
 
 export default function EditEntryModal({
   isOpen,

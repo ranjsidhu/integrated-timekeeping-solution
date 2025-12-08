@@ -1,12 +1,8 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
+import type { DeleteForecastEntryResult } from "@/types/forecast.types";
 import { getSession } from "@/utils/auth/getSession";
-
-type DeleteForecastEntryResult = {
-  success: boolean;
-  error?: string;
-};
 
 export async function deleteForecastEntry(
   entryId: number,

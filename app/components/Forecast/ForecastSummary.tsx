@@ -1,13 +1,7 @@
 "use client";
 
 import { ChartLine, Time } from "@carbon/icons-react";
-import type { ForecastEntry } from "@/types/forecast.types";
-import type { WeekEnding } from "@/types/timesheet.types";
-
-type ForecastSummaryProps = {
-  forecastEntries: ForecastEntry[];
-  weekEndings: WeekEnding[];
-};
+import type { ForecastSummaryProps } from "@/types/forecast.types";
 
 export default function ForecastSummary({
   forecastEntries,

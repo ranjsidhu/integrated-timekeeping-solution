@@ -2,31 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { searchProjects } from "@/app/actions";
-import type { Project } from "@/types/forecast.types";
+import type { AddEntryStep2Props, Project } from "@/types/forecast.types";
 import Button from "../../Button/Button";
 import DatePicker from "../../DatePicker/DatePicker";
 import DatePickerInput from "../../DatePickerInput/DatePickerInput";
 import Input from "../../Input/Input";
-
-type AddEntryStep2Props = {
-  categoryId: number | undefined;
-  onNext: (data: {
-    project_id: number;
-    from_date: Date[];
-    to_date: Date[];
-    hours_per_week: number;
-    potential_extension?: Date[];
-  }) => void;
-  onBack: () => void;
-  onCancel: () => void;
-  initialData?: {
-    project_id?: number;
-    from_date?: Date[];
-    to_date?: Date[];
-    hours_per_week?: number;
-    potential_extension?: Date[];
-  };
-};
 
 export default function AddEntryStep2({
   categoryId,

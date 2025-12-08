@@ -1,15 +1,11 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
-import type { ForecastEntry } from "@/types/forecast.types";
+import type {
+  ForecastEntry,
+  GetForecastPlanResult,
+} from "@/types/forecast.types";
 import { getSession } from "@/utils/auth/getSession";
-
-type GetForecastPlanResult = {
-  success: boolean;
-  entries?: ForecastEntry[];
-  status?: string;
-  error?: string;
-};
 
 export async function getForecastPlan(): Promise<GetForecastPlanResult> {
   try {

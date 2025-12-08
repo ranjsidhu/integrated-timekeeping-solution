@@ -1,15 +1,7 @@
 "use client";
 
 import { Edit, TrashCan } from "@carbon/icons-react";
-import type { ForecastEntry } from "@/types/forecast.types";
-import type { WeekEnding } from "@/types/timesheet.types";
-
-type ForecastTimelineProps = {
-  forecastEntries: ForecastEntry[];
-  weekEndings: WeekEnding[];
-  onEditEntry: (entryId: number) => void;
-  onDeleteEntry: (entryId: number) => void;
-};
+import type { ForecastTimelineProps } from "@/types/forecast.types";
 
 export default function ForecastTimeline({
   forecastEntries,

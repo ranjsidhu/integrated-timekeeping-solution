@@ -2,13 +2,7 @@
 
 import { ChevronRight, Edit, TrashCan } from "@carbon/icons-react";
 import { useState } from "react";
-import type { ForecastEntry } from "@/types/forecast.types";
-
-type ForecastEntriesListProps = {
-  forecastEntries: ForecastEntry[];
-  onEditEntry: (entryId: number) => void;
-  onDeleteEntry: (entryId: number) => void;
-};
+import type { ForecastEntriesListProps } from "@/types/forecast.types";
 
 export default function ForecastEntriesList({
   forecastEntries,

@@ -2,12 +2,8 @@
 
 import type { NewForecastEntry } from "@/app/components/Forecast/AddEntryModal";
 import { prisma } from "@/prisma/prisma";
+import type { UpdateForecastEntryResult } from "@/types/forecast.types";
 import { getSession } from "@/utils/auth/getSession";
-
-type UpdateForecastEntryResult = {
-  success: boolean;
-  error?: string;
-};
 
 export async function updateForecastEntry(
   entryId: number,

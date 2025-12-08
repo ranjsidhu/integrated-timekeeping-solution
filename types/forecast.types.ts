@@ -72,6 +72,7 @@ export type AddEntryModalProps = {
   onSave: (entry: NewForecastEntry) => void;
   categories: Category[];
   weekEndings: WeekEnding[];
+  existingEntries: ForecastEntry[];
 };
 
 export type NewForecastEntry = {
@@ -103,6 +104,7 @@ export type EditEntryModalProps = {
   onSave: (entryId: number, entry: NewForecastEntry) => void;
   categories: Category[];
   weekEndings: WeekEnding[];
+  existingEntries: ForecastEntry[];
   entry: ForecastEntry | null;
 };
 
@@ -117,4 +119,80 @@ export type WeeklyValidationError = {
 export type ValidationResult = {
   isValid: boolean;
   errors: WeeklyValidationError[];
+};
+
+export type ForecastPageExtendedProps = ForecastProps & {
+  categories: Category[];
+};
+
+export type CreateForecastEntryResult = {
+  success: boolean;
+  entryId?: number;
+  error?: string;
+};
+
+export type DeleteForecastEntryResult = {
+  success: boolean;
+  error?: string;
+};
+
+export type GetForecastPlanResult = {
+  success: boolean;
+  entries?: ForecastEntry[];
+  status?: string;
+  error?: string;
+};
+
+export type SaveForecastPlanResult = {
+  success: boolean;
+  error?: string;
+};
+
+export type SearchProjectResponse = {
+  id: number;
+  project_name: string;
+  code?: string;
+};
+
+export type SubmitForecastPlanResult = {
+  success: boolean;
+  status?: string;
+  error?: string;
+  validationErrors?: Array<{
+    weekId: number;
+    weekEnding: Date;
+    total: number;
+  }>;
+};
+
+export type UpdateForecastEntryResult = {
+  success: boolean;
+  error?: string;
+};
+
+export type ForecastEntriesListProps = {
+  forecastEntries: ForecastEntry[];
+  onEditEntry: (entryId: number) => void;
+  onDeleteEntry: (entryId: number) => void;
+};
+
+export type ForecastHeaderProps = {
+  status: string;
+  viewMode: "timeline" | "list";
+  onViewModeChange: (mode: "timeline" | "list") => void;
+  onAddEntry: () => void;
+  onSave: () => void;
+  onSubmit: () => void;
+};
+
+export type ForecastSummaryProps = {
+  forecastEntries: ForecastEntry[];
+  weekEndings: WeekEnding[];
+};
+
+export type ForecastTimelineProps = {
+  forecastEntries: ForecastEntry[];
+  weekEndings: WeekEnding[];
+  onEditEntry: (entryId: number) => void;
+  onDeleteEntry: (entryId: number) => void;
 };

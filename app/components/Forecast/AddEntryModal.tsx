@@ -2,20 +2,10 @@
 
 import { useState } from "react";
 import { Modal, ProgressIndicator, ProgressStep } from "@/app/components";
-import type { Category, ForecastEntry } from "@/types/forecast.types";
-import type { WeekEnding } from "@/types/timesheet.types";
+import type { AddEntryModalProps } from "@/types/forecast.types";
 import AddEntryStep1 from "./AddEntrySteps/AddEntryStep1";
 import AddEntryStep2 from "./AddEntrySteps/AddEntryStep2";
 import AddEntryStep3 from "./AddEntrySteps/AddEntryStep3";
-
-type AddEntryModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (entry: NewForecastEntry) => void;
-  categories: Category[];
-  weekEndings: WeekEnding[];
-  existingEntries: ForecastEntry[];
-};
 
 export type NewForecastEntry = {
   category_id: number;

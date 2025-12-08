@@ -1,12 +1,7 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
-
-export type SearchProjectResponse = {
-  id: number;
-  project_name: string;
-  code?: string;
-};
+import type { SearchProjectResponse } from "@/types/forecast.types";
 
 /**
  * Search projects based on category type
