@@ -16,7 +16,7 @@
     "localbuild": "docker build --no-cache --build-arg DATABASE_URL='test' --build-arg LOCAL_DATABASE_URL='test' -t its-local:latest ."
   },
   "dependencies": {
-    "@carbon/react": "1.96.0",
+    "@carbon/react": "1.97.0",
     "@ibm/plex": "6.4.1",
     "@prisma/adapter-pg": "7.1.0",
     "@prisma/client": "7.1.0",
