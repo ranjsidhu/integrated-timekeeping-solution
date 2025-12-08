@@ -59,7 +59,9 @@ export default function AddEntryStep2({
           const project = results.find((p) => p.id === initialData.project_id);
           if (project) {
             setSelectedProject(project);
-            setProjectSearch(project.project_name);
+            setFromDate(initialData.from_date || []);
+            setToDate(initialData.to_date || []);
+            setHoursPerWeek(initialData.hours_per_week || 40);
           }
         } catch (error) {
           console.error("Error loading initial project:", error);
@@ -68,7 +70,13 @@ export default function AddEntryStep2({
     };
 
     loadInitialProject();
-  }, [initialData?.project_id, categoryId]);
+  }, [
+    initialData?.project_id,
+    categoryId,
+    initialData?.from_date,
+    initialData?.to_date,
+    initialData?.hours_per_week,
+  ]);
 
   // Search projects
   useEffect(() => {
@@ -174,7 +182,7 @@ export default function AddEntryStep2({
             datePickerType="single"
             className="w-full"
             onChange={(dates) => setFromDate(dates)}
-            value={fromDate.length > 0 ? fromDate[0] : undefined}
+            value={fromDate}
           >
             <DatePickerInput
               id="from-date"
@@ -189,7 +197,7 @@ export default function AddEntryStep2({
           <DatePicker
             datePickerType="single"
             onChange={(dates) => setToDate(dates)}
-            value={toDate.length > 0 ? toDate[0] : undefined}
+            value={toDate}
           >
             <DatePickerInput
               id="to-date"

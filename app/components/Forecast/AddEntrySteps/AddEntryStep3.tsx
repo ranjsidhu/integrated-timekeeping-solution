@@ -96,7 +96,6 @@ export default function AddEntryStep3({
   }, [existingEntries, editingEntryId]);
 
   // Initialize weekly hours with suggested hours
-
   useEffect(() => {
     if (initialWeeklyHours && Object.keys(initialWeeklyHours).length > 0) {
       // When editing, merge initial hours with new weeks

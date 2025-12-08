@@ -80,7 +80,7 @@ export default function EditEntryModal({
   };
 
   const handleClose = () => {
-    setCurrentStep(1);
+    setCurrentStep(2);
     setFormData({});
     onClose();
   };
