@@ -121,3 +121,50 @@ export interface WorkItem {
   work_item_code: string;
   description: string;
 }
+
+export type TimesheetActionsProps = {
+  handleSave: () => void;
+  handleSubmit: () => void;
+};
+
+export type TimesheetBillCodesProps = {
+  billCodes: CodeWithWorkItems["work_items"][number]["bill_codes"];
+  editingValues?: Record<string, Partial<Record<DayOfWeek, string>>>;
+  onTempChange: (entryId: string, day: DayOfWeek, value: string) => void;
+  onCommit: (entryId: string, day: DayOfWeek) => void;
+  deleteEntry: (entryId: string) => void;
+  entry: TimeEntry;
+};
+
+export type TimesheetCardsProps = {
+  workItems: CodeWithWorkItems["work_items"];
+  expandedRows: Set<string>;
+  toggleExpanded: (id: number) => void;
+  weekEnd: Date | string;
+  editingValues?: Record<string, Partial<Record<DayOfWeek, string>>>;
+  onTempChange: (entryId: string, day: DayOfWeek, value: string) => void;
+  onCommit: (entryId: string, day: DayOfWeek) => void;
+  deleteEntry: (entryId: string) => void;
+  timeEntries: TimeEntry[];
+};
+
+export type TimesheetControlsProps = {
+  selectedWeek: WeekEnding;
+  weekEndings: WeekEnding[];
+  setSelectedWeek: (week: WeekEnding) => void;
+  onCopyWeek?: (weekToCopy: WeekEnding) => void;
+};
+
+export type TimesheetHeadProps = {
+  selectedWeek: WeekEnding;
+};
+
+export type TimesheetTotalsProps = {
+  timeEntries: TimeEntry[];
+};
+
+export type TimesheetWorkItemsProps = {
+  workItem: CodeWithWorkItems["work_items"][number];
+  isExpanded: boolean;
+  toggleExpanded: (id: number) => void;
+};

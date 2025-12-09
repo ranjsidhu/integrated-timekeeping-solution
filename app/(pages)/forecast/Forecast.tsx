@@ -19,12 +19,13 @@ import {
   Loading,
   Notifications,
 } from "@/app/components";
-import type { NewForecastEntry } from "@/app/components/Forecast/AddEntryModal";
+
 import { useForecastData } from "@/app/hooks";
 import { useNotification } from "@/app/providers";
 import type {
   ForecastEntry,
   ForecastPageExtendedProps,
+  NewForecastEntry,
 } from "@/types/forecast.types";
 
 export default function ForecastPage({

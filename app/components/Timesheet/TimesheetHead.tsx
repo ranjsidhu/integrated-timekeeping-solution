@@ -1,9 +1,5 @@
-import type { WeekEnding } from "@/types/timesheet.types";
+import type { TimesheetHeadProps } from "@/types/timesheet.types";
 import { getDayInfo } from "@/utils/timesheet/timesheet.utils";
-
-type TimesheetHeadProps = {
-  selectedWeek: WeekEnding;
-};
 
 export default function TimesheetHead({ selectedWeek }: TimesheetHeadProps) {
   return (

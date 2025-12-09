@@ -1,26 +1,10 @@
 import { ChevronDown, ChevronRight, TrashCan } from "@carbon/icons-react";
-import type {
-  CodeWithWorkItems,
-  DayOfWeek,
-  TimeEntry,
-} from "@/types/timesheet.types";
+import type { DayOfWeek, TimesheetCardsProps } from "@/types/timesheet.types";
 import {
   calculateTotal,
   getDateLabel,
 } from "@/utils/timesheet/timesheet.utils";
 import Input from "../Input/Input";
-
-type TimesheetCardsProps = {
-  workItems: CodeWithWorkItems["work_items"];
-  expandedRows: Set<string>;
-  toggleExpanded: (id: number) => void;
-  weekEnd: Date | string;
-  editingValues?: Record<string, Partial<Record<DayOfWeek, string>>>;
-  onTempChange: (entryId: string, day: DayOfWeek, value: string) => void;
-  onCommit: (entryId: string, day: DayOfWeek) => void;
-  deleteEntry: (entryId: string) => void;
-  timeEntries: TimeEntry[];
-};
 
 const days: DayOfWeek[] = ["mon", "tue", "wed", "thu", "fri"];
 

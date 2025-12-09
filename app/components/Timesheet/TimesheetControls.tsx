@@ -4,17 +4,13 @@ import { Add } from "@carbon/icons-react";
 import { Popover, PopoverContent } from "@carbon/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { WeekEnding } from "@/types/timesheet.types";
+import type {
+  TimesheetControlsProps,
+  WeekEnding,
+} from "@/types/timesheet.types";
 import Button from "../Button/Button";
 import Column from "../Column/Column";
 import Dropdown from "../Dropdown/Dropdown";
-
-type TimesheetControlsProps = {
-  selectedWeek: WeekEnding;
-  weekEndings: WeekEnding[];
-  setSelectedWeek: (week: WeekEnding) => void;
-  onCopyWeek?: (weekToCopy: WeekEnding) => void;
-};
 
 export default function TimesheetControls({
   selectedWeek,
