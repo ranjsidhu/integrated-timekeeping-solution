@@ -9,32 +9,58 @@ export default function Notifications() {
 
   if (!notifications || notifications.length === 0) return null;
 
-  const n = notifications[0];
+  // Display up to 3 notifications
+  const displayedNotifications = notifications.slice(0, 3);
 
-  const handleClose = () => {
-    removeNotification(0);
-  };
+  const toastNotifications = displayedNotifications.filter(
+    (n) => n.type === "toast",
+  );
+  const inlineNotifications = displayedNotifications.filter(
+    (n) => n.type !== "toast",
+  );
 
-  const commonProps = {
-    kind: n.kind,
-    title: n.title,
-    subtitle: n.subtitle,
-    caption: n.caption,
-    type: n.type,
-    onClose: handleClose,
-    "data-testid": "notification",
-  };
+  return (
+    <>
+      {/* Toast notifications stacked in top-right */}
+      {toastNotifications.length > 0 && (
+        <div className="fixed top-4 right-4 z-9001 pointer-events-auto space-y-2">
+          {toastNotifications.map((n) => {
+            const actualIndex = notifications.indexOf(n);
+            return (
+              <ToastNotification
+                key={actualIndex}
+                kind={n.kind}
+                title={n.title}
+                subtitle={n.subtitle}
+                caption={n.caption}
+                onClose={() => removeNotification(actualIndex)}
+                timeout={5000}
+                lowContrast
+                role="alert"
+                data-testid={`notification-${actualIndex}`}
+              />
+            );
+          })}
+        </div>
+      )}
 
-  return n.type === "toast" ? (
-    <div className="fixed top-4 right-4 z-9001 pointer-events-auto">
-      <ToastNotification
-        {...commonProps}
-        timeout={5000}
-        lowContrast
-        role="alert"
-      />
-    </div>
-  ) : (
-    <InlineNotification {...commonProps} lowContrast role="alert" />
+      {/* Inline notifications stacked */}
+      {inlineNotifications.map((n) => {
+        const actualIndex = notifications.indexOf(n);
+        return (
+          <div key={actualIndex} className="mb-2">
+            <InlineNotification
+              kind={n.kind}
+              title={n.title}
+              subtitle={n.subtitle}
+              onClose={() => removeNotification(actualIndex)}
+              lowContrast
+              role="alert"
+              data-testid={`notification-${actualIndex}`}
+            />
+          </div>
+        );
+      })}
+    </>
   );
 }
