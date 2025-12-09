@@ -32,7 +32,7 @@ describe("getForecastWeekEndings", () => {
     expect(results[0]).toMatchObject({
       id: 1,
       week_ending: sampleDate,
-      status: "",
+      status: "Draft",
       label: new Date(sampleDate).toLocaleDateString("en-GB", {
         month: "short",
         day: "2-digit",

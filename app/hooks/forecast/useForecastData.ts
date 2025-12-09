@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getForecastPlan } from "@/app/actions";
 import type { ForecastEntry } from "@/types/forecast.types";
 
 export function useForecastData(setForecastStatus: (status: string) => void) {
@@ -9,16 +10,14 @@ export function useForecastData(setForecastStatus: (status: string) => void) {
     async function loadForecast() {
       setIsLoading(true);
 
-      // TODO: Implement actual API call
-      // const result = await getForecastPlan(userId);
+      const result = await getForecastPlan();
 
-      // Mock data for now
-      const timeoutId = setTimeout(() => {
-        setForecastEntries([]);
-        setForecastStatus("Draft");
-        setIsLoading(false);
-      }, 500);
-      return () => clearTimeout(timeoutId);
+      if (result.success) {
+        setForecastEntries(result.entries || []);
+        setForecastStatus(result.status || "Draft");
+      }
+
+      setIsLoading(false);
     }
 
     loadForecast();

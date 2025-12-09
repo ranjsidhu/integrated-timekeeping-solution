@@ -14,7 +14,6 @@ export interface BillCode {
   code: string;
   description: string;
   projectName?: string;
-  clientName?: string;
   workItems?: WorkItem[];
   isExpanded?: boolean;
 }

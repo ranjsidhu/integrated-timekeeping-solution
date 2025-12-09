@@ -1,39 +1,80 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { searchProjects } from "@/app/actions";
-import type { Project } from "@/types/forecast.types";
+import type { AddEntryStep2Props, Project } from "@/types/forecast.types";
 import Button from "../../Button/Button";
 import DatePicker from "../../DatePicker/DatePicker";
 import DatePickerInput from "../../DatePickerInput/DatePickerInput";
 import Input from "../../Input/Input";
-
-type AddEntryStep2Props = {
-  categoryId: number | undefined;
-  onNext: (data: {
-    project_id: number;
-    from_date: Date[];
-    to_date: Date[];
-    hours_per_week: number;
-    potential_extension?: Date[];
-  }) => void;
-  onBack: () => void;
-  onCancel: () => void;
-};
 
 export default function AddEntryStep2({
   categoryId,
   onNext,
   onBack,
   onCancel,
+  initialData,
 }: AddEntryStep2Props) {
   const [projectSearch, setProjectSearch] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [fromDate, setFromDate] = useState<Date[]>([]);
-  const [toDate, setToDate] = useState<Date[]>([]);
-  const [hoursPerWeek, setHoursPerWeek] = useState(40);
-  const [potentialExtension, setPotentialExtension] = useState<Date[]>([]);
+  const [fromDate, setFromDate] = useState<Date[]>(
+    initialData?.from_date || [],
+  );
+  const [toDate, setToDate] = useState<Date[]>(initialData?.to_date || []);
+  const [hoursPerWeek, setHoursPerWeek] = useState(
+    initialData?.hours_per_week || 40,
+  );
+  const [potentialExtension, setPotentialExtension] = useState<Date[]>(
+    initialData?.potential_extension || [],
+  );
+
+  const hasInitialized = useRef(false);
+  // Store initial data in ref to avoid dependency issues
+  const initialDataRef = useRef(initialData);
+
+  // Update ref when initialData changes
+  useEffect(() => {
+    initialDataRef.current = initialData;
+  }, [initialData]);
+
+  // Load initial project if editing
+  useEffect(() => {
+    const loadInitialProject = async () => {
+      const currentInitialData = initialDataRef.current;
+
+      if (
+        currentInitialData?.project_id &&
+        categoryId !== undefined &&
+        !hasInitialized.current
+      ) {
+        try {
+          // Search for all projects to find the one we need
+          const results = await searchProjects("", categoryId);
+          const project = results.find(
+            (p) => p.id === currentInitialData.project_id,
+          );
+          if (project) {
+            setSelectedProject(project);
+            setFromDate(currentInitialData.from_date || []);
+            setToDate(currentInitialData.to_date || []);
+            setPotentialExtension(currentInitialData.potential_extension || []);
+            setHoursPerWeek(currentInitialData.hours_per_week || 40);
+          }
+          hasInitialized.current = true;
+        } catch (error) {
+          console.error("Error loading initial project:", error);
+        }
+      }
+    };
+
+    loadInitialProject();
+  }, [categoryId]); // Only depend on categoryId
+
+  // Reset initialization flag when initialData changes
+  useEffect(() => {
+    hasInitialized.current = false;
+  }, []);
 
   // Search projects
   useEffect(() => {
@@ -51,21 +92,26 @@ export default function AddEntryStep2({
   }, [projectSearch, categoryId]);
 
   const handleNext = () => {
-    if (selectedProject && fromDate && toDate && hoursPerWeek > 0) {
+    if (
+      selectedProject &&
+      fromDate.length > 0 &&
+      toDate.length > 0 &&
+      hoursPerWeek > 0
+    ) {
       onNext({
         project_id: selectedProject.id,
         from_date: fromDate,
         to_date: toDate,
         hours_per_week: hoursPerWeek,
-        potential_extension: potentialExtension || undefined,
+        potential_extension: potentialExtension,
       });
     }
   };
 
   const isValid =
     selectedProject &&
-    fromDate.length > 0 &&
-    toDate.length > 0 &&
+    fromDate &&
+    toDate &&
     hoursPerWeek > 0 &&
     hoursPerWeek <= 40;
 
@@ -113,11 +159,6 @@ export default function AddEntryStep2({
                 <div className="font-medium text-[#161616]">
                   {project.project_name}
                 </div>
-                {project.client_name && (
-                  <div className="text-sm text-[#525252]">
-                    {project.client_name}
-                  </div>
-                )}
               </button>
             ))}
           </div>
@@ -137,23 +178,28 @@ export default function AddEntryStep2({
           <DatePicker
             datePickerType="single"
             className="w-full"
-            onChange={(e) => setFromDate(e)}
+            onChange={(dates) => setFromDate(dates)}
+            value={fromDate}
           >
             <DatePickerInput
               id="from-date"
               size="lg"
-              labelText="Start date"
+              labelText="Start date *"
               className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
               placeholder="mm/dd/yyyy"
             />
           </DatePicker>
         </div>
         <div>
-          <DatePicker datePickerType="single" onChange={(e) => setToDate(e)}>
+          <DatePicker
+            datePickerType="single"
+            onChange={(dates) => setToDate(dates)}
+            value={toDate}
+          >
             <DatePickerInput
               id="to-date"
               size="lg"
-              labelText="End date"
+              labelText="End date *"
               className="w-full px-4 py-2 border border-[#8d8d8d] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0f62fe]"
               placeholder="mm/dd/yyyy"
             />
@@ -181,7 +227,8 @@ export default function AddEntryStep2({
       <div>
         <DatePicker
           datePickerType="single"
-          onChange={(e) => setPotentialExtension(e)}
+          onChange={(dates) => setPotentialExtension(dates)}
+          value={potentialExtension}
         >
           <DatePickerInput
             id="extension-date"
@@ -208,7 +255,7 @@ export default function AddEntryStep2({
             onClick={handleNext}
             disabled={!isValid}
           >
-            Create Entry
+            Next
           </Button>
         </div>
       </div>

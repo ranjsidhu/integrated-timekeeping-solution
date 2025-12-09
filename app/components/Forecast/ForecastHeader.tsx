@@ -2,20 +2,12 @@
 
 import { Add, Grid, List, Save } from "@carbon/icons-react";
 import { Tag } from "@carbon/react";
+import type { ForecastHeaderProps } from "@/types/forecast.types";
 import {
   getForecastStatusColour,
   viewModeClassnames,
 } from "@/utils/forecast/forecast.utils";
 import Button from "../Button/Button";
-
-type ForecastHeaderProps = {
-  status: string;
-  viewMode: "timeline" | "list";
-  onViewModeChange: (mode: "timeline" | "list") => void;
-  onAddEntry: () => void;
-  onSave: () => void;
-  onSubmit: () => void;
-};
 
 export default function ForecastHeader({
   status,
