@@ -1,42 +1,87 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
-import type { Project } from "@/types/forecast.types";
+import type { SearchProjectResponse } from "@/types/forecast.types";
 
 /**
- * Searches for projects based on a search term and category ID.
- * @param searchTerm - term to search project names
- * @param categoryId - category ID to filter projects
- * @returns - array of matching projects
+ * Search projects based on category type
+ * @param searchTerm - Project name to search for
+ * @param categoryId - Category ID to filter projects
  */
 export async function searchProjects(
   searchTerm: string,
   categoryId: number,
-): Promise<Project[]> {
+): Promise<SearchProjectResponse[]> {
   try {
-    // Get category to determine if productive or non-productive
+    // Get the category to determine if billable
     const category = await prisma.category.findUnique({
       where: { id: categoryId },
+      select: { category_name: true },
     });
 
-    if (!category) return [];
+    if (!category) {
+      return [];
+    }
 
-    // Search projects based on assignment type
+    const isBillable = category.category_name === "Billable";
+
+    // Get projects with their codes and bill codes
     const projects = await prisma.project.findMany({
       where: {
-        project_name: {
-          contains: searchTerm,
-          mode: "insensitive",
-        },
         is_active: true,
+        OR: [
+          {
+            project_name: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+          {
+            codes: {
+              some: {
+                code: {
+                  contains: searchTerm,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+        ],
+        // Filter by billable status
+        codes: {
+          some: {
+            work_items: {
+              some: {
+                bill_codes: {
+                  some: {
+                    is_billable: isBillable,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-      take: 10,
+      select: {
+        id: true,
+        project_name: true,
+        codes: {
+          select: {
+            code: true,
+          },
+          take: 1,
+        },
+      },
+      orderBy: {
+        project_name: "asc",
+      },
+      take: 20,
     });
 
     return projects.map((p) => ({
       id: p.id,
       project_name: p.project_name,
-      client_name: undefined, // TODO: Add client relation if needed
+      code: p.codes[0]?.code,
     }));
   } catch (error) {
     console.error("Error searching projects:", error);

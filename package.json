@@ -13,7 +13,8 @@
     "prepare": "husky",
     "test": "jest",
     "test:watch": "jest --watch",
-    "localbuild": "docker build --no-cache --build-arg DATABASE_URL='test' --build-arg LOCAL_DATABASE_URL='test' -t its-local:latest ."
+    "localbuild": "docker build --no-cache -t its-local:latest .",
+    "localquality": "npm run lint && npm run test && npm run type-check && npm run localbuild"
   },
   "dependencies": {
     "@carbon/react": "1.97.0",
@@ -28,8 +29,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
-    "@commitlint/cli": "20.1.0",
+    "@commitlint/cli": "20.2.0",
     "@commitlint/config-conventional": "20.2.0",
+    "@commitlint/format": "20.2.0",
+    "@commitlint/types": "20.2.0",
     "@tailwindcss/postcss": "4.1.17",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.0",

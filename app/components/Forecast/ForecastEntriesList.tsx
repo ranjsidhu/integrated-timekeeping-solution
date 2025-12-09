@@ -2,19 +2,10 @@
 
 import { ChevronRight, Edit, TrashCan } from "@carbon/icons-react";
 import { useState } from "react";
-import type { ForecastEntry } from "@/types/forecast.types";
-import type { WeekEnding } from "@/types/timesheet.types";
-
-type ForecastEntriesListProps = {
-  forecastEntries: ForecastEntry[];
-  weekEndings: WeekEnding[];
-  onEditEntry: (entryId: number) => void;
-  onDeleteEntry: (entryId: number) => void;
-};
+import type { ForecastEntriesListProps } from "@/types/forecast.types";
 
 export default function ForecastEntriesList({
   forecastEntries,
-  weekEndings,
   onEditEntry,
   onDeleteEntry,
 }: ForecastEntriesListProps) {
@@ -66,12 +57,16 @@ export default function ForecastEntriesList({
                     {entry.project_name}
                   </div>
                   <div className="text-sm text-[#525252]">
-                    {entry.category_name} • {entry.hours_per_week}h/week
+                    {entry.category_name}
                   </div>
                 </div>
                 <div className="text-right mr-4">
                   <div className="text-2xl font-semibold text-[#161616]">
-                    {(entry.hours_per_week || 0) * weekEndings.length}h
+                    {Object.values(entry.weekly_hours || {}).reduce(
+                      (sum, hours) => sum + hours,
+                      0,
+                    )}
+                    h
                   </div>
                   <div className="text-xs text-[#8d8d8d]">total</div>
                 </div>
@@ -89,12 +84,6 @@ export default function ForecastEntriesList({
                 <div className="bg-white rounded-lg p-4 space-y-4 border border-[#e0e0e0]">
                   {/* Details */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-[#525252]">Client:</span>
-                      <span className="ml-2 font-medium text-[#161616]">
-                        {entry.client_name || "N/A"}
-                      </span>
-                    </div>
                     <div>
                       <span className="text-[#525252]">Start:</span>
                       <span className="ml-2 font-medium text-[#161616]">
