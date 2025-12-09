@@ -26,11 +26,6 @@ export default function Header() {
   const initials = formInitials(name);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
 
-  // Hide header on the login page
-  if (pathname === "/login") {
-    return null;
-  }
-
   const toggleSideNav = () => {
     setIsNavExpanded(!isNavExpanded);
   };
@@ -53,35 +48,39 @@ export default function Header() {
           <HeaderName href="/" prefix="IBM" data-testid="header-name">
             Integrated Timekeeping
           </HeaderName>
-          <HeaderNavigation
-            aria-label="IBM Integrated Timekeeping"
-            data-testid="header-navigation"
-          >
-            <DisplayLinks />
-          </HeaderNavigation>
-          <HeaderGlobalBar data-testid="header-global-bar">
-            <HeaderGlobalAction
-              aria-label={initials}
-              tooltipAlignment="center"
-              data-testid="header-global-action-initials"
-            >
-              <p className="border border-white rounded-full px-2">
-                {initials}
-              </p>
-            </HeaderGlobalAction>
-          </HeaderGlobalBar>
-          <SideNav
-            aria-label="Side navigation"
-            expanded={isNavExpanded}
-            isPersistent={false}
-            data-testid="header-side-nav"
-          >
-            <SideNavItems data-testid="side-nav-items">
-              <HeaderSideNavItems data-testid="header-side-nav-items">
+          {pathname !== "/" && (
+            <>
+              <HeaderNavigation
+                aria-label="IBM Integrated Timekeeping"
+                data-testid="header-navigation"
+              >
                 <DisplayLinks />
-              </HeaderSideNavItems>
-            </SideNavItems>
-          </SideNav>
+              </HeaderNavigation>
+              <HeaderGlobalBar data-testid="header-global-bar">
+                <HeaderGlobalAction
+                  aria-label={initials}
+                  tooltipAlignment="center"
+                  data-testid="header-global-action-initials"
+                >
+                  <p className="border border-white rounded-full px-2">
+                    {initials}
+                  </p>
+                </HeaderGlobalAction>
+              </HeaderGlobalBar>
+              <SideNav
+                aria-label="Side navigation"
+                expanded={isNavExpanded}
+                isPersistent={false}
+                data-testid="header-side-nav"
+              >
+                <SideNavItems data-testid="side-nav-items">
+                  <HeaderSideNavItems data-testid="header-side-nav-items">
+                    <DisplayLinks />
+                  </HeaderSideNavItems>
+                </SideNavItems>
+              </SideNav>
+            </>
+          )}
         </CarbonHeader>
       )}
     />
