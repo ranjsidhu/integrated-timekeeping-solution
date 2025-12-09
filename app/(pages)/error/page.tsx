@@ -1,4 +1,4 @@
-import { Layout } from "@/app/components";
+import { Layout, Link } from "@/app/components";
 
 export default async function ErrorPage() {
   const errorMessage =
@@ -15,6 +15,9 @@ export default async function ErrorPage() {
           <div className="flex flex-col items-center text-center">
             <h1 className="text-2xl font-semibold mb-2">Error</h1>
             <p className="text-sm text-slate-600 mb-2">{errorMessage}</p>
+            <Link href="/" className="mt-5!">
+              Back to Home
+            </Link>
           </div>
         </div>
       </div>
