@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { getCodesBySearch } from "@/app/actions";
 import { Search } from "@/app/components";
 import type { CodeWithWorkItems } from "@/types/timesheet.types";
@@ -9,19 +9,34 @@ import SearchCodeResult from "./SearchCodeResult";
 export default function SearchCodes() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<CodeWithWorkItems[]>([]);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.value.length) {
-      setSearchResults([]);
-      setSearchTerm("");
-    } else {
-      setSearchTerm(e.target.value);
-      if (searchTerm.length >= 3) {
-        const codes = await getCodesBySearch(e.target.value);
-        setSearchResults(codes);
-      }
+  // Debounced search effect
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
-  };
+
+    if (!searchTerm.length) {
+      setSearchResults([]);
+      return;
+    }
+
+    if (searchTerm.length < 3) {
+      return;
+    }
+
+    debounceTimerRef.current = setTimeout(async () => {
+      const codes = await getCodesBySearch(searchTerm);
+      setSearchResults(codes);
+    }, 300);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchTerm]);
 
   return (
     <Fragment>
@@ -35,7 +50,7 @@ export default function SearchCodes() {
           type="search"
           size="md"
           closeButtonLabelText="Clear search input"
-          onChange={handleChange}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       {/* Search results */}
