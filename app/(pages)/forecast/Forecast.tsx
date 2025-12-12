@@ -27,6 +27,7 @@ import type {
   ForecastPageExtendedProps,
   NewForecastEntry,
 } from "@/types/forecast.types";
+import { formatValidationErrors } from "@/utils/forecast/validation.utils";
 
 export default function ForecastPage({
   weekEndings,
@@ -37,6 +38,7 @@ export default function ForecastPage({
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<ForecastEntry | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [problemWeeks, setProblemWeeks] = useState<number[]>([]);
 
   const { forecastEntries, isLoading, setForecastEntries } =
     useForecastData(setForecastStatus);
@@ -75,33 +77,43 @@ export default function ForecastPage({
         subtitle: "Your forecast has been submitted successfully",
       });
     } else if (result.validationErrors && result.validationErrors.length > 0) {
-      // Format validation errors
-      const errorMessage = result.validationErrors
-        .map((err) => {
-          const weekLabel = new Date(err.weekEnding).toLocaleDateString(
-            "en-US",
-            {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            },
-          );
+      // Track problematic weeks for highlighting in the timeline
+      setProblemWeeks(result.validationErrors.map((e) => e.weekId));
+      const formatted = formatValidationErrors(
+        result.validationErrors.map((err) => ({
+          weekId: err.weekId,
+          weekLabel: new Date(err.weekEnding).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
+          currentTotal: err.total,
+          newHours: 0,
+          finalTotal: err.total,
+        })),
+      );
 
-          if (err.total > 40) {
-            return `${weekLabel}: ${err.total}h (over by ${err.total - 40}h)`;
-          } else {
-            return `${weekLabel}: ${err.total}h (under by ${40 - err.total}h)`;
-          }
-        })
-        .join("\n");
+      const [summary, ...lines] = formatted.split("\n");
 
       addNotification({
         kind: "error",
         type: "inline",
         title: "Cannot submit forecast",
-        subtitle: `Each week must total exactly 40 hours:\n${errorMessage}`,
+        subtitle: summary,
+      });
+
+      lines.forEach((line) => {
+        if (line.trim().length === 0) return;
+        addNotification({
+          kind: "error",
+          type: "inline",
+          title: "",
+          subtitle: line,
+        });
       });
     } else {
+      // Clear any previous highlights on generic error or success handled above
+      setProblemWeeks([]);
       addNotification({
         kind: "error",
         type: "inline",
@@ -232,6 +244,7 @@ export default function ForecastPage({
               weekEndings={displayWeeks}
               onEditEntry={handleEditEntry}
               onDeleteEntry={handleDeleteEntry}
+              problemWeeks={problemWeeks}
             />
           ) : (
             <ForecastEntriesList

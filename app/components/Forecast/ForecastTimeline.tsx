@@ -8,6 +8,7 @@ export default function ForecastTimeline({
   weekEndings,
   onEditEntry,
   onDeleteEntry,
+  problemWeeks = [],
 }: ForecastTimelineProps) {
   if (forecastEntries.length === 0) {
     return (
@@ -71,7 +72,11 @@ export default function ForecastTimeline({
               {displayWeeks.map((week, index) => (
                 <th
                   key={week.id}
-                  className="px-2 py-3 text-center font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-[70px]"
+                  className={`px-2 py-3 text-center font-semibold text-xs uppercase tracking-wide min-w-[70px] ${
+                    problemWeeks.includes(week.id)
+                      ? "text-[#da1e28] bg-[#ffd7d9] border-l border-[#ffb3b8]"
+                      : "text-[#525252]"
+                  }`}
                 >
                   <div>W{index + 1}</div>
                   <div className="font-normal text-[0.625rem] mt-1">
@@ -168,7 +173,11 @@ export default function ForecastTimeline({
                     return (
                       <td
                         key={week.id}
-                        className="px-2 py-3 text-center border-l border-[#e0e0e0]"
+                        className={`px-2 py-3 text-center border-l ${
+                          problemWeeks.includes(week.id)
+                            ? "bg-[#fff1f1] border-[#ffb3b8]"
+                            : "border-[#e0e0e0]"
+                        }`}
                       >
                         {hasHours ? (
                           <div className="inline-flex items-center justify-center px-2 py-1 bg-[#0f62fe] text-white rounded text-sm font-semibold min-w-[50px]">
@@ -219,7 +228,11 @@ export default function ForecastTimeline({
                 return (
                   <td
                     key={week.id}
-                    className="px-2 py-3 text-center text-sm border-l border-[#c6c6c6]"
+                    className={`px-2 py-3 text-center text-sm border-l ${
+                      problemWeeks.includes(week.id)
+                        ? "bg-[#ffd7d9] text-[#da1e28] border-[#ffb3b8]"
+                        : "border-[#c6c6c6]"
+                    }`}
                   >
                     {total > 0 ? (
                       <div className="font-bold text-[#161616]">{total}</div>
