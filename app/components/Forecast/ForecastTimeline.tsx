@@ -220,9 +220,12 @@ export default function ForecastTimeline({
               <td className="p-4 text-sm sticky left-0 bg-[#e0e0e0] z-10">
                 Total Assigned
               </td>
-              <td className="bg-[#e0e0e0]"></td>
-              <td className="bg-[#e0e0e0]"></td>
-              <td className="bg-[#e0e0e0]"></td>
+              {/* Empty cell for Start Date column */}
+              <td className="bg-[#e0e0e0]" aria-label="Start Date column"></td>
+              {/* Empty cell for End Date column */}
+              <td className="bg-[#e0e0e0]" aria-label="End Date column"></td>
+              {/* Empty cell for Extension column */}
+              <td className="bg-[#e0e0e0]" aria-label="Extension column"></td>
               {displayWeeks.map((week) => {
                 const total = calculateWeekTotal(week.id);
                 return (

@@ -16,7 +16,7 @@ export async function validateTimesheetSubmission(
 ) {
   const errors: TimesheetValidationError[] = [];
 
-  // Validation 10: At least one entry with hours
+  // Validation: At least one entry with hours
   const hasAnyHours = timeEntries.some((entry) =>
     Object.values(entry.hours).some((hours) => (hours || 0) > 0),
   );
@@ -78,7 +78,7 @@ export async function validateTimesheetSubmission(
     const code = billCode.work_item.code;
     const entries = timeEntries.filter((e) => e.billCodeId === billCode.id);
 
-    // Validation 6: Active projects - if code belongs to a project, it must be active
+    // Validation: Active projects - if code belongs to a project, it must be active
     if (code.project_id && code.project && !code.project.is_active) {
       errors.push({
         billCodeId: billCode.id,
@@ -96,7 +96,7 @@ export async function validateTimesheetSubmission(
       fri: 4,
     };
 
-    // Validation 7: Check for duplicate entries (same bill code on same work date)
+    // Validation: Check for duplicate entries (same bill code on same work date)
     const workDateCounts = new Map<string, number>();
     for (const day of daysOfWeek) {
       const hours = entries[0]?.hours[day] || 0;
@@ -125,7 +125,7 @@ export async function validateTimesheetSubmission(
         const workDate = new Date(monday);
         workDate.setDate(monday.getDate() + dayIndexMap[day]);
 
-        // Validation 4: Work date range - dates must be within the week
+        // Validation: Work date range - dates must be within the week
         if (workDate < monday || workDate > friday) {
           errors.push({
             billCodeId: billCode.id,
@@ -134,7 +134,7 @@ export async function validateTimesheetSubmission(
           });
         }
 
-        // Validation 1: Start date check - entries can't be before code's start date
+        // Validation: Start date check - entries can't be before code's start date
         const startDate = new Date(code.start_date);
         if (workDate < startDate) {
           errors.push({

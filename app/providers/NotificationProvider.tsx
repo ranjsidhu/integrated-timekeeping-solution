@@ -56,7 +56,7 @@ export const NotificationProvider = ({
           // Remove oldest notification and clear its timer
           const removed = updated.shift();
           if (removed) {
-            const removedId = (removed as unknown as { id?: string }).id;
+            const removedId = (removed as { id?: string }).id;
             if (removedId && timersRef.current[removedId]) {
               clearTimeout(timersRef.current[removedId]);
               delete timersRef.current[removedId];

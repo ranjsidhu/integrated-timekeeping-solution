@@ -17,11 +17,10 @@ jest.mock("next-auth/react", () => ({
 
 // Mock next/navigation
 const mockPush = jest.fn();
-const mockRefresh = jest.fn();
+
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(() => ({
     push: mockPush,
-    refresh: mockRefresh,
   })),
 }));
 
@@ -44,7 +43,6 @@ describe("LoginForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPush.mockClear();
-    mockRefresh.mockClear();
     mockUpdate.mockClear();
     (useSession as jest.Mock).mockReturnValue({
       data: null,
@@ -124,7 +122,6 @@ describe("LoginForm", () => {
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalled();
       expect(mockPush).toHaveBeenCalledWith("/timesheet");
-      expect(mockRefresh).toHaveBeenCalled();
     });
 
     // no error notification should be shown for a successful signIn

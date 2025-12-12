@@ -94,7 +94,7 @@ export function useTimesheetActions(
           addNotification({
             kind: "error",
             type: "inline",
-            title: "Expired bill code",
+            title: error.message,
             subtitle: error.message,
           });
         });

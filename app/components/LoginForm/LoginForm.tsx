@@ -67,7 +67,6 @@ export default function LoginForm() {
         await update();
         // Navigate client-side after session is updated
         router.push("/timesheet");
-        router.refresh();
       } else {
         setNotification({
           show: true,
