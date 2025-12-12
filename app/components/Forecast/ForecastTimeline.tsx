@@ -217,12 +217,12 @@ export default function ForecastTimeline({
 
             {/* Totals Row */}
             <tr className="bg-[#e0e0e0] border-t-2 border-[#161616] font-semibold">
-              <td
-                className="p-4 text-sm sticky left-0 bg-[#e0e0e0] z-10"
-                colSpan={4}
-              >
+              <td className="p-4 text-sm sticky left-0 bg-[#e0e0e0] z-10">
                 Total Assigned
               </td>
+              <td className="bg-[#e0e0e0]"></td>
+              <td className="bg-[#e0e0e0]"></td>
+              <td className="bg-[#e0e0e0]"></td>
               {displayWeeks.map((week) => {
                 const total = calculateWeekTotal(week.id);
                 return (
