@@ -1,5 +1,6 @@
 "use client";
 
+import { Logout } from "@carbon/icons-react";
 import {
   Header as CarbonHeader,
   HeaderContainer,
@@ -14,7 +15,7 @@ import {
   SkipToContent,
 } from "@carbon/react";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import { formInitials } from "@/utils/general";
 import DisplayLinks from "./DisplayLinks";
@@ -57,6 +58,16 @@ export default function Header() {
                 <DisplayLinks />
               </HeaderNavigation>
               <HeaderGlobalBar data-testid="header-global-bar">
+                <HeaderGlobalAction
+                  aria-label="Log out"
+                  tooltipAlignment="center"
+                  data-testid="header-global-action-logout"
+                  onClick={() => {
+                    signOut({ redirectTo: "/" });
+                  }}
+                >
+                  <Logout size={16} />
+                </HeaderGlobalAction>
                 <HeaderGlobalAction
                   aria-label={initials}
                   tooltipAlignment="center"
