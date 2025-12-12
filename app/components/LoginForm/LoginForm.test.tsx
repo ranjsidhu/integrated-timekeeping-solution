@@ -1,8 +1,28 @@
+/** biome-ignore-all assist/source/organizeImports: Unit tests */
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import LoginForm from "./LoginForm";
 
 jest.mock("@/utils/auth/signIn", () => ({
   handleCredentialsSignIn: jest.fn(),
+}));
+
+// Mock next-auth/react
+jest.mock("next-auth/react", () => ({
+  useSession: jest.fn(() => ({
+    data: null,
+    status: "unauthenticated",
+    update: jest.fn(),
+  })),
+}));
+
+// Mock next/navigation
+const mockPush = jest.fn();
+const mockRefresh = jest.fn();
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({
+    push: mockPush,
+    refresh: mockRefresh,
+  })),
 }));
 
 // Mock Header to avoid importing ESM modules (@carbon/react, next-auth)
@@ -16,10 +36,21 @@ jest.mock("../Header/Header", () => {
 });
 
 import { handleCredentialsSignIn } from "@/utils/auth/signIn";
+import { useSession } from "next-auth/react";
 
 describe("LoginForm", () => {
+  const mockUpdate = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPush.mockClear();
+    mockRefresh.mockClear();
+    mockUpdate.mockClear();
+    (useSession as jest.Mock).mockReturnValue({
+      data: null,
+      status: "unauthenticated",
+      update: mockUpdate,
+    });
   });
 
   it("renders inputs and submit button", () => {
@@ -67,9 +98,9 @@ describe("LoginForm", () => {
     expect(screen.queryByText(/email is required/i)).toBeNull();
   });
 
-  it("calls handleCredentialsSignIn with credentials and does not show notification on resolved promise", async () => {
-    // simulate a successful resolved promise (no notification is set on success)
-    (handleCredentialsSignIn as jest.Mock).mockResolvedValue(undefined);
+  it("calls handleCredentialsSignIn with credentials and redirects on success", async () => {
+    // simulate a successful sign-in
+    (handleCredentialsSignIn as jest.Mock).mockResolvedValue({ success: true });
 
     render(<LoginForm />);
 
@@ -89,17 +120,23 @@ describe("LoginForm", () => {
       }),
     );
 
-    // no error notification should be shown for a resolved signIn
+    // should update session and redirect
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalled();
+      expect(mockPush).toHaveBeenCalledWith("/timesheet");
+      expect(mockRefresh).toHaveBeenCalled();
+    });
+
+    // no error notification should be shown for a successful signIn
     expect(screen.queryByTestId("notification")).toBeNull();
     expect(screen.queryByText(/Login Failed/i)).toBeNull();
   });
 
-  it("does not show error notification when signIn triggers NEXT_REDIRECT", async () => {
-    // next-auth may redirect by throwing an error that includes NEXT_REDIRECT;
-    // LoginForm treats that as a non-error case (does not show a notification)
-    (handleCredentialsSignIn as jest.Mock).mockRejectedValue(
-      new Error("NEXT_REDIRECT: redirecting to /dashboard"),
-    );
+  it("shows error notification when signIn returns failure", async () => {
+    (handleCredentialsSignIn as jest.Mock).mockResolvedValue({
+      success: false,
+      error: "Invalid credentials",
+    });
 
     render(<LoginForm />);
 
@@ -107,7 +144,7 @@ describe("LoginForm", () => {
       target: { value: "eve@gmail.com" },
     });
     fireEvent.change(screen.getByTestId("password-input"), {
-      target: { value: "secret" },
+      target: { value: "wrongpass" },
     });
 
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
@@ -115,18 +152,18 @@ describe("LoginForm", () => {
     await waitFor(() =>
       expect(handleCredentialsSignIn).toHaveBeenCalledWith({
         email: "eve@gmail.com",
-        password: "secret",
+        password: "wrongpass",
       }),
     );
 
-    // ensure the NEXT_REDIRECT path does not surface a user notification
-    expect(screen.queryByTestId("notification")).toBeNull();
-    expect(screen.queryByText(/Login Failed/i)).toBeNull();
+    // should show error notification
+    expect(await screen.findByText(/Login Failed/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Invalid credentials/i)).toBeInTheDocument();
   });
 
-  it("shows error notification when signIn throws a non-redirect error", async () => {
+  it("shows error notification when signIn throws an unexpected error", async () => {
     (handleCredentialsSignIn as jest.Mock).mockRejectedValue(
-      new Error("Invalid credentials"),
+      new Error("Network error"),
     );
 
     render(<LoginForm />);
@@ -149,7 +186,7 @@ describe("LoginForm", () => {
 
     expect(await screen.findByText(/Login Failed/i)).toBeInTheDocument();
     expect(
-      await screen.findByText(/Invalid username or password/i),
+      await screen.findByText(/An unexpected error occurred/i),
     ).toBeInTheDocument();
 
     // close the notification and ensure it is removed

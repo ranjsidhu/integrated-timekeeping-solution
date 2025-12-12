@@ -54,25 +54,25 @@ export default function ForecastTimeline({
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse min-w-[1000px]">
+        <table className="w-full border-collapse min-w-250">
           <thead>
             <tr className="bg-[#f4f4f4] border-b border-[#e0e0e0]">
-              <th className="p-4 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide sticky left-0 bg-[#f4f4f4] z-20 min-w-[300px]">
+              <th className="p-4 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide sticky left-0 bg-[#f4f4f4] z-20 min-w-75">
                 Assignment
               </th>
-              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-[120px]">
+              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-30">
                 Start Date
               </th>
-              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-[120px]">
+              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-30">
                 End Date
               </th>
-              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-[140px]">
+              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-35">
                 Extension
               </th>
               {displayWeeks.map((week, index) => (
                 <th
                   key={week.id}
-                  className={`px-2 py-3 text-center font-semibold text-xs uppercase tracking-wide min-w-[70px] ${
+                  className={`px-2 py-3 text-center font-semibold text-xs uppercase tracking-wide min-w-17.5 ${
                     problemWeeks.includes(week.id)
                       ? "text-[#da1e28] bg-[#ffd7d9] border-l border-[#ffb3b8]"
                       : "text-[#525252]"
@@ -87,7 +87,7 @@ export default function ForecastTimeline({
                   </div>
                 </th>
               ))}
-              <th className="px-3 py-3 text-center font-semibold text-xs text-[#525252] uppercase tracking-wide sticky right-0 bg-[#f4f4f4] z-20 min-w-[100px]">
+              <th className="px-3 py-3 text-center font-semibold text-xs text-[#525252] uppercase tracking-wide sticky right-0 bg-[#f4f4f4] z-20 min-w-35">
                 Actions
               </th>
             </tr>
@@ -180,7 +180,7 @@ export default function ForecastTimeline({
                         }`}
                       >
                         {hasHours ? (
-                          <div className="inline-flex items-center justify-center px-2 py-1 bg-[#0f62fe] text-white rounded text-sm font-semibold min-w-[50px]">
+                          <div className="inline-flex items-center justify-center px-2 py-1 bg-[#0f62fe] text-white rounded text-sm font-semibold min-w-12.5">
                             {weekHours}
                           </div>
                         ) : (

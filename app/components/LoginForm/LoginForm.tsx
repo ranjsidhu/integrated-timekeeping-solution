@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import {
   Button,
@@ -17,6 +19,8 @@ import { handleCredentialsSignIn } from "@/utils/auth/signIn";
 import { validateForm } from "@/utils/login/login.utils";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const { update } = useSession();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<LoginFormData>({
@@ -56,19 +60,31 @@ export default function LoginForm() {
 
     try {
       setLoading(true);
-      await handleCredentialsSignIn(formData);
-    } catch (error: unknown) {
-      const castedError = error as Error;
-      if (!castedError?.message?.includes("NEXT_REDIRECT")) {
-        console.error("Login error:", castedError.message);
+      const result = await handleCredentialsSignIn(formData);
+
+      if (result.success) {
+        // Update the session to ensure it's available on the client
+        await update();
+        // Navigate client-side after session is updated
+        router.push("/timesheet");
+        router.refresh();
+      } else {
         setNotification({
           show: true,
           kind: "error",
           title: "Login Failed",
-          subtitle: "Invalid username or password",
+          subtitle: result.error || "Invalid username or password",
         });
+        setLoading(false);
       }
-    } finally {
+    } catch (error: unknown) {
+      console.error("Login error:", error);
+      setNotification({
+        show: true,
+        kind: "error",
+        title: "Login Failed",
+        subtitle: "An unexpected error occurred",
+      });
       setLoading(false);
     }
   };
