@@ -15,16 +15,12 @@ import {
   SkipToContent,
 } from "@carbon/react";
 import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
-import { formInitials } from "@/utils/general";
 import DisplayLinks from "./DisplayLinks";
 
 export default function Header() {
   const pathname = usePathname();
-  const session = useSession();
-  const name = session?.data?.user.name;
-  const initials = formInitials(name);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   const toggleSideNav = () => {
@@ -67,15 +63,6 @@ export default function Header() {
                   }}
                 >
                   <Logout size={16} />
-                </HeaderGlobalAction>
-                <HeaderGlobalAction
-                  aria-label={initials}
-                  tooltipAlignment="center"
-                  data-testid="header-global-action-initials"
-                >
-                  <p className="border border-white rounded-full px-2">
-                    {initials}
-                  </p>
                 </HeaderGlobalAction>
               </HeaderGlobalBar>
               <SideNav

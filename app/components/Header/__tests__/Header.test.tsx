@@ -48,7 +48,10 @@ jest.mock("@carbon/react", () => {
 
 // Mock next/navigation and next-auth/react hooks
 jest.mock("next/navigation", () => ({ usePathname: jest.fn() }));
-jest.mock("next-auth/react", () => ({ useSession: jest.fn() }));
+jest.mock("next-auth/react", () => ({
+  useSession: jest.fn(),
+  signOut: jest.fn(),
+}));
 
 // Mock DisplayLinks (relative to Header file)
 jest.mock("../DisplayLinks", () => () => <div data-testid="display-links" />);
@@ -60,24 +63,6 @@ const { useSession } = require("next-auth/react");
 describe("Header component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("renders header and displays initials from session on non-root paths", () => {
-    (usePathname as jest.Mock).mockReturnValue("/timesheet");
-    (useSession as jest.Mock).mockReturnValue({
-      data: { user: { name: "Alice Bob" } },
-    });
-
-    render(<Header />);
-
-    expect(screen.getByTestId("header-container")).toBeInTheDocument();
-    expect(screen.getByTestId("header-name")).toHaveAttribute("href", "/");
-    // Initials "AB" should be rendered inside header-global-action
-    expect(screen.getByText("AB")).toBeInTheDocument();
-    // SkipToContent should be rendered
-    expect(screen.getByTestId("skip-to-content")).toBeInTheDocument();
-    // Menu button should be present
-    expect(screen.getByTestId("header-menu-button")).toBeInTheDocument();
   });
 
   it("does not render header navigation and global bar on root path /", () => {
@@ -106,9 +91,8 @@ describe("Header component", () => {
     expect(screen.getByTestId("header-global-bar")).toBeInTheDocument();
     expect(screen.getByTestId("header-side-nav")).toBeInTheDocument();
     expect(
-      screen.getByTestId("header-global-action-initials"),
+      screen.getByTestId("header-global-action-logout"),
     ).toBeInTheDocument();
-    expect(screen.getByText("TU")).toBeInTheDocument();
   });
 
   it("renders header on /login path with navigation", () => {
@@ -202,11 +186,9 @@ describe("Header component", () => {
 
     render(<Header />);
 
-    // Should render header with empty/null initials
+    // Should render header even with null user name
     expect(screen.getByTestId("header-container")).toBeInTheDocument();
-    expect(
-      screen.getByTestId("header-global-action-initials"),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("header-menu-button")).toBeInTheDocument();
   });
 
   it("handles undefined session gracefully", () => {
