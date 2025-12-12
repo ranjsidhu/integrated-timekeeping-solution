@@ -168,3 +168,9 @@ export type TimesheetWorkItemsProps = {
   isExpanded: boolean;
   toggleExpanded: (id: number) => void;
 };
+
+export interface TimesheetValidationError {
+  billCodeId?: number;
+  workDate?: Date;
+  message: string;
+}
