@@ -1,9 +1,5 @@
+import type { TimesheetActionsProps } from "@/types/timesheet.types";
 import Button from "../Button/Button";
-
-type TimesheetActionsProps = {
-  handleSave: () => void;
-  handleSubmit: () => void;
-};
 
 export default function TimesheetActions({
   handleSave,

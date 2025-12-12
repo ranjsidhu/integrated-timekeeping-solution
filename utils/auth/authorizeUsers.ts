@@ -1,12 +1,8 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
+import type { Credentials } from "@/types/auth.types";
 import { verifyPassword } from "@/utils/auth/password";
-
-interface Credentials {
-  email: string;
-  password: string;
-}
 
 /**
  * Authorizes a user based on provided credentials.

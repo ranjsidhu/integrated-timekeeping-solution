@@ -1,11 +1,5 @@
 import { ChevronDown, ChevronRight } from "@carbon/icons-react";
-import type { CodeWithWorkItems } from "@/types/timesheet.types";
-
-type TimesheetWorkItemsProps = {
-  workItem: CodeWithWorkItems["work_items"][number];
-  isExpanded: boolean;
-  toggleExpanded: (id: number) => void;
-};
+import type { TimesheetWorkItemsProps } from "@/types/timesheet.types";
 
 export default function TimesheetWorkItems({
   isExpanded,

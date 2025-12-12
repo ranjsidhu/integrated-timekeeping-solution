@@ -81,7 +81,7 @@ describe("Notifications component", () => {
     const wrapper = container.querySelector("div.fixed");
     expect(wrapper).toBeTruthy();
 
-    const el = screen.getByTestId("notification");
+    const el = screen.getByTestId("notification-0");
     expect(el).toBeInTheDocument();
 
     // clicking should call removeNotification via onClose
@@ -107,7 +107,7 @@ describe("Notifications component", () => {
 
     render(<Notifications />);
 
-    const el = screen.getByTestId("notification");
+    const el = screen.getByTestId("notification-0");
     expect(el).toBeInTheDocument();
 
     fireEvent.click(el);

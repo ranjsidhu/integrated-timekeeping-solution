@@ -68,15 +68,48 @@ export function useTimesheetActions(
   const handleSubmit = async () => {
     try {
       const result = await submitTimesheet(selectedWeek, timeEntries);
-      if (result?.success) {
-        setTimesheetStatus(result.status);
+
+      if (!result) {
+        addNotification({
+          kind: "error",
+          type: "inline",
+          title: "Error submitting timesheet",
+          subtitle:
+            "There was an issue submitting your timesheet. Please try again.",
+        });
+        return;
       }
-      addNotification({
-        kind: "success",
-        type: "inline",
-        title: "Timesheet submitted",
-        subtitle: "Your timesheet has been submitted successfully",
-      });
+
+      // Check for validation errors
+      if (!result.success && result.validationErrors) {
+        addNotification({
+          kind: "error",
+          type: "inline",
+          title: "Timesheet validation failed",
+          subtitle: result.message || "Please fix the errors below:",
+        });
+
+        // Add individual error notifications for each validation error
+        result.validationErrors.forEach((error) => {
+          addNotification({
+            kind: "error",
+            type: "inline",
+            title: error.message,
+            subtitle: error.message,
+          });
+        });
+        return;
+      }
+
+      if (result.success) {
+        setTimesheetStatus(result.status || "Submitted");
+        addNotification({
+          kind: "success",
+          type: "inline",
+          title: "Timesheet submitted",
+          subtitle: "Your timesheet has been submitted successfully",
+        });
+      }
     } catch (error: unknown) {
       console.error("Error submitting timesheet:", (error as Error).message);
       addNotification({

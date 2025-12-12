@@ -1,10 +1,5 @@
-import type { Account, User } from "next-auth";
 import { prisma } from "@/prisma/prisma";
-
-type SignInCallbackParams = {
-  user: User;
-  account: Account | null | undefined;
-};
+import type { SignInCallbackParams } from "@/types/auth.types";
 
 /**
  * Callback function to handle user sign-in.

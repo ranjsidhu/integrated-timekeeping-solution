@@ -116,10 +116,10 @@ describe("ForecastTimeline", () => {
       (cell) => cell.textContent === "Total Assigned",
     );
 
-    // The next cells after "Total Assigned" should contain the weekly totals
-    expect(totalCells[totalAssignedIndex + 1].textContent).toBe("5");
-    expect(totalCells[totalAssignedIndex + 2].textContent).toBe("3");
-    expect(totalCells[totalAssignedIndex + 3].textContent).toBe("0");
+    // Skip 3 empty cells (Start Date, End Date, Extension), then check weekly totals
+    expect(totalCells[totalAssignedIndex + 4].textContent).toBe("5");
+    expect(totalCells[totalAssignedIndex + 5].textContent).toBe("3");
+    expect(totalCells[totalAssignedIndex + 6].textContent).toBe("0");
   });
 
   it("renders multiple entries correctly", () => {
@@ -152,8 +152,9 @@ describe("ForecastTimeline", () => {
       (cell) => cell.textContent === "Total Assigned",
     );
 
-    expect(totalCells[totalAssignedIndex + 1].textContent).toBe("13");
-    expect(totalCells[totalAssignedIndex + 2].textContent).toBe("11");
+    // Skip 3 empty cells (Start Date, End Date, Extension), then check weekly totals
+    expect(totalCells[totalAssignedIndex + 4].textContent).toBe("13");
+    expect(totalCells[totalAssignedIndex + 5].textContent).toBe("11");
   });
 
   it("displays week headers correctly", () => {

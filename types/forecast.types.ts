@@ -195,4 +195,5 @@ export type ForecastTimelineProps = {
   weekEndings: WeekEnding[];
   onEditEntry: (entryId: number) => void;
   onDeleteEntry: (entryId: number) => void;
+  problemWeeks?: number[];
 };
