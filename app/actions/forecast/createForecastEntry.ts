@@ -1,8 +1,10 @@
 "use server";
 
-import type { NewForecastEntry } from "@/app/components/Forecast/AddEntryModal";
 import { prisma } from "@/prisma/prisma";
-import type { CreateForecastEntryResult } from "@/types/forecast.types";
+import type {
+  CreateForecastEntryResult,
+  NewForecastEntry,
+} from "@/types/forecast.types";
 import { getSession } from "@/utils/auth/getSession";
 
 export async function createForecastEntry(

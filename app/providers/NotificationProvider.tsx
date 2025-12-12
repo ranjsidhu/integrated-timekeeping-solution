@@ -49,7 +49,22 @@ export const NotificationProvider = ({
         id,
       } as NotificationType & { id: string };
 
-      setNotifications((prev) => [...prev, newNotification]);
+      setNotifications((prev) => {
+        // Limit to maximum 3 notifications
+        const updated = [...prev, newNotification];
+        if (updated.length > 3) {
+          // Remove oldest notification and clear its timer
+          const removed = updated.shift();
+          if (removed) {
+            const removedId = (removed as { id?: string }).id;
+            if (removedId && timersRef.current[removedId]) {
+              clearTimeout(timersRef.current[removedId]);
+              delete timersRef.current[removedId];
+            }
+          }
+        }
+        return updated;
+      });
 
       // schedule automatic removal
       const timer = setTimeout(() => {

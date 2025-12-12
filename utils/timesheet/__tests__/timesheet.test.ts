@@ -19,7 +19,7 @@ import {
   mergeTimeEntries,
   mergeWorkItems,
   processPendingCode,
-} from "./timesheet.utils";
+} from "../timesheet.utils";
 
 describe("timesheet utils", () => {
   describe("getDayInfo", () => {

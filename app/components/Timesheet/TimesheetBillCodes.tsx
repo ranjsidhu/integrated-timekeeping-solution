@@ -1,22 +1,12 @@
 import { TrashCan } from "@carbon/icons-react";
 import { Fragment } from "react";
 import type {
-  CodeWithWorkItems,
   DayOfWeek,
-  TimeEntry,
+  TimesheetBillCodesProps,
 } from "@/types/timesheet.types";
 import { calculateTotal } from "@/utils/timesheet/timesheet.utils";
 import IconButton from "../IconButton/IconButton";
 import Input from "../Input/Input";
-
-type TimesheetBillCodesProps = {
-  billCodes: CodeWithWorkItems["work_items"][number]["bill_codes"];
-  editingValues?: Record<string, Partial<Record<DayOfWeek, string>>>;
-  onTempChange: (entryId: string, day: DayOfWeek, value: string) => void;
-  onCommit: (entryId: string, day: DayOfWeek) => void;
-  deleteEntry: (entryId: string) => void;
-  entry: TimeEntry;
-};
 
 export default function TimesheetBillCodes({
   billCodes,

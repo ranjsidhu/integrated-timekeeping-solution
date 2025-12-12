@@ -2,20 +2,13 @@
 
 import { useState } from "react";
 import { Modal, ProgressIndicator, ProgressStep } from "@/app/components";
-import type { AddEntryModalProps } from "@/types/forecast.types";
+import type {
+  AddEntryModalProps,
+  NewForecastEntry,
+} from "@/types/forecast.types";
 import AddEntryStep1 from "./AddEntrySteps/AddEntryStep1";
 import AddEntryStep2 from "./AddEntrySteps/AddEntryStep2";
 import AddEntryStep3 from "./AddEntrySteps/AddEntryStep3";
-
-export type NewForecastEntry = {
-  category_id: number;
-  project_id: number;
-  from_date: Date[];
-  to_date: Date[];
-  hours_per_week: number;
-  potential_extension?: Date[];
-  weekly_hours?: Record<number, number>;
-};
 
 export default function AddEntryModal({
   isOpen,

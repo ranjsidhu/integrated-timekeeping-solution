@@ -1,12 +1,8 @@
-import type { DayOfWeek, TimeEntry } from "@/types/timesheet.types";
+import type { DayOfWeek, TimesheetTotalsProps } from "@/types/timesheet.types";
 import {
   calculateDayTotal,
   calculateTotal,
 } from "@/utils/timesheet/timesheet.utils";
-
-type TimesheetTotalsProps = {
-  timeEntries: TimeEntry[];
-};
 
 export default function TimesheetTotals({ timeEntries }: TimesheetTotalsProps) {
   return (
