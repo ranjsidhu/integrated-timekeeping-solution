@@ -53,33 +53,33 @@ export default function ForecastTimeline({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse min-w-250">
+      <div className="overflow-x-auto overscroll-x-contain">
+        <table className="w-full border-collapse min-w-160 sm:min-w-210">
           <thead>
             <tr className="bg-[#f4f4f4] border-b border-[#e0e0e0]">
-              <th className="p-4 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide sticky left-0 bg-[#f4f4f4] z-20 min-w-75">
+              <th className="px-3 py-3 sm:p-4 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide sticky left-0 bg-[#f4f4f4] z-20 min-w-38 sm:min-w-48">
                 Assignment
               </th>
-              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-30">
+              <th className="px-2 py-2 sm:px-3 sm:py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-28">
                 Start Date
               </th>
-              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-30">
+              <th className="px-2 py-2 sm:px-3 sm:py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-28">
                 End Date
               </th>
-              <th className="px-3 py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-35">
+              <th className="px-2 py-2 sm:px-3 sm:py-3 text-left font-semibold text-xs text-[#525252] uppercase tracking-wide min-w-30">
                 Extension
               </th>
               {displayWeeks.map((week, index) => (
                 <th
                   key={week.id}
-                  className={`px-2 py-3 text-center font-semibold text-xs uppercase tracking-wide min-w-17.5 ${
+                  className={`px-2 py-3 text-center font-semibold text-xs uppercase tracking-wide min-w-15 sm:min-w-17 ${
                     problemWeeks.includes(week.id)
                       ? "text-[#da1e28] bg-[#ffd7d9] border-l border-[#ffb3b8]"
                       : "text-[#525252]"
                   }`}
                 >
                   <div>W{index + 1}</div>
-                  <div className="font-normal text-[0.625rem] mt-1">
+                  <div className="font-normal text-[0.625rem] mt-1 leading-3">
                     {new Date(week.week_ending).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -87,7 +87,7 @@ export default function ForecastTimeline({
                   </div>
                 </th>
               ))}
-              <th className="px-3 py-3 text-center font-semibold text-xs text-[#525252] uppercase tracking-wide sticky right-0 bg-[#f4f4f4] z-20 min-w-35">
+              <th className="px-2 py-3 sm:px-3 text-center font-semibold text-xs text-[#525252] uppercase tracking-wide sticky right-0 bg-[#f4f4f4] z-20 min-w-17.5 sm:min-w-23.75">
                 Actions
               </th>
             </tr>
@@ -111,18 +111,18 @@ export default function ForecastTimeline({
                   }`}
                 >
                   {/* Assignment Info */}
-                  <td className="p-4 sticky left-0 bg-inherit z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
-                    <div className="flex items-center gap-3">
+                  <td className="px-3 py-3 sm:p-4 sticky left-0 bg-inherit z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <div
-                        className={`w-10 h-10 rounded-lg ${avatarColor} flex items-center justify-center text-white font-semibold text-sm shrink-0`}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg ${avatarColor} flex items-center justify-center text-white font-semibold text-sm shrink-0`}
                       >
                         {avatarLetter}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-[#161616] truncate">
+                        <div className="font-semibold text-[#161616] truncate text-sm sm:text-base">
                           {entry.project_name}
                         </div>
-                        <div className="text-xs text-[#525252] truncate">
+                        <div className="text-[0.7rem] sm:text-xs text-[#525252] truncate">
                           {entry.category_name}
                         </div>
                       </div>
@@ -130,7 +130,7 @@ export default function ForecastTimeline({
                   </td>
 
                   {/* Start Date */}
-                  <td className="px-3 py-3 text-sm text-[#525252]">
+                  <td className="px-2 py-2 sm:px-3 sm:py-3 text-sm text-[#525252] whitespace-nowrap">
                     {new Date(entry.from_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -139,7 +139,7 @@ export default function ForecastTimeline({
                   </td>
 
                   {/* End Date */}
-                  <td className="px-3 py-3 text-sm text-[#525252]">
+                  <td className="px-2 py-2 sm:px-3 sm:py-3 text-sm text-[#525252] whitespace-nowrap">
                     {new Date(entry.to_date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -148,7 +148,7 @@ export default function ForecastTimeline({
                   </td>
 
                   {/* Extension */}
-                  <td className="px-3 py-3 text-sm text-center">
+                  <td className="px-2 py-2 sm:px-3 sm:py-3 text-sm text-center whitespace-nowrap">
                     {entry.potential_extension ? (
                       <span className="text-[#f1c21b]">
                         {new Date(entry.potential_extension).toLocaleDateString(
@@ -192,12 +192,12 @@ export default function ForecastTimeline({
 
                   {/* Actions */}
                   <td className="p-2 text-center sticky right-0 bg-inherit z-10 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2">
                       <button
                         aria-label="Edit entry"
                         type="button"
                         onClick={() => onEditEntry(entry.id)}
-                        className="p-2 text-[#525252] hover:text-[#0f62fe] hover:bg-[#e0e0e0] rounded-md transition-colors"
+                        className="p-3 sm:p-2 h-10 w-10 sm:h-9 sm:w-9 flex items-center justify-center text-[#525252] hover:text-[#0f62fe] hover:bg-[#e0e0e0] rounded-lg transition-colors focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#0f62fe]"
                       >
                         <Edit size={16} />
                       </button>
@@ -205,7 +205,7 @@ export default function ForecastTimeline({
                         aria-label="Delete entry"
                         type="button"
                         onClick={() => onDeleteEntry(entry.id)}
-                        className="p-2 text-[#525252] hover:text-[#da1e28] hover:bg-[#e0e0e0] rounded-md transition-colors"
+                        className="p-3 sm:p-2 h-10 w-10 sm:h-9 sm:w-9 flex items-center justify-center text-[#525252] hover:text-[#da1e28] hover:bg-[#e0e0e0] rounded-lg transition-colors focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[#0f62fe]"
                       >
                         <TrashCan size={16} />
                       </button>
