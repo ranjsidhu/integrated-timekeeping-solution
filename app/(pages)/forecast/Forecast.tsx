@@ -46,6 +46,7 @@ export default function ForecastPage({
   const { addNotification } = useNotification();
 
   const handleSave = async () => {
+    setProblemWeeks([]);
     const result = await saveForecastPlan();
 
     if (result.success) {
@@ -55,6 +56,7 @@ export default function ForecastPage({
         title: "Forecast saved",
         subtitle: "Your changes have been saved successfully",
       });
+      setForecastStatus("Draft");
     } else {
       addNotification({
         kind: "error",
@@ -66,6 +68,7 @@ export default function ForecastPage({
   };
 
   const handleSubmit = async () => {
+    setProblemWeeks([]);
     const result = await submitForecastPlan();
 
     if (result.success) {
