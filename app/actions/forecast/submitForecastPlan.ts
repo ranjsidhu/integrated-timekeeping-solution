@@ -96,10 +96,6 @@ export async function submitForecastPlan(): Promise<SubmitForecastPlanResult> {
       };
     }
 
-    // TODO: Additional validations
-    // - Must cover minimum 12 weeks (optional based on requirements)
-    // - No gaps in coverage (optional based on requirements)
-
     // Submit the plan
     await prisma.forecastPlan.update({
       where: { id: forecastPlan.id },
