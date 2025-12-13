@@ -24,7 +24,7 @@ export async function saveForecastPlan(): Promise<SaveForecastPlanResult> {
     });
 
     if (!forecastPlan) {
-      return { success: false, error: "No draft forecast plan found" };
+      return { success: false, error: "No forecast plan found" };
     }
 
     await prisma.forecastPlan.update({

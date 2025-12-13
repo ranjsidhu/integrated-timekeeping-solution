@@ -38,7 +38,7 @@ describe("saveForecastPlan", () => {
     expect(result).toEqual({ success: false, error: "Unauthorized" });
   });
 
-  it("returns error when no draft plan found", async () => {
+  it("returns error when no forecast plan found", async () => {
     mockGetSession.mockResolvedValue({ user: { id: "9" } } as any);
     mockPrisma.forecastPlan.findFirst.mockResolvedValue(null);
 
@@ -46,12 +46,12 @@ describe("saveForecastPlan", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "No draft forecast plan found",
+      error: "No forecast plan found",
     });
     expect(mockPrisma.forecastPlan.update).not.toHaveBeenCalled();
   });
 
-  it("updates draft plan and returns success", async () => {
+  it("updates plan and returns success", async () => {
     mockGetSession.mockResolvedValue({ user: { id: "9" } } as any);
     mockPrisma.forecastPlan.findFirst.mockResolvedValue({ id: 3 } as any);
     mockPrisma.forecastPlan.update.mockResolvedValue({ id: 3 } as any);
