@@ -173,6 +173,78 @@ describe("useTimesheetActions (DOM harness)", () => {
     expect(mockAddNotification).toHaveBeenCalled();
   });
 
+  it("handleSubmit handles null result and shows error notification", async () => {
+    (submitTimesheet as jest.Mock).mockResolvedValue(null);
+
+    render(
+      <TestHarness
+        selectedWeek={selectedWeek}
+        initialTimeEntries={[{ id: "e1", hours: 8 }]}
+        initialWorkItems={[{ id: "w1", name: "Code A" }]}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("submit"));
+
+    await waitFor(() => expect(submitTimesheet).toHaveBeenCalled());
+    // status remains empty and a notification is shown
+    expect(screen.getByTestId("status").textContent).toBe("");
+    expect(mockAddNotification).toHaveBeenCalled();
+  });
+
+  it("handleSubmit displays validation errors when present", async () => {
+    (submitTimesheet as jest.Mock).mockResolvedValue({
+      success: false,
+      message: "Validation failed",
+      validationErrors: [
+        { message: "Week 1 under by 8h" },
+        { message: "Week 2 over by 2h" },
+      ],
+    });
+
+    render(
+      <TestHarness
+        selectedWeek={selectedWeek}
+        initialTimeEntries={[{ id: "e1", hours: 8 }]}
+        initialWorkItems={[{ id: "w1", name: "Code A" }]}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("submit"));
+
+    await waitFor(() => expect(submitTimesheet).toHaveBeenCalled());
+    // status should not change
+    expect(screen.getByTestId("status").textContent).toBe("");
+    // main validation notification + individual errors
+    expect(mockAddNotification).toHaveBeenCalled();
+    const calls = mockAddNotification.mock.calls.map((c) => c[0]);
+    expect(calls.some((c) => c.title === "Timesheet validation failed")).toBe(
+      true,
+    );
+    expect(
+      calls.filter((c) => c.kind === "error").length,
+    ).toBeGreaterThanOrEqual(3);
+  });
+
+  it("handleSubmit catches thrown error and notifies", async () => {
+    (submitTimesheet as jest.Mock).mockRejectedValue(new Error("submit boom"));
+
+    render(
+      <TestHarness
+        selectedWeek={selectedWeek}
+        initialTimeEntries={[{ id: "e1", hours: 8 }]}
+        initialWorkItems={[{ id: "w1", name: "Code A" }]}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("submit"));
+
+    await waitFor(() => expect(submitTimesheet).toHaveBeenCalled());
+    // status remains unchanged and error notification emitted
+    expect(screen.getByTestId("status").textContent).toBe("");
+    expect(mockAddNotification).toHaveBeenCalled();
+  });
+
   it("handleCopyWeek merges work items and time entries and notifies", async () => {
     const fakeResult = {
       success: true,

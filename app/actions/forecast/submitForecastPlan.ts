@@ -39,33 +39,37 @@ export async function submitForecastPlan(): Promise<SubmitForecastPlanResult> {
       return { success: false, error: "Cannot submit an empty forecast plan" };
     }
 
-    // Calculate weekly totals across all entries
+    // Get the first 12 week endings (the visible weeks)
+    const allWeekEndings = await prisma.timesheetWeekEnding.findMany({
+      orderBy: {
+        week_ending: "asc",
+      },
+      take: 12,
+    });
+
+    const visibleWeekIds = new Set(allWeekEndings.map((w) => w.id));
+
+    // Calculate weekly totals across all entries (only for visible weeks)
     const weeklyTotals: Record<number, number> = {};
 
     forecastPlan.forecast_entries.forEach((entry) => {
       entry.weekly_breakdowns.forEach((breakdown) => {
         const weekId = breakdown.forecast_week_ending_id;
-        weeklyTotals[weekId] = (weeklyTotals[weekId] || 0) + breakdown.hours;
+        // Only count hours for visible weeks
+        if (visibleWeekIds.has(weekId)) {
+          weeklyTotals[weekId] = (weeklyTotals[weekId] || 0) + breakdown.hours;
+        }
       });
     });
 
-    // Get all week endings that have hours
+    // Get all week endings that have hours (from visible weeks)
     const weeksWithHours = Object.keys(weeklyTotals).map(Number);
 
     if (weeksWithHours.length === 0) {
       return { success: false, error: "Forecast plan has no hours assigned" };
     }
 
-    // Fetch week ending details for validation errors
-    const weekEndings = await prisma.timesheetWeekEnding.findMany({
-      where: {
-        id: {
-          in: weeksWithHours,
-        },
-      },
-    });
-
-    // Validate each week totals exactly 40 hours
+    // Validate each week totals exactly 40 hours (only visible weeks)
     const validationErrors: Array<{
       weekId: number;
       weekEnding: Date;
@@ -75,7 +79,7 @@ export async function submitForecastPlan(): Promise<SubmitForecastPlanResult> {
     Object.entries(weeklyTotals).forEach(([weekIdStr, total]) => {
       if (total !== 40) {
         const weekId = Number(weekIdStr);
-        const week = weekEndings.find((w) => w.id === weekId);
+        const week = allWeekEndings.find((w) => w.id === weekId);
 
         if (week) {
           validationErrors.push({

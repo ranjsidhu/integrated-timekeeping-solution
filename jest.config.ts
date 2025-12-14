@@ -11,7 +11,12 @@ const config = {
   setupFilesAfterEnv: ["./jest.setup.ts"],
   testEnvironment: "jsdom",
   collectCoverage: true,
-  coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/generated/"],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "<rootDir>/generated/",
+    "/index.ts$",
+    "/index.tsx$",
+  ],
   transform: {
     "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
   },

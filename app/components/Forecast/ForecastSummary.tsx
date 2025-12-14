@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartLine, Time } from "@carbon/icons-react";
+import { ChartLine, EventSchedule, Time } from "@carbon/icons-react";
 import type { ForecastSummaryProps } from "@/types/forecast.types";
 
 export default function ForecastSummary({
@@ -48,8 +48,20 @@ export default function ForecastSummary({
 
   const activeProjects = new Set(forecastEntries.map((e) => e.project_id)).size;
 
+  // Calculate availability date: furthest end date of billable assignments
+  const availabilityDate = forecastEntries.reduce(
+    (furthest, entry) => {
+      if (entry.category_name === "Billable") {
+        const endDate = new Date(entry.to_date);
+        return !furthest || endDate > furthest ? endDate : furthest;
+      }
+      return furthest;
+    },
+    null as Date | null,
+  );
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {/* Total Hours Card */}
       <div className="bg-[#0f62fe] rounded-lg p-6 text-white shadow-sm">
         <div className="flex items-center justify-between mb-4">
@@ -103,6 +115,25 @@ export default function ForecastSummary({
         <div className="text-purple-100 text-sm">
           Billable Utilisation Forecast
         </div>
+      </div>
+
+      {/* Availability Date Card */}
+      <div className="bg-[#f1c21b] rounded-lg p-6 text-[#161616] shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div className="p-3 bg-black/10 rounded-lg">
+            <EventSchedule size={24} />
+          </div>
+        </div>
+        <div className="text-2xl font-semibold mb-1">
+          {availabilityDate
+            ? availabilityDate.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "No billable work"}
+        </div>
+        <div className="text-[#161616]/80 text-sm">Next Availability Date</div>
       </div>
     </div>
   );
