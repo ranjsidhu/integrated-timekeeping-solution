@@ -17,7 +17,6 @@ export async function saveForecastPlan(): Promise<SaveForecastPlanResult> {
     const forecastPlan = await prisma.forecastPlan.findFirst({
       where: {
         user_id: userId,
-        submitted_at: null,
       },
       orderBy: {
         created_at: "desc",
@@ -25,14 +24,14 @@ export async function saveForecastPlan(): Promise<SaveForecastPlanResult> {
     });
 
     if (!forecastPlan) {
-      return { success: false, error: "No draft forecast plan found" };
+      return { success: false, error: "No forecast plan found" };
     }
 
-    //  TODO -  Update the plan (just touch updated_at for now)
     await prisma.forecastPlan.update({
       where: { id: forecastPlan.id },
       data: {
         updated_at: new Date(),
+        submitted_at: null,
       },
     });
 

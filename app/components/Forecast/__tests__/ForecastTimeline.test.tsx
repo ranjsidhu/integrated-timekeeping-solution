@@ -195,4 +195,145 @@ describe("ForecastTimeline", () => {
     // Should have at least one "-" for week 3 and one for extension
     expect(emptyCells.length).toBeGreaterThanOrEqual(2);
   });
+
+  it("renders extension date when provided", () => {
+    const entryWithExtension: ForecastEntry = {
+      ...baseEntry,
+      potential_extension: new Date(2025, 0, 28),
+    };
+
+    render(
+      <ForecastTimeline
+        forecastEntries={[entryWithExtension]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    // Expect formatted extension date to appear, not '-'
+    expect(screen.queryByText("-")).toBeInTheDocument(); // dash may exist elsewhere
+    expect(screen.getByText("Jan 28, 2025")).toBeInTheDocument();
+  });
+
+  it("applies avatar color based on category", () => {
+    const holidayEntry: ForecastEntry = {
+      ...baseEntry,
+      id: 3,
+      category_name: "Holiday",
+      project_name: "HolidayProj",
+    };
+    const trainingEntry: ForecastEntry = {
+      ...baseEntry,
+      id: 4,
+      category_name: "Training",
+      project_name: "TrainingProj",
+    };
+    const billableEntry: ForecastEntry = {
+      ...baseEntry,
+      id: 5,
+      category_name: "Billable",
+      project_name: "BillableProj",
+    };
+
+    render(
+      <ForecastTimeline
+        forecastEntries={[holidayEntry, trainingEntry, billableEntry]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    // Robust: locate each row by project name and assert avatar with expected bg class exists
+    const holidayRow = screen.getByText("HolidayProj").closest("tr");
+    const trainingRow = screen.getByText("TrainingProj").closest("tr");
+    const billableRow = screen.getByText("BillableProj").closest("tr");
+
+    const holidayAvatar = holidayRow?.querySelector("div.rounded-lg");
+    const trainingAvatar = trainingRow?.querySelector("div.rounded-lg");
+    const billableAvatar = billableRow?.querySelector("div.rounded-lg");
+
+    expect(holidayAvatar?.className).toContain("bg-[#8a3ffc]");
+    expect(trainingAvatar?.className).toContain("bg-[#0f62fe]");
+    expect(billableAvatar?.className).toContain("bg-[#24a148]");
+  });
+
+  it("renders start and end dates correctly", () => {
+    render(
+      <ForecastTimeline
+        forecastEntries={[baseEntry]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    // Expect formatted start/end date cells
+    expect(screen.getByText("Jan 1, 2025")).toBeInTheDocument();
+    expect(screen.getByText("Jan 7, 2025")).toBeInTheDocument();
+  });
+
+  it("highlights problem weeks in header, rows, and totals", () => {
+    const problemWeeks = [2];
+
+    render(
+      <ForecastTimeline
+        forecastEntries={[baseEntry]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+        problemWeeks={problemWeeks}
+      />,
+    );
+
+    // Header cell for W2 should have error styles
+    const w2Header = screen.getByText("W2").closest("th");
+    expect(w2Header).toHaveClass("bg-[#ffd7d9]");
+    expect(w2Header).toHaveClass("text-[#da1e28]");
+
+    // Body cell for week 2 should have error bg
+    const cells = screen.getAllByRole("cell");
+    // At least one body cell should include the error bg when week 2 is present
+    expect(
+      cells.some(
+        (c) =>
+          c.className.includes("bg-[#fff1f1]") &&
+          c.className.includes("border-[#ffb3b8]"),
+      ),
+    ).toBe(true);
+
+    // Totals row for week 2 should have error styles
+    const totalCells = screen.getAllByRole("cell");
+    const totalAssignedIndex = totalCells.findIndex(
+      (cell) => cell.textContent === "Total Assigned",
+    );
+    const w2TotalCell = totalCells[totalAssignedIndex + 5];
+    expect(w2TotalCell.className).toContain("bg-[#ffd7d9]");
+    expect(w2TotalCell.className).toContain("text-[#da1e28]");
+  });
+
+  it("shows 0 in totals when no hours for a week", () => {
+    const entryNoWeek3: ForecastEntry = {
+      ...baseEntry,
+      weekly_hours: { 1: 5, 2: 3 },
+    };
+
+    render(
+      <ForecastTimeline
+        forecastEntries={[entryNoWeek3]}
+        weekEndings={weekEndings}
+        onEditEntry={jest.fn()}
+        onDeleteEntry={jest.fn()}
+      />,
+    );
+
+    const totalCells = screen.getAllByRole("cell");
+    const totalAssignedIndex = totalCells.findIndex(
+      (cell) => cell.textContent === "Total Assigned",
+    );
+
+    // Week 3 total cell should display 0 when no hours across entries
+    expect(totalCells[totalAssignedIndex + 6].textContent).toBe("0");
+  });
 });

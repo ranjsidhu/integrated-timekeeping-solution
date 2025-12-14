@@ -2,6 +2,11 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import LoginForm from "./LoginForm";
 
+// Mock Prisma client early to prevent import chain issues
+jest.mock("@/prisma/prisma", () => ({
+  prisma: {},
+}));
+
 jest.mock("@/utils/auth/signIn", () => ({
   handleCredentialsSignIn: jest.fn(),
 }));
