@@ -6,6 +6,7 @@ import type { WeekEnding } from "@/types/timesheet.types";
 jest.mock("@carbon/icons-react", () => ({
   ChartLine: () => <span data-testid="icon-chartline" />,
   Time: () => <span data-testid="icon-time" />,
+  EventSchedule: () => <span data-testid="icon-event-schedule" />,
 }));
 
 import ForecastSummary from "../ForecastSummary";

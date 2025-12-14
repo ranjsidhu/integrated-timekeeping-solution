@@ -81,6 +81,11 @@ describe("submitForecastPlan", () => {
       ],
     } as any);
 
+    mockPrisma.timesheetWeekEnding.findMany.mockResolvedValue([
+      { id: 1, week_ending: new Date("2025-12-05") },
+      { id: 2, week_ending: new Date("2025-12-12") },
+    ] as any);
+
     const result = await submitForecastPlan();
 
     expect(result).toEqual({
@@ -112,6 +117,10 @@ describe("submitForecastPlan", () => {
 
     const result = await submitForecastPlan();
 
+    expect(mockPrisma.timesheetWeekEnding.findMany).toHaveBeenCalledWith({
+      orderBy: { week_ending: "asc" },
+      take: 12,
+    });
     expect(result.success).toBe(false);
     expect(result.error).toBe("Weekly hours validation failed");
     expect(result.validationErrors).toHaveLength(2);
@@ -157,6 +166,10 @@ describe("submitForecastPlan", () => {
 
     const result = await submitForecastPlan();
 
+    expect(mockPrisma.timesheetWeekEnding.findMany).toHaveBeenCalledWith({
+      orderBy: { week_ending: "asc" },
+      take: 12,
+    });
     expect(result).toEqual({ success: true, status: "Submitted" });
     expect(mockPrisma.forecastPlan.update).toHaveBeenCalledWith({
       where: { id: 4 },
