@@ -7,6 +7,7 @@ import {
   getTeamUtilization,
 } from "@/app/actions";
 import { AuthWrapper, Layout } from "@/app/components";
+import { analyticsRoles } from "@/utils/analytics/analyticsRoles";
 import { getSession } from "@/utils/auth/getSession";
 import { withRoleProtection } from "@/utils/auth/routeProtection";
 import Analytics from "./Analytics";
@@ -19,17 +20,16 @@ export default async function AnalyticsPage() {
   const session = await getSession();
 
   try {
-    const allowedRoles = ["Resource Manager", "Admin"];
     const [metrics, utilization, forecastVsActuals, projects] =
       await Promise.all([
-        withRoleProtection(getAnalyticsMetrics, allowedRoles),
-        withRoleProtection(getTeamUtilization, allowedRoles),
-        withRoleProtection(getForecastVsActuals, allowedRoles),
-        withRoleProtection(getProjectAnalytics, allowedRoles),
+        withRoleProtection(getAnalyticsMetrics, analyticsRoles),
+        withRoleProtection(getTeamUtilization, analyticsRoles),
+        withRoleProtection(getForecastVsActuals, analyticsRoles),
+        withRoleProtection(getProjectAnalytics, analyticsRoles),
       ]);
 
     return (
-      <AuthWrapper session={session}>
+      <AuthWrapper session={session} rolesRequired={analyticsRoles}>
         <Layout>
           <Analytics
             initialMetrics={metrics}

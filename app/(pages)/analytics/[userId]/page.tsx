@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getIndividualAnalytics } from "@/app/actions";
 import { AuthWrapper, Layout } from "@/app/components";
 import type { IndividualAnalyticsPageProps } from "@/types/analytics.types";
+import { analyticsRoles } from "@/utils/analytics/analyticsRoles";
 import { getSession } from "@/utils/auth/getSession";
 import { withRoleProtection } from "@/utils/auth/routeProtection";
 import IndividualAnalytics from "./IndividualAnalytics";
@@ -24,7 +25,7 @@ export default async function IndividualAnalyticsPage({
   try {
     const analytics = await withRoleProtection(
       getIndividualAnalytics,
-      ["Resource Manager", "Admin"],
+      analyticsRoles,
       Number(userId),
       4,
     );
@@ -34,7 +35,7 @@ export default async function IndividualAnalyticsPage({
     }
 
     return (
-      <AuthWrapper session={session}>
+      <AuthWrapper session={session} rolesRequired={analyticsRoles}>
         <Layout>
           <IndividualAnalytics
             initialData={analytics}

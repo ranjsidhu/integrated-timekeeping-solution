@@ -8,6 +8,7 @@ import type {
   ProjectExportRow,
   TeamExportRow,
 } from "@/types/analytics.types";
+import { analyticsRoles } from "@/utils/analytics/analyticsRoles";
 import { getSession } from "@/utils/auth/getSession";
 import { withRoleProtection } from "@/utils/auth/routeProtection";
 
@@ -21,7 +22,7 @@ export async function getProtectedExportData(
 ): Promise<TeamExportRow[] | ProjectExportRow[] | ForecastActualsExportRow[]> {
   return withRoleProtection(
     getExportData,
-    ["Resource Manager", "Admin"],
+    analyticsRoles,
     dataType,
     weeksToShow,
   );
