@@ -1,3 +1,9 @@
+import AnalyticsFilters from "./Analytics/AnalyticsFilters";
+import ForecastVsActualsChart from "./Analytics/ForecastVsActualsChart";
+import MetricsCard from "./Analytics/MetricsCard";
+import ProjectAnalyticsTable from "./Analytics/ProjectAnalyticsTable";
+import TeamCapacityTable from "./Analytics/TeamCapacityTable";
+import UtilizationTrendChart from "./Analytics/UtilizationTrendChart";
 import AuthWrapper from "./AuthWrapper/AuthWrapper";
 import Button from "./Button/Button";
 import Category from "./Category/Category";
@@ -42,6 +48,12 @@ import TimesheetTotals from "./Timesheet/TimesheetTotals";
 import TimesheetWorkItems from "./Timesheet/TimesheetWorkItems";
 
 export {
+  AnalyticsFilters,
+  ForecastVsActualsChart,
+  MetricsCard,
+  ProjectAnalyticsTable,
+  TeamCapacityTable,
+  UtilizationTrendChart,
   AuthWrapper,
   Button,
   Category,

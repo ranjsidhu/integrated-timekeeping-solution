@@ -49,10 +49,11 @@ export interface NotificationState {
   subtitle: string;
 }
 
-export type Role = "Employee" | "Resource Manager";
+export type Role = "Employee" | "Resource Manager" | "Admin";
 
 export interface AuthWrapperProps {
   children: React.ReactNode;
   session: Session | null;
   rolesRequired?: Role[];
+  noRedirect?: boolean;
 }
