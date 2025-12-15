@@ -13,7 +13,7 @@ export default function DisplayLinks() {
         <HeaderMenuItem
           href={route.href}
           key={route.href}
-          isActive={pathname === route.href}
+          isActive={pathname.includes(route.href)}
           data-testid={`header-menu-item-${route.label.toLowerCase()}`}
         >
           {route.label}

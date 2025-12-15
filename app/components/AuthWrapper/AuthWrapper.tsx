@@ -6,23 +6,28 @@ export default async function AuthWrapper({
   children,
   session,
   rolesRequired,
+  noRedirect = false,
 }: AuthWrapperProps) {
   if (!session?.user) {
+    if (noRedirect) return null;
     redirect("/");
   }
 
   const userDetails = await getUserDetails(session.user.email);
   if (!userDetails) {
+    if (noRedirect) return null;
     redirect("/error");
   }
 
   if (userDetails.error) {
+    if (noRedirect) return null;
     redirect("/error");
   }
 
   const userRoles = userDetails?.roles as Role[];
 
   if (!userRoles) {
+    if (noRedirect) return null;
     redirect("/error");
   }
 
@@ -31,6 +36,7 @@ export default async function AuthWrapper({
     rolesRequired &&
     !userRoles.some((role) => rolesRequired.includes(role as Role))
   ) {
+    if (noRedirect) return null;
     redirect("/timesheet");
   }
 

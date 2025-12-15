@@ -55,4 +55,5 @@ export interface AuthWrapperProps {
   children: React.ReactNode;
   session: Session | null;
   rolesRequired?: Role[];
+  noRedirect?: boolean;
 }
