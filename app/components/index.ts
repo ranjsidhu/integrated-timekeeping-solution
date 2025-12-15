@@ -1,3 +1,5 @@
+import MetricsCard from "./Analytics/MetricsCard";
+import TeamCapacityTable from "./Analytics/TeamCapacityTable";
 import AuthWrapper from "./AuthWrapper/AuthWrapper";
 import Button from "./Button/Button";
 import Category from "./Category/Category";
@@ -42,6 +44,8 @@ import TimesheetTotals from "./Timesheet/TimesheetTotals";
 import TimesheetWorkItems from "./Timesheet/TimesheetWorkItems";
 
 export {
+  MetricsCard,
+  TeamCapacityTable,
   AuthWrapper,
   Button,
   Category,

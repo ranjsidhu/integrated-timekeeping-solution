@@ -1,3 +1,5 @@
+import { getAnalyticsMetrics } from "./analytics/getAnalyticsMetrics";
+import { getTeamUtilization } from "./analytics/getTeamUtilization";
 import { createForecastEntry } from "./forecast/createForecastEntry";
 import { deleteForecastEntry } from "./forecast/deleteForecastEntry";
 import { getCategories } from "./forecast/getCategories";
@@ -14,6 +16,8 @@ import { saveTimesheet } from "./timesheet/saveTimesheet";
 import { submitTimesheet } from "./timesheet/submitTimesheet";
 
 export {
+  getAnalyticsMetrics,
+  getTeamUtilization,
   createForecastEntry,
   deleteForecastEntry,
   getCategories,
