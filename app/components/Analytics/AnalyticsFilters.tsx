@@ -68,6 +68,7 @@ export default function AnalyticsFilters({
               labelText="Time Period"
               value={weeksToShow.toString()}
               onChange={(e) => onWeeksChange(Number(e.target.value))}
+              data-testid="weeks-select"
             >
               {WEEK_OPTIONS.map((option) => (
                 <SelectItem
@@ -93,6 +94,7 @@ export default function AnalyticsFilters({
                 onClick={() => handleExport("team")}
                 disabled={isExporting}
                 renderIcon={Download}
+                data-testid="export-button-team"
               >
                 Team Capacity
               </Button>
@@ -102,6 +104,7 @@ export default function AnalyticsFilters({
                 onClick={() => handleExport("projects")}
                 disabled={isExporting}
                 renderIcon={Download}
+                data-testid="export-button-projects"
               >
                 Project Analytics
               </Button>
@@ -111,6 +114,7 @@ export default function AnalyticsFilters({
                 onClick={() => handleExport("forecast-actuals")}
                 disabled={isExporting}
                 renderIcon={Download}
+                data-testid="export-button-forecast-actuals"
               >
                 Forecast vs Actuals
               </Button>

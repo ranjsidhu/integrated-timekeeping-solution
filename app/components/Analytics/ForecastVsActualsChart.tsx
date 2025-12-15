@@ -165,8 +165,11 @@ export default function ForecastVsActualsChart({
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6 p-4 bg-[#f4f4f4] rounded-lg">
-        <div>
+      <div
+        className="grid grid-cols-4 gap-4 mb-6 p-4 bg-[#f4f4f4] rounded-lg"
+        data-testid="summary-stats"
+      >
+        <div data-testid="total-forecast">
           <div className="text-xs text-[#525252] uppercase tracking-wide mb-1">
             Total Forecast
           </div>
@@ -174,7 +177,7 @@ export default function ForecastVsActualsChart({
             {totalForecast}h
           </div>
         </div>
-        <div>
+        <div data-testid="total-actual">
           <div className="text-xs text-[#525252] uppercase tracking-wide mb-1">
             Total Actual
           </div>
@@ -182,7 +185,7 @@ export default function ForecastVsActualsChart({
             {totalActual}h
           </div>
         </div>
-        <div>
+        <div data-testid="variance">
           <div className="text-xs text-[#525252] uppercase tracking-wide mb-1">
             Variance
           </div>
@@ -195,7 +198,7 @@ export default function ForecastVsActualsChart({
             {totalVariance}h
           </div>
         </div>
-        <div>
+        <div data-testid="accuracy">
           <div className="text-xs text-[#525252] uppercase tracking-wide mb-1">
             Accuracy
           </div>
@@ -206,12 +209,15 @@ export default function ForecastVsActualsChart({
       </div>
 
       {/* Chart */}
-      <div className="h-80">
+      <div className="h-80" data-testid="chart-container">
         <Bar data={chartData} options={options} />
       </div>
 
       {weekEndings.length === 0 && (
-        <div className="h-80 flex items-center justify-center">
+        <div
+          className="h-80 flex items-center justify-center"
+          data-testid="empty-state"
+        >
           <p className="text-[#525252]">
             No historical data available. Submit timesheets to see comparisons.
           </p>

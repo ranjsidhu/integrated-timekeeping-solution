@@ -27,7 +27,7 @@ export default function ProjectAnalyticsTable({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full" data-testid="projects-table">
           <thead className="bg-[#f4f4f4]">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-[#161616] uppercase tracking-wider">
@@ -61,6 +61,7 @@ export default function ProjectAnalyticsTable({
               <tr
                 key={project.projectId}
                 className="hover:bg-[#f4f4f4] transition-colors"
+                data-testid={`project-row-${project.projectId}`}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-[#161616]">
@@ -114,7 +115,7 @@ export default function ProjectAnalyticsTable({
       </div>
 
       {projects.length === 0 && (
-        <div className="p-12 text-center">
+        <div className="p-12 text-center" data-testid="empty-state">
           <p className="text-[#525252]">No project data available</p>
         </div>
       )}

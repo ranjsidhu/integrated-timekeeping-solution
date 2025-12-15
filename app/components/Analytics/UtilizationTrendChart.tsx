@@ -179,7 +179,7 @@ export default function UtilizationTrendChart({
           Team-wide utilization over the next {weekEndings.length} weeks
         </p>
       </div>
-      <div className="h-80">
+      <div className="h-80" data-testid="chart-container">
         <Line data={chartData} options={options} />
       </div>
     </div>
