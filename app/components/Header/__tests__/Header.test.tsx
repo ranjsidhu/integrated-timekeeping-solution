@@ -6,7 +6,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 // Mock @carbon/react components used by Header to avoid ESM parsing issues
 jest.mock("@carbon/react", () => {
   return {
-    HeaderContainer: (props: any) => props.render(),
     Header: (props: any) => (
       <div data-testid={props["data-testid"]}>{props.children}</div>
     ),
@@ -56,11 +55,16 @@ jest.mock("next-auth/react", () => ({
 // Mock DisplayLinks (relative to Header file)
 jest.mock("../DisplayLinks", () => () => <div data-testid="display-links" />);
 
-import Header from "../Header";
+// Mock AnalyticsLink (relative to Header file)
+jest.mock("../../AnalyticsLink/AnalyticsLink", () => () => (
+  <div data-testid="analytics-link" />
+));
+
+import HeaderClient from "../HeaderClient";
 const { usePathname } = require("next/navigation");
 const { useSession } = require("next-auth/react");
 
-describe("Header component", () => {
+describe("HeaderClient component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -71,7 +75,7 @@ describe("Header component", () => {
       data: { user: { name: "Root User" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     // On root path, navigation elements should not be rendered
     expect(screen.queryByTestId("header-navigation")).not.toBeInTheDocument();
@@ -85,7 +89,7 @@ describe("Header component", () => {
       data: { user: { name: "Test User" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     expect(screen.getByTestId("header-navigation")).toBeInTheDocument();
     expect(screen.getByTestId("header-global-bar")).toBeInTheDocument();
@@ -101,10 +105,8 @@ describe("Header component", () => {
       data: { user: { name: "Test" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
-    // Header container is always rendered
-    expect(screen.getByTestId("header-container")).toBeInTheDocument();
     // Navigation elements are rendered on any non-root path (including /login)
     expect(screen.getByTestId("header-navigation")).toBeInTheDocument();
     expect(screen.getByTestId("header-global-bar")).toBeInTheDocument();
@@ -116,7 +118,7 @@ describe("Header component", () => {
       data: { user: { name: "Toggle Test" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     const button = screen.getByTestId("header-menu-button");
     // initially false
@@ -136,7 +138,7 @@ describe("Header component", () => {
       data: { user: { name: "Multi Click Test" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     const button = screen.getByTestId("header-menu-button");
 
@@ -157,7 +159,7 @@ describe("Header component", () => {
       data: { user: { name: "Links Test" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     // DisplayLinks should appear twice: in HeaderNavigation and in HeaderSideNavItems
     const displayLinks = screen.getAllByTestId("display-links");
@@ -170,7 +172,7 @@ describe("Header component", () => {
       data: { user: { name: "Side Nav Test" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     const sideNav = screen.getByTestId("header-side-nav");
     expect(sideNav).toBeInTheDocument();
@@ -184,10 +186,9 @@ describe("Header component", () => {
       data: { user: { name: null } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     // Should render header even with null user name
-    expect(screen.getByTestId("header-container")).toBeInTheDocument();
     expect(screen.getByTestId("header-menu-button")).toBeInTheDocument();
   });
 
@@ -195,10 +196,9 @@ describe("Header component", () => {
     (usePathname as jest.Mock).mockReturnValue("/timesheet");
     (useSession as jest.Mock).mockReturnValue({});
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     // Should render header even without user data
-    expect(screen.getByTestId("header-container")).toBeInTheDocument();
     expect(screen.getByTestId("header-menu-button")).toBeInTheDocument();
   });
 
@@ -208,10 +208,27 @@ describe("Header component", () => {
       data: { user: { name: "Name Test" } },
     });
 
-    render(<Header />);
+    render(<HeaderClient />);
 
     const headerName = screen.getByTestId("header-name");
     expect(headerName).toHaveAttribute("href", "/");
     expect(headerName).toHaveTextContent("Integrated Timekeeping");
+  });
+
+  it("renders children passed to HeaderClient", () => {
+    (usePathname as jest.Mock).mockReturnValue("/analytics");
+    (useSession as jest.Mock).mockReturnValue({
+      data: { user: { name: "Test" } },
+    });
+
+    render(
+      <HeaderClient>
+        <div data-testid="test-child">Test Child</div>
+      </HeaderClient>,
+    );
+
+    // Children should appear twice: in HeaderNavigation and in HeaderSideNavItems
+    const children = screen.getAllByTestId("test-child");
+    expect(children).toHaveLength(2);
   });
 });
