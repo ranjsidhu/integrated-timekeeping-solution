@@ -2,21 +2,18 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getIndividualAnalytics } from "@/app/actions";
 import { AuthWrapper, Layout } from "@/app/components";
+import type { IndividualAnalyticsPageProps } from "@/types/analytics.types";
 import { getSession } from "@/utils/auth/getSession";
-import { withSessionProtection } from "@/utils/auth/routeProtection";
+import { withRoleProtection } from "@/utils/auth/routeProtection";
 import IndividualAnalytics from "./IndividualAnalytics";
 
 export const metadata: Metadata = {
   title: "Team Member Analytics",
 };
 
-type PageProps = {
-  params: Promise<{
-    userId: string;
-  }>;
-};
-
-export default async function IndividualAnalyticsPage({ params }: PageProps) {
+export default async function IndividualAnalyticsPage({
+  params,
+}: IndividualAnalyticsPageProps) {
   const session = await getSession();
   const { userId } = await params;
 
@@ -25,8 +22,9 @@ export default async function IndividualAnalyticsPage({ params }: PageProps) {
   }
 
   try {
-    const analytics = await withSessionProtection(
+    const analytics = await withRoleProtection(
       getIndividualAnalytics,
+      ["Resource Manager", "Admin"],
       Number(userId),
       4,
     );

@@ -8,7 +8,7 @@ import {
 } from "@/app/actions";
 import { AuthWrapper, Layout } from "@/app/components";
 import { getSession } from "@/utils/auth/getSession";
-import { withSessionProtection } from "@/utils/auth/routeProtection";
+import { withRoleProtection } from "@/utils/auth/routeProtection";
 import Analytics from "./Analytics";
 
 export const metadata: Metadata = {
@@ -19,12 +19,13 @@ export default async function AnalyticsPage() {
   const session = await getSession();
 
   try {
+    const allowedRoles = ["Resource Manager", "Admin"];
     const [metrics, utilization, forecastVsActuals, projects] =
       await Promise.all([
-        withSessionProtection(getAnalyticsMetrics, 4),
-        withSessionProtection(getTeamUtilization, 4),
-        withSessionProtection(getForecastVsActuals, 4),
-        withSessionProtection(getProjectAnalytics, 4),
+        withRoleProtection(getAnalyticsMetrics, allowedRoles),
+        withRoleProtection(getTeamUtilization, allowedRoles),
+        withRoleProtection(getForecastVsActuals, allowedRoles),
+        withRoleProtection(getProjectAnalytics, allowedRoles),
       ]);
 
     return (

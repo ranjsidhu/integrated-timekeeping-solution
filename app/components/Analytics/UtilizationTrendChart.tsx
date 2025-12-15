@@ -14,6 +14,7 @@ import {
 } from "chart.js";
 import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
+import type { UtilizationTrendChartProps } from "@/types/analytics.types";
 
 // Register ChartJS components
 ChartJS.register(
@@ -26,15 +27,6 @@ ChartJS.register(
   Legend,
   Filler,
 );
-
-type UtilizationTrendChartProps = {
-  teamMembers: Array<{
-    id: number;
-    name: string;
-    weeklyHours: Record<number, number>;
-  }>;
-  weekEndings: Array<{ id: number; week_ending: Date; label: string }>;
-};
 
 export default function UtilizationTrendChart({
   teamMembers,

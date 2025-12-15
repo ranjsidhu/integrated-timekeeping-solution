@@ -1,4 +1,7 @@
-import { getExportData } from "./analytics/exportAnalyticsData";
+import {
+  getExportData,
+  getProtectedExportData,
+} from "./analytics/exportAnalyticsData";
 import { getAnalyticsMetrics } from "./analytics/getAnalyticsMetrics";
 import { getForecastVsActuals } from "./analytics/getForecastVsActuals";
 import { getIndividualAnalytics } from "./analytics/getIndividualAnalytics";
@@ -21,6 +24,7 @@ import { submitTimesheet } from "./timesheet/submitTimesheet";
 
 export {
   getExportData,
+  getProtectedExportData,
   getAnalyticsMetrics,
   getForecastVsActuals,
   getIndividualAnalytics,

@@ -7,6 +7,22 @@ jest.mock("@/prisma/prisma", () => ({
   prisma: {},
 }));
 
+// Mock server actions to prevent Next.js server API imports
+jest.mock("@/app/actions", () => ({
+  getProtectedExportData: jest.fn(),
+  getAnalyticsMetrics: jest.fn(),
+  getForecastVsActuals: jest.fn(),
+  getProjectAnalytics: jest.fn(),
+  getTeamUtilization: jest.fn(),
+}));
+
+// Mock route protection utilities
+jest.mock("@/utils/auth/routeProtection", () => ({
+  withRoleProtection: jest.fn(),
+  withSessionProtection: jest.fn(),
+  verifyRoleEnvVariable: jest.fn(),
+}));
+
 jest.mock("@/utils/auth/signIn", () => ({
   handleCredentialsSignIn: jest.fn(),
 }));

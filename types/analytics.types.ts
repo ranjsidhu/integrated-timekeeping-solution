@@ -177,3 +177,14 @@ export type ProjectAssignment = {
   projectName: string;
   totalHours: number;
 };
+
+export type IndividualAnalyticsProps = {
+  initialData: IndividualAnalytics;
+  userId: number;
+};
+
+export type IndividualAnalyticsPageProps = {
+  params: Promise<{
+    userId: string;
+  }>;
+};

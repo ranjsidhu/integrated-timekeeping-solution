@@ -6,12 +6,7 @@ import { useEffect, useState } from "react";
 import { getIndividualAnalytics } from "@/app/actions";
 import { Loading, MetricsCard } from "@/app/components";
 import Button from "@/app/components/Button/Button";
-import type { IndividualAnalytics as IndividualAnalyticsType } from "@/types/analytics.types";
-
-type IndividualAnalyticsProps = {
-  initialData: IndividualAnalyticsType;
-  userId: number;
-};
+import type { IndividualAnalyticsProps } from "@/types/analytics.types";
 
 export default function IndividualAnalytics({
   initialData,

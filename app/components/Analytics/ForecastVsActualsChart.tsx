@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { useMemo } from "react";
 import { Bar } from "react-chartjs-2";
+import type { ForecastVsActualsChartProps } from "@/types/analytics.types";
 
 // Register ChartJS components
 ChartJS.register(
@@ -22,13 +23,6 @@ ChartJS.register(
   Tooltip,
   Legend,
 );
-
-type ForecastVsActualsChartProps = {
-  weekEndings: Array<{ id: number; week_ending: Date; label: string }>;
-  forecastHours: number[];
-  actualHours: number[];
-  variance: number[];
-};
 
 export default function ForecastVsActualsChart({
   weekEndings,

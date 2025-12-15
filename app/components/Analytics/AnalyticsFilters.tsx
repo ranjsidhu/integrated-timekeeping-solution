@@ -3,7 +3,7 @@
 import { Download } from "@carbon/icons-react";
 import { Select, SelectItem } from "@carbon/react";
 import { useState } from "react";
-import { getExportData } from "@/app/actions";
+import { getProtectedExportData } from "@/app/actions";
 import type {
   AnalyticsFiltersProps,
   ExportDataType,
@@ -28,7 +28,7 @@ export default function AnalyticsFilters({
   const handleExport = async (dataType: ExportDataType) => {
     setIsExporting(true);
     try {
-      const data = await getExportData(dataType, weeksToShow);
+      const data = await getProtectedExportData(dataType, weeksToShow);
 
       if (data.length === 0) {
         alert("No data available to export");
@@ -44,7 +44,7 @@ export default function AnalyticsFilters({
       exportToCSV(data, filenameMap[dataType]);
     } catch (error) {
       console.error("Error exporting data:", error);
-      alert("Failed to export data");
+      alert("Failed to export data. You may not have permission.");
     } finally {
       setIsExporting(false);
     }

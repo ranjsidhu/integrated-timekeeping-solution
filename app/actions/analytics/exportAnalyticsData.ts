@@ -9,9 +9,27 @@ import type {
   TeamExportRow,
 } from "@/types/analytics.types";
 import { getSession } from "@/utils/auth/getSession";
+import { withRoleProtection } from "@/utils/auth/routeProtection";
+
+/**
+ * Protected export function that checks user authorization
+ * This is the public-facing server action that client components should call
+ */
+export async function getProtectedExportData(
+  dataType: ExportDataType,
+  weeksToShow: number = 4,
+): Promise<TeamExportRow[] | ProjectExportRow[] | ForecastActualsExportRow[]> {
+  return withRoleProtection(
+    getExportData,
+    ["Resource Manager", "Admin"],
+    dataType,
+    weeksToShow,
+  );
+}
 
 /**
  * Get formatted data for export based on type
+ * This is the internal implementation - should not be called directly from client components
  */
 export async function getExportData(
   dataType: ExportDataType,
