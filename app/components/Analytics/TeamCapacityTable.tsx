@@ -3,6 +3,7 @@ import type { TeamCapacityTableProps } from "@/types/analytics.types";
 export default function TeamCapacityTable({
   teamMembers,
   weekEndings,
+  onMemberClick,
 }: TeamCapacityTableProps) {
   const getUtilizationColor = (utilization: number) => {
     if (utilization >= 80) return "text-[#24a148]"; // Green
@@ -24,6 +25,7 @@ export default function TeamCapacityTable({
         </h2>
         <p className="text-sm text-[#525252] mt-1">
           Forecasted hours for the next {weekEndings.length} weeks
+          {onMemberClick && " • Click on a team member to view details"}
         </p>
       </div>
 
@@ -57,7 +59,12 @@ export default function TeamCapacityTable({
             {teamMembers.map((member) => (
               <tr
                 key={member.id}
-                className="hover:bg-[#f4f4f4] transition-colors"
+                className={`transition-colors ${
+                  onMemberClick
+                    ? "hover:bg-[#e0e0e0] cursor-pointer"
+                    : "hover:bg-[#f4f4f4]"
+                }`}
+                onClick={() => onMemberClick?.(member.id)}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-[#161616]">

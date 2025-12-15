@@ -1,6 +1,7 @@
 import { getExportData } from "./analytics/exportAnalyticsData";
 import { getAnalyticsMetrics } from "./analytics/getAnalyticsMetrics";
 import { getForecastVsActuals } from "./analytics/getForecastVsActuals";
+import { getIndividualAnalytics } from "./analytics/getIndividualAnalytics";
 import { getProjectAnalytics } from "./analytics/getProjectAnalytics";
 import { getTeamUtilization } from "./analytics/getTeamUtilization";
 import { createForecastEntry } from "./forecast/createForecastEntry";
@@ -22,6 +23,7 @@ export {
   getExportData,
   getAnalyticsMetrics,
   getForecastVsActuals,
+  getIndividualAnalytics,
   getProjectAnalytics,
   getTeamUtilization,
   createForecastEntry,

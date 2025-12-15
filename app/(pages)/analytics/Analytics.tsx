@@ -6,6 +6,7 @@ import {
   Time,
   UserMultiple,
 } from "@carbon/icons-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   getAnalyticsMetrics,
@@ -31,6 +32,7 @@ export default function AnalyticsPage({
   initialForecastVsActuals,
   initialProjects,
 }: AnalyticsPageProps) {
+  const router = useRouter();
   const [weeksToShow, setWeeksToShow] = useState(4);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,6 +74,10 @@ export default function AnalyticsPage({
 
   const handleWeeksChange = (weeks: number) => {
     setWeeksToShow(weeks);
+  };
+
+  const handleMemberClick = (userId: number) => {
+    router.push(`/analytics/${userId}`);
   };
 
   return (
@@ -153,6 +159,7 @@ export default function AnalyticsPage({
         <TeamCapacityTable
           teamMembers={teamMembers}
           weekEndings={weekEndings}
+          onMemberClick={handleMemberClick}
         />
       </div>
     </div>

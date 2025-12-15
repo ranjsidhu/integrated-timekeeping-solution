@@ -31,6 +31,7 @@ export type MetricsCardProps = {
 export type TeamCapacityTableProps = {
   teamMembers: TeamMember[];
   weekEndings: Array<{ id: number; week_ending: Date; label: string }>;
+  onMemberClick?: (userId: number) => void;
 };
 
 export type AnalyticsPageProps = {
@@ -130,4 +131,49 @@ export type ProjectAnalyticsData = {
   nonBillableHours: number;
   teamMemberCount: number;
   teamMemberIds: Set<number>;
+};
+
+export type IndividualAnalytics = {
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  summary: {
+    forecastUtilization: number;
+    actualUtilization: number;
+    forecastHours: number;
+    actualHours: number;
+    forecastBillableHours: number;
+    actualBillableHours: number;
+    forecastCompliance: number;
+  };
+  weeklyData: {
+    futureWeeks: Array<{
+      id: number;
+      week_ending: Date;
+      label: string;
+      forecastHours: number;
+      forecastBillableHours: number;
+    }>;
+    historicalWeeks: Array<{
+      id: number;
+      week_ending: Date;
+      label: string;
+      actualHours: number;
+      actualBillableHours: number;
+      forecastHours: number;
+    }>;
+  };
+  projectAssignments: Array<{
+    projectId: number;
+    projectName: string;
+    totalHours: number;
+  }>;
+};
+
+export type ProjectAssignment = {
+  projectId: number;
+  projectName: string;
+  totalHours: number;
 };
