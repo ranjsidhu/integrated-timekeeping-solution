@@ -19,7 +19,7 @@
   "dependencies": {
     "@carbon/react": "1.97.0",
     "@ibm/plex": "6.4.1",
-    "@prisma/adapter-pg": "7.1.0",
+    "@prisma/adapter-pg": "7.2.0",
     "@prisma/client": "7.1.0",
     "chart.js": "4.5.1",
     "dotenv": "17.2.3",
